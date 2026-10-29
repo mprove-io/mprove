@@ -1,4 +1,4 @@
-import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { GivenTab } from '#backend/drizzle/postgres/tables/givens';
 import type { Given } from '#common/types/backend/parts/given/given';
 
 export function givenTabToApi(item: { given: GivenTab }): Given {

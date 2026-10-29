@@ -1,9 +1,9 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { dashboardTabToApi } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/dashboard-tab-to-api/dashboard-tab-to-api';
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';

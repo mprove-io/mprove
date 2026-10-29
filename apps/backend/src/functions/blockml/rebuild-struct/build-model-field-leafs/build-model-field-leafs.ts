@@ -1,5 +1,5 @@
 import type { SourceDef as MalloySourceDef } from '@malloydata/malloy';
-import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/tables/model-field-leafs';
 import {
   collectMalloyFieldLeafInfosFromSourceRecursive,
   type MalloyFieldLeafInfo

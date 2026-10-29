@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { BranchTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
+import type {
+  BranchEnt,
+  BranchTab
+} from '#backend/drizzle/postgres/tables/branches';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeBranchFullId } from '#backend/functions/hash/make-branch-full-id/make-branch-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

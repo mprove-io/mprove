@@ -1,5 +1,5 @@
 import { BigQuery, type BigQueryOptions } from '@google-cloud/bigquery';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToBigqueryOptions } from '#backend/functions/dwh/bigquery/options-to-bigquery-options/options-to-bigquery-options';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 

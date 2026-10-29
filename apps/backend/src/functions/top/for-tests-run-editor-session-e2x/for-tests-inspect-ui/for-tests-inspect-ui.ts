@@ -1,7 +1,7 @@
 import type { ExecutionContext } from 'ava';
 import { eq } from 'drizzle-orm';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { Prep } from '#backend/interfaces/prep';
 import { DbService } from '#backend/services/db/db.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';

@@ -3,11 +3,9 @@ import type { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import * as MYSQL from 'mysql2/promise';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToMysqlOptions } from '#backend/functions/dwh/mysql/options-to-mysql-options/options-to-mysql-options';
 import { processMysqlError } from '#backend/functions/dwh/mysql/run-mysql-query/process-mysql-error/process-mysql-error';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';

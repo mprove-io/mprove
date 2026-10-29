@@ -11,12 +11,12 @@ import {
   ToBackendDeleteDraftDashboardsResponseDto
 } from '#backend/controllers/dashboards/delete-draft-dashboards/delete-draft-dashboards.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getDashboardsCatalog } from '#backend/functions/db/dashboards/get-dashboards-catalog/get-dashboards-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';

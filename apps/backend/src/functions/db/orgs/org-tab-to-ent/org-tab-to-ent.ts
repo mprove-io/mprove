@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import type { OrgEnt, OrgTab } from '#backend/drizzle/postgres/tables/orgs';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import type { TabService } from '#backend/services/tab/tab.service';

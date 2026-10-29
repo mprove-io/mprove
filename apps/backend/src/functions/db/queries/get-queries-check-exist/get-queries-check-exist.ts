@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
 

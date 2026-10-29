@@ -1,4 +1,4 @@
-import type { MconfigTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
 import { makeMconfigFields } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/make-mconfig-fields/make-mconfig-fields';
 import { makeMconfigFiltersX } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/make-mconfig-filters-x/make-mconfig-filters-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';

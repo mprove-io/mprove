@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';

@@ -1,11 +1,9 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  ChartTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';

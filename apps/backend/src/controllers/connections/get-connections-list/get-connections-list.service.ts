@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { DbService } from '#backend/services/db/db.service';

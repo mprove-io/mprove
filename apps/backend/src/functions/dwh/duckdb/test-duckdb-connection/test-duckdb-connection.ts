@@ -1,5 +1,5 @@
 import { type DuckDBConnection, DuckDBInstance } from '@duckdb/node-api';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import {
   type OptionsToDuckdbOptionsOutput,
   optionsToDuckdbOptions

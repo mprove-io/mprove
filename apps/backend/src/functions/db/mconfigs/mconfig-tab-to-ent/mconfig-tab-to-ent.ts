@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { MconfigTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
+import type {
+  MconfigEnt,
+  MconfigTab
+} from '#backend/drizzle/postgres/tables/mconfigs';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { MconfigLt } from '#common/types/shared/st-lt/mconfigs/mconfig-lt';

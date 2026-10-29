@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema-postgres';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { TransactionError } from '#common/types/backend/function-errors/transaction-error';

@@ -1,4 +1,4 @@
-import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { Member } from '#common/types/backend/parts/member';

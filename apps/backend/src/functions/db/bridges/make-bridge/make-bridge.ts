@@ -1,4 +1,4 @@
-import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
 import { makeBridgeFullId } from '#backend/functions/hash/make-bridge-full-id/make-bridge-full-id';
 
 export function makeBridge(item: {

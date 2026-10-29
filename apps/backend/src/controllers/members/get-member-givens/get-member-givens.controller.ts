@@ -7,9 +7,9 @@ import {
   ToBackendGetMemberGivensResponseDto
 } from '#backend/controllers/members/get-member-givens/get-member-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

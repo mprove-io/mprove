@@ -11,12 +11,12 @@ import {
   ToBackendDeleteConnectionResponseDto
 } from '#backend/controllers/connections/delete-connection/delete-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/tables/cached-parts';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';

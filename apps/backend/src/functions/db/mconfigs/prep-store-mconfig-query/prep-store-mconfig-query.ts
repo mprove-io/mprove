@@ -1,13 +1,11 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  MconfigTab,
-  ModelTab,
-  ProjectTab,
-  QueryTab,
-  StructTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { adjustMconfig } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/adjust-mconfig/adjust-mconfig';
 import { transformStoreRequest } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-request/transform-store-request';

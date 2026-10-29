@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { selectUnselectedGivens } from '#backend/functions/db/users/select-unselected-givens/select-unselected-givens';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';

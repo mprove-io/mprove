@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckBranchDoesNotExistError } from '#common/types/backend/function-errors/check-branch-does-not-exist-error';
 

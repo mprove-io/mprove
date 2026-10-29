@@ -11,10 +11,10 @@ import {
   ToBackendDeleteGivenResponseDto
 } from '#backend/controllers/givens/delete-given/delete-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { givensTable } from '#backend/drizzle/postgres/schema/givens';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { givensTable } from '#backend/drizzle/postgres/tables/givens';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { rolesTable } from '#backend/drizzle/postgres/tables/roles';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';

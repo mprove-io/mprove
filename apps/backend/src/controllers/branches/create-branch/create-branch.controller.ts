@@ -10,10 +10,10 @@ import {
   ToBackendCreateBranchResponseDto
 } from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
 import { checkBranchDoesNotExist } from '#backend/functions/db/branches/check-branch-does-not-exist/check-branch-does-not-exist';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';

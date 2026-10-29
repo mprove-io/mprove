@@ -1,4 +1,4 @@
-import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
 import { makeDashboardFiltersX } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/dashboard-tab-to-api/make-dashboard-filters-x/make-dashboard-filters-x';
 import { makeTilesX } from '#backend/functions/make-tiles-x/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';

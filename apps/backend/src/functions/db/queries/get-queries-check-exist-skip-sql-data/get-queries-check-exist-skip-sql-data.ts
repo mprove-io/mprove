@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import {
   type QueryEnt,
   queriesTable
-} from '#backend/drizzle/postgres/schema/queries';
+} from '#backend/drizzle/postgres/tables/queries';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 

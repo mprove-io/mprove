@@ -7,8 +7,8 @@ import {
   ToBackendSetAvatarResponseDto
 } from '#backend/controllers/avatars/set-avatar/set-avatar.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import { avatarsTable } from '#backend/drizzle/postgres/tables/avatars';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

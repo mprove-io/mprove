@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 

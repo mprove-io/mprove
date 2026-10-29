@@ -11,12 +11,12 @@ import {
   ToBackendDeleteEnvResponseDto
 } from '#backend/controllers/envs/delete-env/delete-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { envsTable } from '#backend/drizzle/postgres/schema/envs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/tables/cached-parts';
+import { envsTable } from '#backend/drizzle/postgres/tables/envs';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';

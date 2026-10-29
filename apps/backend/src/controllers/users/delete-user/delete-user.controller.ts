@@ -11,16 +11,14 @@ import {
   ToBackendDeleteUserResponseDto
 } from '#backend/controllers/users/delete-user/delete-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';

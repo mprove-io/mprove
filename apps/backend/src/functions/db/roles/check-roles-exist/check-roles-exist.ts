@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import type { RoleTab } from '#backend/drizzle/postgres/tables/roles';
+import { rolesTable } from '#backend/drizzle/postgres/tables/roles';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckRolesExistError } from '#common/types/backend/function-errors/check-roles-exist-error';
 import type { DbRolesFindManyError } from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';

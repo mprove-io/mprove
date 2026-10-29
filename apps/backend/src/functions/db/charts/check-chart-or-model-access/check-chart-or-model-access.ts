@@ -1,9 +1,7 @@
 import { Result } from '@praha/byethrow';
-import type {
-  ChartTab,
-  MemberTab,
-  ModelTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';

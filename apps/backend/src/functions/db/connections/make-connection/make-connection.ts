@@ -1,4 +1,4 @@
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
 import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';

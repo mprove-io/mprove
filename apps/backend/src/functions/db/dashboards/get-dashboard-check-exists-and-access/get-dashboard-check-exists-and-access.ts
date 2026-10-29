@@ -1,11 +1,9 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  DashboardTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
+import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';

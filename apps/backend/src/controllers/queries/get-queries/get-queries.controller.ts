@@ -10,15 +10,13 @@ import {
   ToBackendGetQueriesResponseDto
 } from '#backend/controllers/queries/get-queries/get-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MconfigTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getQueriesCheckExist } from '#backend/functions/db/queries/get-queries-check-exist/get-queries-check-exist';
 import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';

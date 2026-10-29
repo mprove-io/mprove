@@ -1,12 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type {
-  ConnectionTab,
-  EnvTab,
-  MemberTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { envTabToApi } from '#backend/functions/db/envs/get-api-envs/env-tab-to-api/env-tab-to-api';
 import type { DbService } from '#backend/services/db/db.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';

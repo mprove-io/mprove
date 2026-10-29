@@ -24,14 +24,12 @@ import Redis from 'ioredis';
 import type { ClientConfig } from 'pg';
 import pg from 'pg';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  DconfigTab,
-  OrgTab,
-  ProjectTab,
-  UconfigTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { DconfigTab } from '#backend/drizzle/postgres/tables/dconfigs';
+import type { OrgTab } from '#backend/drizzle/postgres/tables/orgs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { UconfigTab } from '#backend/drizzle/postgres/tables/uconfigs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { getDconfigHashSecretUnwrap } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret-unwrap/get-dconfig-hash-secret-unwrap';
 import { addDemoMemberToDemoProject } from '#backend/functions/db/members/add-demo-member-to-demo-project/add-demo-member-to-demo-project';
@@ -68,13 +66,13 @@ import { appProviders } from './app-providers';
 import { getConfig } from './config/get.config';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
-import type { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
-import { connectionsTable } from './drizzle/postgres/schema/connections';
-import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
-import { orgsTable } from './drizzle/postgres/schema/orgs';
-import { projectsTable } from './drizzle/postgres/schema/projects';
-import { uconfigsTable } from './drizzle/postgres/schema/uconfigs';
-import { usersTable } from './drizzle/postgres/schema/users';
+import type { schemaPostgres } from './drizzle/postgres/schema-postgres';
+import { connectionsTable } from './drizzle/postgres/tables/connections';
+import { dconfigsTable } from './drizzle/postgres/tables/dconfigs';
+import { orgsTable } from './drizzle/postgres/tables/orgs';
+import { projectsTable } from './drizzle/postgres/tables/projects';
+import { uconfigsTable } from './drizzle/postgres/tables/uconfigs';
+import { usersTable } from './drizzle/postgres/tables/users';
 import { mcpProviders } from './mcp-providers';
 
 const { Client } = pg;

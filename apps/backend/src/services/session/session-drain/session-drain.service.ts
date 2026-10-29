@@ -19,15 +19,13 @@ import type {
 import { Result } from '@praha/byethrow';
 import { eq, max, sql } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  OcMessageTab,
-  OcPartTab,
-  OcSessionTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { ocEventsTable } from '#backend/drizzle/postgres/tables/oc-events';
+import type { OcMessageTab } from '#backend/drizzle/postgres/tables/oc-messages';
+import type { OcPartTab } from '#backend/drizzle/postgres/tables/oc-parts';
+import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';
 import { makeOcMessage } from '#backend/functions/db/oc-messages/make-oc-message/make-oc-message';
 import { makeOcPart } from '#backend/functions/db/oc-parts/make-oc-part/make-oc-part';

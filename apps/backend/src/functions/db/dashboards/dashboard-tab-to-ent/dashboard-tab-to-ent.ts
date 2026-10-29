@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
+import type {
+  DashboardEnt,
+  DashboardTab
+} from '#backend/drizzle/postgres/tables/dashboards';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeDashboardFullId } from '#backend/functions/hash/make-dashboard-full-id/make-dashboard-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

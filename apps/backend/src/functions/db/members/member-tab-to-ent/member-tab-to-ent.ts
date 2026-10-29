@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import type {
+  MemberEnt,
+  MemberTab
+} from '#backend/drizzle/postgres/tables/members';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { makeMemberFullId } from '#backend/functions/hash/make-member-full-id/make-member-full-id';

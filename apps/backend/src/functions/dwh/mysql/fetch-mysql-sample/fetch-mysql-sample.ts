@@ -2,7 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import * as MYSQL from 'mysql2/promise';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToMysqlOptions } from '#backend/functions/dwh/mysql/options-to-mysql-options/options-to-mysql-options';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';

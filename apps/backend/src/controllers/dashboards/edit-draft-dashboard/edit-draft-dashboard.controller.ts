@@ -10,12 +10,12 @@ import {
   ToBackendEditDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/edit-draft-dashboard/edit-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
 import { DbService } from '#backend/services/db/db.service';

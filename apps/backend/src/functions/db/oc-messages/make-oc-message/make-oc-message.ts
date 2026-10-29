@@ -1,5 +1,5 @@
 import type { Message } from '@opencode-ai/sdk/v2';
-import type { OcMessageTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcMessageTab } from '#backend/drizzle/postgres/tables/oc-messages';
 
 export function makeOcMessage(item: {
   messageId: string;

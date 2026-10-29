@@ -11,15 +11,15 @@ import {
   ToBackendDeleteProjectResponseDto
 } from '#backend/controllers/projects/delete-project/delete-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { envsTable } from '#backend/drizzle/postgres/schema/envs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/tables/cached-parts';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { envsTable } from '#backend/drizzle/postgres/tables/envs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

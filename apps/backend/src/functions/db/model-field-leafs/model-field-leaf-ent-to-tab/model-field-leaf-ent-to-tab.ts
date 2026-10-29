@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import type {
+  ModelFieldLeafEnt,
+  ModelFieldLeafTab
+} from '#backend/drizzle/postgres/tables/model-field-leafs';
 
 export function modelFieldLeafEntToTab(item: {
   ent: ModelFieldLeafEnt;

@@ -1,7 +1,5 @@
-import type {
-  OcSessionTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 
 export function tabToSessionApi(item: {

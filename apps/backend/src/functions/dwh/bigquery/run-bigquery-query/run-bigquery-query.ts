@@ -3,10 +3,8 @@ import {
   type BigQueryOptions,
   type JobResponse
 } from '@google-cloud/bigquery';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToBigqueryOptions } from '#backend/functions/dwh/bigquery/options-to-bigquery-options/options-to-bigquery-options';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { isDefined } from '#common/functions/is-defined/is-defined';

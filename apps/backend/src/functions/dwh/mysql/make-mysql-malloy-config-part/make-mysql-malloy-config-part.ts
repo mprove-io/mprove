@@ -1,5 +1,5 @@
 import type { ConnectionConfigEntry } from '@malloydata/malloy';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';
 

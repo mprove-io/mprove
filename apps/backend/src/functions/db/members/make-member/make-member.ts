@@ -1,7 +1,5 @@
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeMemberFullId } from '#backend/functions/hash/make-member-full-id/make-member-full-id';
 
 export function makeMember(item: {

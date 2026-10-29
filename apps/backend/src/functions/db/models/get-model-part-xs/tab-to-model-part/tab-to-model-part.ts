@@ -1,4 +1,4 @@
-import type { ModelTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { ModelPart } from '#common/types/backend/parts/model/model-part';
 
 export function tabToModelPart(item: { model: ModelTab }): ModelPart {

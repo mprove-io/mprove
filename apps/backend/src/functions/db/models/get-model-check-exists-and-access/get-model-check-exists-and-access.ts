@@ -1,10 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  MemberTab,
-  ModelTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';

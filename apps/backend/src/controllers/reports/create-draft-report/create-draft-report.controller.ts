@@ -10,18 +10,16 @@ import {
   ToBackendCreateDraftReportResponseDto
 } from '#backend/controllers/reports/create-draft-report/create-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ModelTab,
-  ReportTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { kitsTable } from '#backend/drizzle/postgres/tables/kits';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';

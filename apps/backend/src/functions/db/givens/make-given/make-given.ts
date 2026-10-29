@@ -1,4 +1,4 @@
-import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { GivenTab } from '#backend/drizzle/postgres/tables/givens';
 import { makeGivenFullId } from '#backend/functions/hash/make-given-full-id/make-given-full-id';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 

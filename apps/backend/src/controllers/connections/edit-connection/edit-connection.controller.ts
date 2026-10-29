@@ -8,10 +8,10 @@ import {
   ToBackendEditConnectionResponseDto
 } from '#backend/controllers/connections/edit-connection/edit-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';

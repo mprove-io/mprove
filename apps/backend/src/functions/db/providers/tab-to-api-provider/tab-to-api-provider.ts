@@ -1,4 +1,4 @@
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import {
   ANTHROPIC_PROVIDER_ID,
   CODEX_PROVIDER_ID,

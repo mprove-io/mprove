@@ -1,4 +1,4 @@
-import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OrgTab } from '#backend/drizzle/postgres/tables/orgs';
 import type { Org } from '#common/types/backend/parts/org';
 
 export function orgTabToApi(item: { org: OrgTab }): Org {

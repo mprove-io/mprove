@@ -1,4 +1,4 @@
-import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
 import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 

@@ -15,15 +15,13 @@ import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  OcMessageTab,
-  OcPartTab,
-  OcSessionTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { ocEventsTable } from '#backend/drizzle/postgres/tables/oc-events';
+import type { OcMessageTab } from '#backend/drizzle/postgres/tables/oc-messages';
+import type { OcPartTab } from '#backend/drizzle/postgres/tables/oc-parts';
+import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { makeOcMessage } from '#backend/functions/db/oc-messages/make-oc-message/make-oc-message';
 import { makeOcPart } from '#backend/functions/db/oc-parts/make-oc-part/make-oc-part';
 import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';

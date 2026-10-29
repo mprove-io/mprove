@@ -1,4 +1,4 @@
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 
 export function wrapToApiProjectsItem(item: {

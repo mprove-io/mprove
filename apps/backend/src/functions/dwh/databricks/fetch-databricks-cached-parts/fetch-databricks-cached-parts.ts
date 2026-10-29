@@ -4,7 +4,7 @@ import type IOperation from '@databricks/sql/dist/contracts/IOperation';
 import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { buildDatabricksConnectOptions } from '#backend/functions/dwh/databricks/build-databricks-connect-options/build-databricks-connect-options';
 import {
   type OptionsToDatabricksConfigOutput,

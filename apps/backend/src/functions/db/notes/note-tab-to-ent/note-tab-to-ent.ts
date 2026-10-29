@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { NoteTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import type { NoteEnt, NoteTab } from '#backend/drizzle/postgres/tables/notes';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';

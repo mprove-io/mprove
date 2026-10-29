@@ -1,6 +1,6 @@
 import type { Result } from '@praha/byethrow';
 import type { PgTable } from 'drizzle-orm/pg-core';
-import { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import { schemaPostgres } from '#backend/drizzle/postgres/schema-postgres';
 import { avatarEntToTab } from '#backend/functions/db/avatars/avatar-ent-to-tab/avatar-ent-to-tab';
 import { avatarTabToEnt } from '#backend/functions/db/avatars/avatar-tab-to-ent/avatar-tab-to-ent';
 import { branchEntToTab } from '#backend/functions/db/branches/branch-ent-to-tab/branch-ent-to-tab';

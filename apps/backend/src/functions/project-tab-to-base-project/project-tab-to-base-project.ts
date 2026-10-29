@@ -1,4 +1,4 @@
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';

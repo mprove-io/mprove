@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { envsTable } from '#backend/drizzle/postgres/schema/envs';
+import { envsTable } from '#backend/drizzle/postgres/tables/envs';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckEnvDoesNotExistError } from '#common/types/backend/function-errors/check-env-does-not-exist-error';
 

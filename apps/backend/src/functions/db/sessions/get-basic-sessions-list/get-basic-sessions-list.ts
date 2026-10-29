@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, desc, eq, notInArray } from 'drizzle-orm';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { tabsToSessionApis } from '#backend/functions/db/sessions/tabs-to-session-apis/tabs-to-session-apis';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';

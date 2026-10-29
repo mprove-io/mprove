@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import type {
+  StructEnt,
+  StructTab
+} from '#backend/drizzle/postgres/tables/structs';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { StructEntToTabError } from '#common/types/backend/function-errors/struct-ent-to-tab-error';

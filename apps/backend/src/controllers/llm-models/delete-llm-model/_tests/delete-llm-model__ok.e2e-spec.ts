@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
 import { and, eq } from 'drizzle-orm';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import {
   type ProviderEnt,
   providersTable
-} from '#backend/drizzle/postgres/schema/providers';
+} from '#backend/drizzle/postgres/tables/providers';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';

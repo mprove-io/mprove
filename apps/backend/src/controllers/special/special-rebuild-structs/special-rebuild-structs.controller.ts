@@ -10,13 +10,11 @@ import {
   ToBackendSpecialRebuildStructsResponseDto
 } from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type {
-  BridgeTab,
-  ProjectTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import {
   type RebuildStructOutput,
   rebuildStruct

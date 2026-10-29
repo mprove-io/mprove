@@ -15,20 +15,18 @@ import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  BridgeTab,
-  OcMessageTab,
-  OcPartTab,
-  ProjectTab,
-  SessionTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { OcMessageTab } from '#backend/drizzle/postgres/tables/oc-messages';
+import { ocMessagesTable } from '#backend/drizzle/postgres/tables/oc-messages';
+import type { OcPartTab } from '#backend/drizzle/postgres/tables/oc-parts';
+import { ocPartsTable } from '#backend/drizzle/postgres/tables/oc-parts';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { buildCodexFetch } from '#backend/functions/codex/build-codex-fetch/build-codex-fetch';
 import {
   type GetModelSelectionOutput,

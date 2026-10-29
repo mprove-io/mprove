@@ -10,18 +10,16 @@ import {
   ToBackendCreateDraftChartResponseDto
 } from '#backend/controllers/charts/create-draft-chart/create-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ChartTab,
-  MconfigTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';

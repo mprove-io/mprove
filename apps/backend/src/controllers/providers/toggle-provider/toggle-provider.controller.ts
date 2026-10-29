@@ -8,9 +8,9 @@ import {
   ToBackendToggleProviderResponseDto
 } from '#backend/controllers/providers/toggle-provider/toggle-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

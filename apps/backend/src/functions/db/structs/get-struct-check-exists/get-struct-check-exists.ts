@@ -2,8 +2,8 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
+import { structsTable } from '#backend/drizzle/postgres/tables/structs';
 import type { DbService } from '#backend/services/db/db.service';
 import {
   EMPTY_STRUCT_ID,

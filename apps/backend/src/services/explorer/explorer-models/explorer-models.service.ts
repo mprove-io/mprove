@@ -5,7 +5,7 @@ import type Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import type { LanguageModel } from 'ai';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import {
   type AnthropicVariantOptions,
   getAnthropicVariantOptions

@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OrgTab } from '#backend/drizzle/postgres/tables/orgs';
 import { addOrg } from '#backend/functions/db/orgs/add-org/add-org';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';

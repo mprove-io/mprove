@@ -1,11 +1,9 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  MemberTab,
-  ReportTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
+import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { makeReport } from '#backend/functions/db/reports/make-report/make-report';
 import type { DbService } from '#backend/services/db/db.service';

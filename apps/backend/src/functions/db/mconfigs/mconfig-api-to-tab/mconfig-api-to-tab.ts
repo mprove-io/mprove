@@ -1,4 +1,4 @@
-import type { MconfigTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 

@@ -7,9 +7,9 @@ import {
   ToBackendIsProjectExistResponseDto
 } from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

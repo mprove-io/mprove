@@ -10,9 +10,9 @@ import {
   ToBackendArchiveSessionResponseDto
 } from '#backend/controllers/sessions/archive-session/archive-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { archiveSession } from '#backend/functions/session-archive/archive-session/archive-session';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { OcSessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
+import type {
+  OcSessionEnt,
+  OcSessionTab
+} from '#backend/drizzle/postgres/tables/oc-sessions';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { Strategy } from 'passport-local';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkUserPasswordHashIsDefined } from '#backend/functions/db/users/check-user-password-hash-is-defined/check-user-password-hash-is-defined';
 import { getUserByEmailCheckExists } from '#backend/functions/db/users/get-user-by-email-check-exists/get-user-by-email-check-exists';
 import { createHashUsingSalt } from '#backend/functions/hash/create-hash-using-salt/create-hash-using-salt';

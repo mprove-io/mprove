@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { EnvTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import type { EnvEnt, EnvTab } from '#backend/drizzle/postgres/tables/envs';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeEnvFullId } from '#backend/functions/hash/make-env-full-id/make-env-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

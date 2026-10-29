@@ -13,16 +13,14 @@ import {
   ToBackendCreateExplorerSessionResponseDto
 } from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  OcEventTab,
-  OcSessionTab,
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { OcEventTab } from '#backend/drizzle/postgres/tables/oc-events';
+import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';

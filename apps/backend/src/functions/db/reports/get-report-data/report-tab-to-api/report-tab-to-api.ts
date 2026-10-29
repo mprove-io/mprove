@@ -1,4 +1,4 @@
-import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import { makeReportFiltersX } from '#backend/functions/db/reports/get-report-data/report-tab-to-api/make-report-filters-x/make-report-filters-x';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';

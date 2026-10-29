@@ -1,4 +1,4 @@
-import type { ModelTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 

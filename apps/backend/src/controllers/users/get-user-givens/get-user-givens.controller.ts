@@ -8,8 +8,8 @@ import {
   ToBackendGetUserGivensResponseDto
 } from '#backend/controllers/users/get-user-givens/get-user-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
 import { selectUnselectedGivens } from '#backend/functions/db/users/select-unselected-givens/select-unselected-givens';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';

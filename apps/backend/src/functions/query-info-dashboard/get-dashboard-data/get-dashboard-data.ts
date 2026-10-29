@@ -3,13 +3,11 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  BridgeTab,
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';

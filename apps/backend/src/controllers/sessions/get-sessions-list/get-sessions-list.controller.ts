@@ -8,13 +8,11 @@ import {
   ToBackendGetSessionsListResponseDto
 } from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { tabsToSessionApis } from '#backend/functions/db/sessions/tabs-to-session-apis/tabs-to-session-apis';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

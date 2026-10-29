@@ -5,12 +5,10 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';

@@ -3,7 +3,7 @@ import {
   type BigQueryOptions,
   type QueryRowsResponse
 } from '@google-cloud/bigquery';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToBigqueryOptions } from '#backend/functions/dwh/bigquery/options-to-bigquery-options/options-to-bigquery-options';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';

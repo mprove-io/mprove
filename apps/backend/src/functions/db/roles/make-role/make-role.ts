@@ -1,4 +1,4 @@
-import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { RoleTab } from '#backend/drizzle/postgres/tables/roles';
 import { makeRoleFullId } from '#backend/functions/hash/make-role-full-id/make-role-full-id';
 import type { Gv } from '#common/types/backend/parts/gv';
 

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { rolesTable } from '#backend/drizzle/postgres/tables/roles';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckRoleDoesNotExistError } from '#common/types/backend/function-errors/check-role-does-not-exist-error';
 

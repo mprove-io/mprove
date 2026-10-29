@@ -10,10 +10,10 @@ import {
   ToBackendCreateProjectResponseDto
 } from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { notesTable } from '#backend/drizzle/postgres/schema/notes';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { notesTable } from '#backend/drizzle/postgres/tables/notes';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { addProject } from '#backend/functions/db/projects/add-project/add-project';

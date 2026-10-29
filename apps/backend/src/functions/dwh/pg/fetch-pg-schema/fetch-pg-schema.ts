@@ -3,7 +3,7 @@ import type { ConfigService } from '@nestjs/config';
 import pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToPgOptions } from '#backend/functions/dwh/pg/options-to-pg-options/options-to-pg-options';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';

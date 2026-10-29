@@ -12,12 +12,10 @@ import {
 } from 'e2b';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ProjectTab,
-  ProviderTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { DbService } from '#backend/services/db/db.service';
 import { anthropicModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/anthropic-model-to-open-code-config/anthropic-model-to-open-code-config';
 import { llmModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/llm-model-to-open-code-config/llm-model-to-open-code-config';

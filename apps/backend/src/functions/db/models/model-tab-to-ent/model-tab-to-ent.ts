@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ModelTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ModelEnt } from '#backend/drizzle/postgres/schema/models';
+import type {
+  ModelEnt,
+  ModelTab
+} from '#backend/drizzle/postgres/tables/models';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeModelFullId } from '#backend/functions/hash/make-model-full-id/make-model-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

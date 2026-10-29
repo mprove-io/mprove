@@ -11,28 +11,26 @@ import {
   ToBackendSeedRecordsResponseDto
 } from '#backend/controllers/test-routes/seed-records/seed-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  CachedColumnTab,
-  CachedPartTab,
-  ChartTab,
-  ConnectionTab,
-  DashboardTab,
-  EnvTab,
-  MconfigTab,
-  MemberTab,
-  ModelFieldLeafTab,
-  ModelTab,
-  OrgTab,
-  ProjectTab,
-  ProviderTab,
-  QueryTab,
-  ReportTab,
-  SessionTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { BranchTab } from '#backend/drizzle/postgres/tables/branches';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import type { CachedColumnTab } from '#backend/drizzle/postgres/tables/cached-columns';
+import type { CachedPartTab } from '#backend/drizzle/postgres/tables/cached-parts';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/tables/model-field-leafs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import type { OrgTab } from '#backend/drizzle/postgres/tables/orgs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   type ParseApiKeyOutput,
   parseApiKey

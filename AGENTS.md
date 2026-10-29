@@ -97,7 +97,7 @@ queries.
 ### Database
 
 - ORM: Drizzle
-- Schema: `src/drizzle/postgres/schema/`
+- Schema: `src/drizzle/postgres/tables/`
 - Migrations: `src/drizzle/postgres/migrations/`
 
 ### E2E Tests

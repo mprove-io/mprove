@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { RoleTab } from '#backend/drizzle/postgres/tables/roles';
 import type { CheckRoleGivenDoesNotExistError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-error';
 
 export function checkRoleGivenDoesNotExist(item: {

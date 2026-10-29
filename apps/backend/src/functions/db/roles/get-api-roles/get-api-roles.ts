@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { rolesTable } from '#backend/drizzle/postgres/tables/roles';
 import { roleTabToApi } from '#backend/functions/db/roles/get-api-roles/role-tab-to-api/role-tab-to-api';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';

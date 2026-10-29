@@ -14,7 +14,7 @@ const { Pool } = pg;
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
 import { DrizzleLogWriter } from './drizzle-log-writer';
-import { schemaPostgres } from './postgres/schema/_schema-postgres';
+import { schemaPostgres } from './postgres/schema-postgres';
 
 export const DRIZZLE = 'DRIZZLE';
 

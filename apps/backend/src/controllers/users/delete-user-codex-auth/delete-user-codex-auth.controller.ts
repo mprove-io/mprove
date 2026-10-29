@@ -7,7 +7,7 @@ import {
   ToBackendDeleteUserCodexAuthResponseDto
 } from '#backend/controllers/users/delete-user-codex-auth/delete-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

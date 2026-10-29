@@ -9,12 +9,12 @@ import {
   ToBackendGetNavResponseDto
 } from '#backend/controllers/nav/get-nav/get-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { avatarsTable } from '#backend/drizzle/postgres/tables/avatars';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';

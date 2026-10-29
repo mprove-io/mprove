@@ -7,8 +7,8 @@ import {
   ToBackendGetAvatarBigResponseDto
 } from '#backend/controllers/avatars/get-avatar-big/get-avatar-big.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import { avatarsTable } from '#backend/drizzle/postgres/tables/avatars';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

@@ -2,7 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { archiveSessionWhileLocked } from '#backend/functions/session-archive/archive-session/archive-session-while-locked/archive-session-while-locked';
 import type { DbService } from '#backend/services/db/db.service';
 import type { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';

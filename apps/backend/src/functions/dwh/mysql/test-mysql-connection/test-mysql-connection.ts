@@ -1,5 +1,5 @@
 import * as MYSQL from 'mysql2/promise';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToMysqlOptions } from '#backend/functions/dwh/mysql/options-to-mysql-options/options-to-mysql-options';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';

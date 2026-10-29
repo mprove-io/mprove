@@ -1,7 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { EnvTab, MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { envsTable } from '#backend/drizzle/postgres/schema/envs';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import { envsTable } from '#backend/drizzle/postgres/tables/envs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { DbService } from '#backend/services/db/db.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';

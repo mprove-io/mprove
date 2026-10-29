@@ -8,7 +8,7 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { buildUserApiKey } from '#backend/controllers/users/generate-user-api-key/build-user-api-key/build-user-api-key';
 import { ToBackendGenerateUserApiKeyResponseDto } from '#backend/controllers/users/generate-user-api-key/generate-user-api-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   type GenerateApiKeyPartsOutput,
   generateApiKeyParts

@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import type {
-  MemberTab,
-  ModelTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { DbService } from '#backend/services/db/db.service';

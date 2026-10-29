@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   type DashboardEnt,
   dashboardsTable
-} from '#backend/drizzle/postgres/schema/dashboards';
+} from '#backend/drizzle/postgres/tables/dashboards';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { tabToDashboardPart } from '#backend/functions/db/dashboards/get-dashboard-parts/tab-to-dashboard-part/tab-to-dashboard-part';
 import type { DbService } from '#backend/services/db/db.service';

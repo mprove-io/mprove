@@ -8,16 +8,14 @@ import {
   ToBackendEditMemberResponseDto
 } from '#backend/controllers/members/edit-member/edit-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  AvatarTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { AvatarTab } from '#backend/drizzle/postgres/tables/avatars';
 import {
   type AvatarEnt,
   avatarsTable
-} from '#backend/drizzle/postgres/schema/avatars';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+} from '#backend/drizzle/postgres/tables/avatars';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkRolesExist } from '#backend/functions/db/roles/check-roles-exist/check-roles-exist';

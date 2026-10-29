@@ -10,16 +10,14 @@ import {
   ToBackendGetMembersResponseDto
 } from '#backend/controllers/members/get-members/get-members.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  AvatarTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { AvatarTab } from '#backend/drizzle/postgres/tables/avatars';
 import {
   type AvatarEnt,
   avatarsTable
-} from '#backend/drizzle/postgres/schema/avatars';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+} from '#backend/drizzle/postgres/tables/avatars';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
 import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';

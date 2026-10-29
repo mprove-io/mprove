@@ -1,4 +1,4 @@
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 
 export type OptionsToDatabricksConfigOutput = {
   authType: ConnectionTab['options']['databricks']['authType'];

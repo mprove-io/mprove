@@ -7,7 +7,7 @@ import {
   ToBackendUpdateUserPasswordResponseDto
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import {
   type CreateSaltAndHashOutput,

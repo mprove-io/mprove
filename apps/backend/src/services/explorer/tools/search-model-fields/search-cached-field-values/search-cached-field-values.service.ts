@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/tables/cached-parts';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/tables/model-field-leafs';
 import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';

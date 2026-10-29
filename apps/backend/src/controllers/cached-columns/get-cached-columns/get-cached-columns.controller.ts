@@ -8,9 +8,9 @@ import {
   ToBackendGetCachedColumnsResponseDto
 } from '#backend/controllers/cached-columns/get-cached-columns/get-cached-columns.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';

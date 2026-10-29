@@ -2,7 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
 import { rebuildBranchBridge } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridge/rebuild-branch-bridge';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';

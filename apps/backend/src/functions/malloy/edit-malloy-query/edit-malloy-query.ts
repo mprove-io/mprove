@@ -2,12 +2,10 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  MconfigTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getApiEnvConnectionsWithFallback } from '#backend/functions/db/envs/get-api-env-connections-with-fallback/get-api-env-connections-with-fallback';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';

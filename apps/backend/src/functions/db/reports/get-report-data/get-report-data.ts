@@ -4,20 +4,18 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type pgPromise from 'pg-promise';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  MconfigTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  QueryTab,
-  ReportTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { kitsTable } from '#backend/drizzle/postgres/tables/kits';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
 import {

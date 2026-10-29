@@ -1,11 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 import pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToPgOptions } from '#backend/functions/dwh/pg/options-to-pg-options/options-to-pg-options';
 import { processPgError } from '#backend/functions/dwh/pg/run-pg-query/process-pg-error/process-pg-error';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';

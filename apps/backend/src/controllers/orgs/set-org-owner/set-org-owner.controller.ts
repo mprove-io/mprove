@@ -8,9 +8,9 @@ import {
   ToBackendSetOrgOwnerResponseDto
 } from '#backend/controllers/orgs/set-org-owner/set-org-owner.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';

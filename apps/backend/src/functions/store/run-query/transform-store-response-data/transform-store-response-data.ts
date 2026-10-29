@@ -1,4 +1,4 @@
-import type { ModelTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { StoreUserCodeReturn } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-request/transform-store-request';
 import { runOnly } from '#backend/functions/user-code/run-only/run-only';
 import { MyRegex } from '#common/classes/my-regex/my-regex';

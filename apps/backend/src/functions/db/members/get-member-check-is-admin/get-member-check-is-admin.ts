@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import {
   type MemberEnt,
   membersTable
-} from '#backend/drizzle/postgres/schema/members';
+} from '#backend/drizzle/postgres/tables/members';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';

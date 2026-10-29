@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OrgTab } from '#backend/drizzle/postgres/tables/orgs';
 import type { CheckUserIsOrgOwnerError } from '#common/types/backend/function-errors/check-user-is-org-owner-error';
 
 export function checkUserIsOrgOwner(item: {

@@ -8,12 +8,10 @@ import {
   ToBackendCreateEnvResponseDto
 } from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BridgeTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { checkEnvDoesNotExist } from '#backend/functions/db/envs/check-env-does-not-exist/check-env-does-not-exist';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';

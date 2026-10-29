@@ -1,4 +1,4 @@
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';

@@ -7,9 +7,9 @@ import {
   ToBackendGetRolesResponseDto
 } from '#backend/controllers/roles/get-roles/get-roles.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';

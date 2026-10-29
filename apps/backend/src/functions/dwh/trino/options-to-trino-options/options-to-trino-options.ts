@@ -1,6 +1,6 @@
 import type { TrinoConnectionConfiguration } from '@malloydata/db-trino/dist/trino_connection';
 import { BasicAuth, type ConnectionOptions } from 'trino-client';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 
 export function optionsToTrinoOptions(item: {
   connection: ConnectionTab;

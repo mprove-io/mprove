@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import type {
+  MemberEnt,
+  MemberTab
+} from '#backend/drizzle/postgres/tables/members';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';

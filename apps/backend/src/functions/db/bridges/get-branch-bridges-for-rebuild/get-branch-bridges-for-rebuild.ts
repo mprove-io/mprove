@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import type { DbService } from '#backend/services/db/db.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';

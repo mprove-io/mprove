@@ -8,8 +8,8 @@ import {
   ToBackendCreateRoleResponseDto
 } from '#backend/controllers/roles/create-role/create-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkRoleDoesNotExist } from '#backend/functions/db/roles/check-role-does-not-exist/check-role-does-not-exist';

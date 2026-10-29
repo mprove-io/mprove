@@ -10,7 +10,7 @@ import {
   ToBackendCompleteUserRegistrationResponseDto
 } from '#backend/controllers/users/complete-user-registration/complete-user-registration.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { addMemberToDemoProject } from '#backend/functions/db/members/add-member-to-demo-project/add-member-to-demo-project';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';

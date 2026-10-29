@@ -1,4 +1,4 @@
-import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { RoleTab } from '#backend/drizzle/postgres/tables/roles';
 import type { Role } from '#common/types/backend/parts/role';
 
 export function roleTabToApi(item: { role: RoleTab }): Role {

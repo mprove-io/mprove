@@ -1,5 +1,5 @@
 import { inArray, sql } from 'drizzle-orm';
-import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { notesTable } from '#backend/drizzle/postgres/tables/notes';
 import type { DbService } from '#backend/services/db/db.service';
 
 export async function removeNotes(item: { db: DbService }): Promise<void> {

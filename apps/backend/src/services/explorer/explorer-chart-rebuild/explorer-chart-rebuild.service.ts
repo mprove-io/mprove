@@ -3,17 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ChartTab,
-  EnvTab,
-  MconfigTab,
-  QueryTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';

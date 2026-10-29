@@ -10,8 +10,8 @@ import {
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { addOrg } from '#backend/functions/db/orgs/add-org/add-org';
 import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';

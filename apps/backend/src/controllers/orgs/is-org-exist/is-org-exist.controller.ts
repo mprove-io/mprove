@@ -6,7 +6,7 @@ import {
   type ToBackendIsOrgExistRequestDto,
   ToBackendIsOrgExistResponseDto
 } from '#backend/controllers/orgs/is-org-exist/is-org-exist.dto';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

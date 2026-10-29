@@ -9,8 +9,8 @@ import {
   ToBackendSetSessionTitleResponseDto
 } from '#backend/controllers/sessions/set-session-title/set-session-title.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';

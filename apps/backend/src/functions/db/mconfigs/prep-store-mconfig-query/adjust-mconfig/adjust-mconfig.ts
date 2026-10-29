@@ -1,7 +1,5 @@
-import type {
-  MconfigTab,
-  ModelTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { getYYYYMMDDCurrentDateByTimezone } from '#backend/functions/get-yyyymmdd-current-date-by-timezone/get-yyyymmdd-current-date-by-timezone';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { isDefined } from '#common/functions/is-defined/is-defined';

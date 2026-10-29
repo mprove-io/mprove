@@ -8,9 +8,9 @@ import {
   ToBackendEditGivenResponseDto
 } from '#backend/controllers/givens/edit-given/edit-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { givensTable } from '#backend/drizzle/postgres/schema/givens';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { givensTable } from '#backend/drizzle/postgres/tables/givens';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';

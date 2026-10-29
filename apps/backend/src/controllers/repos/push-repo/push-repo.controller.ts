@@ -10,14 +10,12 @@ import {
   ToBackendPushRepoResponseDto
 } from '#backend/controllers/repos/push-repo/push-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { BranchTab } from '#backend/drizzle/postgres/tables/branches';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   type RebuildStructOutput,
   rebuildStruct

@@ -1,4 +1,4 @@
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { Project } from '#common/types/backend/parts/project/project';
 

@@ -10,16 +10,14 @@ import {
   ToBackendRefreshCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/refresh-cached-column/refresh-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  CachedColumnTab,
-  CachedPartTab,
-  ConnectionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
-import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { CachedColumnTab } from '#backend/drizzle/postgres/tables/cached-columns';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-columns';
+import type { CachedPartTab } from '#backend/drizzle/postgres/tables/cached-parts';
+import { cachedPartsTable } from '#backend/drizzle/postgres/tables/cached-parts';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';

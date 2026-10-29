@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { DbService } from '#backend/services/db/db.service';
 import {
   ExplorerChartRebuildService,

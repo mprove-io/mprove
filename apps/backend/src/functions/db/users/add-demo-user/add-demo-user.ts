@@ -1,4 +1,4 @@
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeAliasUnwrap } from '#backend/functions/db/users/make-alias-unwrap/make-alias-unwrap';
 import {
   type CreateSaltAndHashOutput,

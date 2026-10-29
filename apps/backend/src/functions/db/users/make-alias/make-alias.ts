@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import type { DbService } from '#backend/services/db/db.service';

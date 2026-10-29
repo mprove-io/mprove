@@ -8,7 +8,7 @@ import {
   type Iterator as TrinoIterator
 } from 'trino-client';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToTrinoOptions } from '#backend/functions/dwh/trino/options-to-trino-options/options-to-trino-options';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';

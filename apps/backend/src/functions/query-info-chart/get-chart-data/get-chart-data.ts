@@ -3,16 +3,14 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  MconfigTab,
-  MemberTab,
-  ProjectTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { checkChartOrModelAccess } from '#backend/functions/db/charts/check-chart-or-model-access/check-chart-or-model-access';
 import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';

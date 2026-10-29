@@ -9,8 +9,8 @@ import {
 } from '#backend/controllers/test-routes/get-rebuild-struct/get-rebuild-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { tabToBaseConnection } from '#backend/functions/db/connections/tab-to-base-connection/tab-to-base-connection';
 import { getApiEnvConnectionsWithFallback } from '#backend/functions/db/envs/get-api-env-connections-with-fallback/get-api-env-connections-with-fallback';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';

@@ -3,11 +3,9 @@ import type {
   PrestoQuery
 } from '@prestodb/presto-js-client';
 import { and, eq } from 'drizzle-orm';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToPrestoClientConfig } from '#backend/functions/dwh/presto/options-to-presto-client-config/options-to-presto-client-config';
 import { PrestoClient } from '#backend/functions/dwh/presto/presto-client';
 import { processPrestoError } from '#backend/functions/dwh/presto/run-presto-query/process-presto-error/process-presto-error';

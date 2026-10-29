@@ -1,4 +1,4 @@
-import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { StructX } from '#common/types/backend/parts/struct/struct-x';

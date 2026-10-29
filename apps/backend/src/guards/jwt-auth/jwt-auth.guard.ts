@@ -4,9 +4,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { Observable } from 'rxjs';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import {
   type ParseApiKeyOutput,
   parseApiKey

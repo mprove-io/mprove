@@ -1,6 +1,6 @@
 import { inArray, sql } from 'drizzle-orm';
 import type { QueryResult } from 'pg';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { DbService } from '#backend/services/db/db.service';
 
 export async function removeQueries(item: { db: DbService }): Promise<void> {

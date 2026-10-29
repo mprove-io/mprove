@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { AvatarTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
+import type {
+  AvatarEnt,
+  AvatarTab
+} from '#backend/drizzle/postgres/tables/avatars';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';

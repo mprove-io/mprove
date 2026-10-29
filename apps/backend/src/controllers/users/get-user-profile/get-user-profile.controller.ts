@@ -7,7 +7,7 @@ import {
   ToBackendGetUserProfileResponseDto
 } from '#backend/controllers/users/get-user-profile/get-user-profile.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

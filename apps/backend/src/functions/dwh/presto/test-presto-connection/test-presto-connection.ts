@@ -1,5 +1,5 @@
 import type { PrestoClientConfig } from '@prestodb/presto-js-client';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToPrestoClientConfig } from '#backend/functions/dwh/presto/options-to-presto-client-config/options-to-presto-client-config';
 import { PrestoClient } from '#backend/functions/dwh/presto/presto-client';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';

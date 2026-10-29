@@ -19,7 +19,7 @@ import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
-import type { UserTab } from './drizzle/postgres/schema/_tabs';
+import type { UserTab } from './drizzle/postgres/tables/users';
 import type { Idemp } from './interfaces/idemp';
 
 @Catch()

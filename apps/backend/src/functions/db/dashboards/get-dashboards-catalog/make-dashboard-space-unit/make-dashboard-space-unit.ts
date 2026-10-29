@@ -1,4 +1,4 @@
-import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
 import { getUnitAuthor } from '#backend/functions/units/get-unit-author/get-unit-author';
 import type { Member } from '#common/types/backend/parts/member';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';

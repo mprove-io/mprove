@@ -1,7 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, isNull, or } from 'drizzle-orm';
-import type { ModelTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { addModelLevelToChartSpaceNodesRecursive } from '#backend/functions/db/charts/get-charts-catalog/add-model-level-to-chart-space-nodes-recursive/add-model-level-to-chart-space-nodes-recursive';

@@ -12,16 +12,14 @@ import {
   ToBackendSendMessageToEditorSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProjectTab,
-  ProviderTab,
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';

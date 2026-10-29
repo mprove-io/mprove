@@ -1,6 +1,6 @@
 import pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToPgOptions } from '#backend/functions/dwh/pg/options-to-pg-options/options-to-pg-options';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';

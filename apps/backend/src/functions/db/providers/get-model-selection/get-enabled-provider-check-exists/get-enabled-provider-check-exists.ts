@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetEnabledProviderCheckExistsError } from '#common/types/backend/function-errors/get-enabled-provider-check-exists-error';
 

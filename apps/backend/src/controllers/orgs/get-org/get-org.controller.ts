@@ -7,10 +7,10 @@ import {
   ToBackendGetOrgResponseDto
 } from '#backend/controllers/orgs/get-org/get-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

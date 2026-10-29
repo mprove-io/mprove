@@ -1,4 +1,4 @@
-import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcEventTab } from '#backend/drizzle/postgres/tables/oc-events';
 import { makeOcEventFullId } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event-full-id/make-oc-event-full-id';
 import type { SessionStreamEvent } from '#common/types/backend/parts/session/session-stream-event';
 

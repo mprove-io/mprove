@@ -2,7 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import snowflake from 'snowflake-sdk';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToSnowflakeOptions } from '#backend/functions/dwh/snowflake/options-to-snowflake-options/options-to-snowflake-options';
 import { snowflakeConnectionExecute } from '#backend/functions/dwh/snowflake/snowflake-connection-execute/snowflake-connection-execute';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';

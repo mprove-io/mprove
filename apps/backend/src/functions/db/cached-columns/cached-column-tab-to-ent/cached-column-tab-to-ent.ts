@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
+import type {
+  CachedColumnsEnt,
+  CachedColumnTab
+} from '#backend/drizzle/postgres/tables/cached-columns';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
 
 export function checkLlmModelDoesNotExist(item: {

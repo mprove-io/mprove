@@ -8,7 +8,7 @@ import {
 } from '#backend/controllers/users/login-user/login-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { LocalAuthGuard } from '#backend/guards/local-auth/local-auth.guard';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';

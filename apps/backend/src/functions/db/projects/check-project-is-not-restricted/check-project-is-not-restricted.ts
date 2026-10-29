@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';

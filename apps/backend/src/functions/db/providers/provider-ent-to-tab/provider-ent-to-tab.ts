@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
+import type {
+  ProviderEnt,
+  ProviderTab
+} from '#backend/drizzle/postgres/tables/providers';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ProviderEntToTabError } from '#common/types/backend/function-errors/provider-ent-to-tab-error';

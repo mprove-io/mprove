@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { FavoriteTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { FavoriteEnt } from '#backend/drizzle/postgres/schema/favorites';
+import type {
+  FavoriteEnt,
+  FavoriteTab
+} from '#backend/drizzle/postgres/tables/favorites';
 
 export function favoriteEntToTab(item: {
   ent: FavoriteEnt;

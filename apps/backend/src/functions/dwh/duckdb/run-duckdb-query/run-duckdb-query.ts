@@ -5,11 +5,9 @@ import {
 } from '@duckdb/node-api';
 import type { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
 import { and, eq } from 'drizzle-orm';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import {
   type OptionsToDuckdbOptionsOutput,
   optionsToDuckdbOptions

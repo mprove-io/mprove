@@ -7,9 +7,9 @@ import {
   ToBackendGetConnectionsResponseDto
 } from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';

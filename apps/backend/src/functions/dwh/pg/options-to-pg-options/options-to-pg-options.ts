@@ -1,5 +1,5 @@
 import type pg from 'pg-promise/typescript/pg-subset';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 
 export function optionsToPgOptions(item: {
   connection: ConnectionTab;

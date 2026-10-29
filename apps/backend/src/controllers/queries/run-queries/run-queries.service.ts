@@ -4,20 +4,18 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import { type Credentials, JWT } from 'google-auth-library';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  EnvTab,
-  MconfigTab,
-  ModelTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';

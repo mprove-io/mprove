@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type pgPromise from 'pg-promise';
-import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { KitTab } from '#backend/drizzle/postgres/tables/kits';
 import { makeReportDataColumns } from '#backend/functions/db/reports/make-report-data-columns/make-report-data-columns';
 import type { DbService } from '#backend/services/db/db.service';
 import { MyRegex } from '#common/classes/my-regex/my-regex';

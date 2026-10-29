@@ -6,11 +6,11 @@ import { isNotNull, type SQLWrapper } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { type DbExtra, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema-postgres';
 import {
   type DconfigEnt,
   dconfigsTable
-} from '#backend/drizzle/postgres/schema/dconfigs';
+} from '#backend/drizzle/postgres/tables/dconfigs';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';

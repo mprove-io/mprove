@@ -10,8 +10,8 @@ import {
   ToBackendRegisterUserResponseDto
 } from '#backend/controllers/users/register-user/register-user.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';

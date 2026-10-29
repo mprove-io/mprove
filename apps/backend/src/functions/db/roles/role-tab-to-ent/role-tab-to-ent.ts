@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
+import type { RoleEnt, RoleTab } from '#backend/drizzle/postgres/tables/roles';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeRoleFullId } from '#backend/functions/hash/make-role-full-id/make-role-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

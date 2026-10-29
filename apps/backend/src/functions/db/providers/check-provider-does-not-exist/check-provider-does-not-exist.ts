@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
 

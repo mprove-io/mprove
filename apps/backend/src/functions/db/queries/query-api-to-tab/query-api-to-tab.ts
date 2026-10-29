@@ -1,4 +1,4 @@
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Query } from '#common/types/blockml/parts/query/query';

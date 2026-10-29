@@ -8,8 +8,8 @@ import {
   ToBackendCreateProviderResponseDto
 } from '#backend/controllers/providers/create-provider/create-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { checkProviderDoesNotExist } from '#backend/functions/db/providers/check-provider-does-not-exist/check-provider-does-not-exist';
 import { makeProvider } from '#backend/functions/db/providers/make-provider/make-provider';

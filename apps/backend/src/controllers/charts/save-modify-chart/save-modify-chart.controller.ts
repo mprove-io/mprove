@@ -11,21 +11,19 @@ import {
   ToBackendSaveModifyChartResponseDto
 } from '#backend/controllers/charts/save-modify-chart/save-modify-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ChartTab,
-  MconfigTab,
-  MemberTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   type RebuildStructOutput,
   rebuildStruct

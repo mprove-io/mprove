@@ -1,4 +1,4 @@
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 

@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { CachedPartTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
+import type {
+  CachedPartsEnt,
+  CachedPartTab
+} from '#backend/drizzle/postgres/tables/cached-parts';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeCachedPartFullId } from '#backend/functions/hash/make-cached-part-full-id/make-cached-part-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

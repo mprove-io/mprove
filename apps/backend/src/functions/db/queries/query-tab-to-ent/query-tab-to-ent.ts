@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
+import type {
+  QueryEnt,
+  QueryTab
+} from '#backend/drizzle/postgres/tables/queries';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import type { TabService } from '#backend/services/tab/tab.service';

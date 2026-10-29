@@ -10,9 +10,9 @@ import {
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { testBigqueryConnection } from '#backend/functions/dwh/bigquery/test-bigquery-connection/test-bigquery-connection';

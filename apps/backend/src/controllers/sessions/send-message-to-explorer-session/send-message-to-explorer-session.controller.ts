@@ -11,14 +11,12 @@ import {
   ToBackendSendMessageToExplorerSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { ocMessagesTable } from '#backend/drizzle/postgres/tables/oc-messages';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
 import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';

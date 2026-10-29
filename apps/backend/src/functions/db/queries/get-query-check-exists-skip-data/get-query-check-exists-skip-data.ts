@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import {
   type QueryEnt,
   queriesTable
-} from '#backend/drizzle/postgres/schema/queries';
+} from '#backend/drizzle/postgres/tables/queries';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';

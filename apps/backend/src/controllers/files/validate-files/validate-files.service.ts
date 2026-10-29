@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import {
   type RebuildStructOutput,
   rebuildStruct

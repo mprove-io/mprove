@@ -5,12 +5,10 @@ import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ProjectTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';

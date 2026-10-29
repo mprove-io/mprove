@@ -8,13 +8,13 @@ import {
   ToBackendGetQueryResponseDto
 } from '#backend/controllers/queries/get-query/get-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import { givensTable } from '#backend/drizzle/postgres/schema/givens';
+import { givensTable } from '#backend/drizzle/postgres/tables/givens';
 import { givenTabToApi } from '#backend/functions/db/givens/get-api-givens/given-tab-to-api/given-tab-to-api';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';

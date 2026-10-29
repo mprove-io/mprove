@@ -1,10 +1,8 @@
 import { and, eq } from 'drizzle-orm';
 import { type ConnectionOptions, type QueryResult, Trino } from 'trino-client';
-import type {
-  ConnectionTab,
-  QueryTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToTrinoOptions } from '#backend/functions/dwh/trino/options-to-trino-options/options-to-trino-options';
 import { processTrinoError } from '#backend/functions/dwh/trino/run-trino-query/process-trino-error/process-trino-error';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';

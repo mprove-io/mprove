@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import type {
+  ReportEnt,
+  ReportTab
+} from '#backend/drizzle/postgres/tables/reports';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';

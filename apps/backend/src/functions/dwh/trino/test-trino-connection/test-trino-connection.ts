@@ -1,5 +1,5 @@
 import { type ConnectionOptions, Trino } from 'trino-client';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToTrinoOptions } from '#backend/functions/dwh/trino/options-to-trino-options/options-to-trino-options';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 

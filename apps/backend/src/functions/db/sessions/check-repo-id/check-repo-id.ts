@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import type { DbService } from '#backend/services/db/db.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';

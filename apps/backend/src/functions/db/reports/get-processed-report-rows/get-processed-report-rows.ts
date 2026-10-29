@@ -1,4 +1,4 @@
-import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { clearRowsCache } from '#backend/functions/db/reports/get-processed-report-rows/clear-rows-cache/clear-rows-cache';
 import { processReportRowIds } from '#backend/functions/db/reports/process-report-row-ids/process-report-row-ids';
 import { reportRowIdLetterToNumber } from '#backend/functions/db/reports/report-row-id-letter-to-number/report-row-id-letter-to-number';

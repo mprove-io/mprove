@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { OcMessageTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
+import type {
+  OcMessageEnt,
+  OcMessageTab
+} from '#backend/drizzle/postgres/tables/oc-messages';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';

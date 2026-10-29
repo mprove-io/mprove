@@ -6,7 +6,7 @@ import {
 import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import {
   type OptionsToDuckdbOptionsOutput,
   optionsToDuckdbOptions

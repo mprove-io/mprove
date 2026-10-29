@@ -8,13 +8,13 @@ import {
   ToBackendGetSessionResponseDto
 } from '#backend/controllers/sessions/get-session/get-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { ocEventsTable } from '#backend/drizzle/postgres/tables/oc-events';
+import { ocMessagesTable } from '#backend/drizzle/postgres/tables/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/tables/oc-parts';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getBasicSessionsList } from '#backend/functions/db/sessions/get-basic-sessions-list/get-basic-sessions-list';
 import { tabToOcSessionApi } from '#backend/functions/db/sessions/tab-to-oc-session-api/tab-to-oc-session-api';
 import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';

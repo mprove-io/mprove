@@ -1,4 +1,4 @@
-import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { CachedColumnTab } from '#backend/drizzle/postgres/tables/cached-columns';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 
 export function cachedColumnTabToApi(item: {

@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
+import type {
+  SessionEnt,
+  SessionTab
+} from '#backend/drizzle/postgres/tables/sessions';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';

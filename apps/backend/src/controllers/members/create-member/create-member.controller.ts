@@ -10,18 +10,16 @@ import {
   ToBackendCreateMemberResponseDto
 } from '#backend/controllers/members/create-member/create-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  AvatarTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { AvatarTab } from '#backend/drizzle/postgres/tables/avatars';
 import {
   type AvatarEnt,
   avatarsTable
-} from '#backend/drizzle/postgres/schema/avatars';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+} from '#backend/drizzle/postgres/tables/avatars';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';

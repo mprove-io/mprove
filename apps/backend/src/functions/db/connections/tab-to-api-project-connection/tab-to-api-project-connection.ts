@@ -1,4 +1,4 @@
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 

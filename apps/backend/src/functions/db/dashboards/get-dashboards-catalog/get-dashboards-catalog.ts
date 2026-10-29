@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
+import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { makeDashboardSpaceUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-space-unit/make-dashboard-space-unit';
 import { makeDashboardUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-unit/make-dashboard-unit';

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { givensTable } from '#backend/drizzle/postgres/schema/givens';
+import { givensTable } from '#backend/drizzle/postgres/tables/givens';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckGivenDoesNotExistError } from '#common/types/backend/function-errors/check-given-does-not-exist-error';
 

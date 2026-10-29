@@ -3,12 +3,10 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type pgPromise from 'pg-promise';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  BridgeTab,
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
 import { getReportCheckExistsAndAccess } from '#backend/functions/db/reports/get-report-check-exists-and-access/get-report-check-exists-and-access';

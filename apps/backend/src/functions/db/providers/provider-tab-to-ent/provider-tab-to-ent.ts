@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
+import type {
+  ProviderEnt,
+  ProviderTab
+} from '#backend/drizzle/postgres/tables/providers';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeProviderFullId } from '#backend/functions/hash/make-provider-full-id/make-provider-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

@@ -11,22 +11,20 @@ import {
   ToBackendDeleteSessionResponseDto
 } from '#backend/controllers/sessions/delete-session/delete-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProjectTab,
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { ocEventsTable } from '#backend/drizzle/postgres/tables/oc-events';
+import { ocMessagesTable } from '#backend/drizzle/postgres/tables/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/tables/oc-parts';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';

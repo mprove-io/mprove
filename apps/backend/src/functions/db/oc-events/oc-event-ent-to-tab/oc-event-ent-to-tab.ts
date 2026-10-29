@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
+import type {
+  OcEventEnt,
+  OcEventTab
+} from '#backend/drizzle/postgres/tables/oc-events';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { OcEventEntToTabError } from '#common/types/backend/function-errors/oc-event-ent-to-tab-error';

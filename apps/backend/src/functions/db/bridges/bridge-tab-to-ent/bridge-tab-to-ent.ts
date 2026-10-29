@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import type {
+  BridgeEnt,
+  BridgeTab
+} from '#backend/drizzle/postgres/tables/bridges';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeBridgeFullId } from '#backend/functions/hash/make-bridge-full-id/make-bridge-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

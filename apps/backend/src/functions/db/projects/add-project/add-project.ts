@@ -2,15 +2,13 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  BranchTab,
-  BridgeTab,
-  ConnectionTab,
-  EnvTab,
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { BranchTab } from '#backend/drizzle/postgres/tables/branches';
+import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   type RebuildStructOutput,
   rebuildStruct

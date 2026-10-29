@@ -9,11 +9,12 @@ import {
   ToBackendGetChartResponseDto
 } from '#backend/controllers/charts/get-chart/get-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { EnvTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getChartData } from '#backend/functions/query-info-chart/get-chart-data/get-chart-data';

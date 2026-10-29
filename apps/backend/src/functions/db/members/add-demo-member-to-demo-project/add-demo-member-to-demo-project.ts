@@ -1,13 +1,11 @@
 import type { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeMember } from '#backend/functions/db/members/make-member/make-member';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';

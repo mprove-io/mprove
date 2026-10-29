@@ -4,7 +4,7 @@ import type {
   ExtractTablesWithRelations,
   KnownKeysOnly
 } from 'drizzle-orm';
-import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema-postgres';
 import type {
   DbEntityRegistry,
   DbTableEnt,

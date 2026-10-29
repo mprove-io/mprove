@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
 import type { DbService } from '#backend/services/db/db.service';
 import type { CheckConnectionDoesNotExistError } from '#common/types/backend/function-errors/check-connection-does-not-exist-error';
 

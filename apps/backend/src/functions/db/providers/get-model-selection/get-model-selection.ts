@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import { getLlmModelCheckExists } from '#backend/functions/db/providers/get-llm-model-check-exists/get-llm-model-check-exists';
 import { getEnabledProviderCheckExists } from '#backend/functions/db/providers/get-model-selection/get-enabled-provider-check-exists/get-enabled-provider-check-exists';
 import type { DbService } from '#backend/services/db/db.service';

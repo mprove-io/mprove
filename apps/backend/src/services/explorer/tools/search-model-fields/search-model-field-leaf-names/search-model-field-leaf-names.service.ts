@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/tables/model-field-leafs';
 import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';

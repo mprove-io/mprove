@@ -8,12 +8,10 @@ import {
   ToBackendCreateGivenResponseDto
 } from '#backend/controllers/givens/create-given/create-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  GivenTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { GivenTab } from '#backend/drizzle/postgres/tables/givens';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkGivenDoesNotExist } from '#backend/functions/db/givens/check-given-does-not-exist/check-given-does-not-exist';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { makeGiven } from '#backend/functions/db/givens/make-given/make-given';

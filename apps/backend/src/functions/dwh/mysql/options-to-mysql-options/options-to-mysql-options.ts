@@ -1,5 +1,5 @@
 import type * as MYSQL from 'mysql2/promise';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 
 export function optionsToMysqlOptions(item: {
   connection: ConnectionTab;

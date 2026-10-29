@@ -1,4 +1,4 @@
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';

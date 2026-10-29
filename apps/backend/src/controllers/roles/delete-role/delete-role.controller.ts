@@ -11,13 +11,11 @@ import {
   ToBackendDeleteRoleResponseDto
 } from '#backend/controllers/roles/delete-role/delete-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { rolesTable } from '#backend/drizzle/postgres/tables/roles';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';

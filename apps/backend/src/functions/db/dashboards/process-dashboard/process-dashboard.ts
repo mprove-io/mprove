@@ -1,11 +1,9 @@
 import { Result } from '@praha/byethrow';
-import type {
-  DashboardTab,
-  MconfigTab,
-  ProjectTab,
-  QueryTab,
-  StructTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
 import {

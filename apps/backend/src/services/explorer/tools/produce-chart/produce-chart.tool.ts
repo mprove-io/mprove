@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { type Tool, tool } from 'ai';
 import { z } from 'zod';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import {
   CHART_ID_PLACEHOLDER,

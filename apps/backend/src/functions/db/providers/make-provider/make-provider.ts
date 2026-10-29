@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProviderTab } from '#backend/drizzle/postgres/tables/providers';
 import { makeProviderFullId } from '#backend/functions/hash/make-provider-full-id/make-provider-full-id';
 import {
   PROVIDER_NAME_BY_ID,

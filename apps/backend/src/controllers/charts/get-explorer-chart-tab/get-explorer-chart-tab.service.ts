@@ -2,20 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type {
-  ChartTab,
-  MconfigTab,
-  ModelTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';

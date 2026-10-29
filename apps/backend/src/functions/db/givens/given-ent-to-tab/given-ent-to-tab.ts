@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
+import type {
+  GivenEnt,
+  GivenTab
+} from '#backend/drizzle/postgres/tables/givens';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { GivenEntToTabError } from '#common/types/backend/function-errors/given-ent-to-tab-error';

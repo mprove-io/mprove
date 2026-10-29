@@ -8,9 +8,9 @@ import {
   ToBackendCreateLlmModelResponseDto
 } from '#backend/controllers/llm-models/create-llm-model/create-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { checkLlmModelDoesNotExist } from '#backend/functions/db/providers/check-llm-model-does-not-exist/check-llm-model-does-not-exist';
 import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';

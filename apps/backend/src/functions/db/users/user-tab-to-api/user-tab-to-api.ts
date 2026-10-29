@@ -1,4 +1,4 @@
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';

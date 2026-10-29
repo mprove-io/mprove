@@ -1,13 +1,13 @@
 import { and, inArray, isNull, sql } from 'drizzle-orm';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
-import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
-import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
+import { kitsTable } from '#backend/drizzle/postgres/tables/kits';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/tables/model-field-leafs';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
+import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
+import { structsTable } from '#backend/drizzle/postgres/tables/structs';
 import type { DbService } from '#backend/services/db/db.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 

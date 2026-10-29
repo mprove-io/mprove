@@ -1,4 +1,4 @@
-import type { EnvTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { EnvTab } from '#backend/drizzle/postgres/tables/envs';
 import { makeEnvFullId } from '#backend/functions/hash/make-env-full-id/make-env-full-id';
 import type { Ev } from '#common/types/backend/parts/ev';
 

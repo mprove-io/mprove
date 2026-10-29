@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { KitEnt } from '#backend/drizzle/postgres/schema/kits';
+import type { KitEnt, KitTab } from '#backend/drizzle/postgres/tables/kits';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { KitLt } from '#common/types/shared/st-lt/kits/kit-lt';

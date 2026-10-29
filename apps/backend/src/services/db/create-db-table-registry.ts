@@ -1,5 +1,5 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema-postgres';
 import {
   type DbEntityRegistry,
   type DbTableKey,

@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { inArray } from 'drizzle-orm';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { ocSessionsTable } from '#backend/drizzle/postgres/tables/oc-sessions';
+import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import type { DbService } from '#backend/services/db/db.service';
 import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';

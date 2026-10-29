@@ -4,12 +4,10 @@ import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ConnectionTab,
-  ModelFieldLeafTab,
-  StructTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
+import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
+import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/tables/model-field-leafs';
+import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { buildModelFieldLeafs } from '#backend/functions/blockml/rebuild-struct/build-model-field-leafs/build-model-field-leafs';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { tabToBaseConnection } from '#backend/functions/db/connections/tab-to-base-connection/tab-to-base-connection';

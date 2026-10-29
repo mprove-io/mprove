@@ -7,19 +7,17 @@ import {
   ToBackendGetOrgUsersResponseDto
 } from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
 import {
   type AvatarEnt,
   avatarsTable
-} from '#backend/drizzle/postgres/schema/avatars';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+} from '#backend/drizzle/postgres/tables/avatars';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

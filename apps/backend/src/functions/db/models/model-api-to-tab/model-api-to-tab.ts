@@ -1,4 +1,4 @@
-import type { ModelTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { makeModelFullId } from '#backend/functions/hash/make-model-full-id/make-model-full-id';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Model } from '#common/types/blockml/parts/model/model';

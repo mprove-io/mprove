@@ -1,14 +1,12 @@
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  ChartTab,
-  DashboardTab,
-  MemberTab,
-  ModelTab,
-  ReportTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
+import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
+import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
+import { modelsTable } from '#backend/drizzle/postgres/tables/models';
+import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { checkChartOrModelAccess } from '#backend/functions/db/charts/check-chart-or-model-access/check-chart-or-model-access';
 import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';
 import { getDashboardCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-check-exists-and-access/get-dashboard-check-exists-and-access';

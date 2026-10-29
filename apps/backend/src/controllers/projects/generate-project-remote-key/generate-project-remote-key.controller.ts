@@ -9,8 +9,9 @@ import {
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import type { NoteTab } from '#backend/drizzle/postgres/tables/notes';
+import { orgsTable } from '#backend/drizzle/postgres/tables/orgs';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
   createGitKeyPair,
   type GitKeyPair

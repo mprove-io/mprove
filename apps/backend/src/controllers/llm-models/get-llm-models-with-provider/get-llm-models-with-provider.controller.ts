@@ -8,10 +8,10 @@ import {
   ToBackendGetLlmModelsWithProviderResponseDto
 } from '#backend/controllers/llm-models/get-llm-models-with-provider/get-llm-models-with-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { membersTable } from '#backend/drizzle/postgres/tables/members';
+import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { providersTable } from '#backend/drizzle/postgres/tables/providers';
+import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

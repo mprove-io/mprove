@@ -1,4 +1,4 @@
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 

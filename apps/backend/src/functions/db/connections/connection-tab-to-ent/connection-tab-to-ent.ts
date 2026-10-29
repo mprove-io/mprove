@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
+import type {
+  ConnectionEnt,
+  ConnectionTab
+} from '#backend/drizzle/postgres/tables/connections';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { isNotNull } from 'drizzle-orm';
-import { dconfigsTable } from '#backend/drizzle/postgres/schema/dconfigs';
+import { dconfigsTable } from '#backend/drizzle/postgres/tables/dconfigs';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 

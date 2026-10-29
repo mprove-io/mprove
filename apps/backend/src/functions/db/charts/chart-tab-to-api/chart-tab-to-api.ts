@@ -1,4 +1,4 @@
-import type { ChartTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
 import { makeTilesX } from '#backend/functions/make-tiles-x/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';

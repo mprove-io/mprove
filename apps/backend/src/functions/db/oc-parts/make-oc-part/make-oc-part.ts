@@ -1,5 +1,5 @@
 import type { Part } from '@opencode-ai/sdk/v2';
-import type { OcPartTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcPartTab } from '#backend/drizzle/postgres/tables/oc-parts';
 
 export function makeOcPart(item: {
   partId: string;

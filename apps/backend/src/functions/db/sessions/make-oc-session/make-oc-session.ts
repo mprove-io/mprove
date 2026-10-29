@@ -1,4 +1,4 @@
-import type { OcSessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions';
 
 export function makeOcSession(item: { sessionId: string }): OcSessionTab {
   let ocSession: OcSessionTab = {

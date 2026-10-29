@@ -1,5 +1,5 @@
 import snowflake from 'snowflake-sdk';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToSnowflakeOptions } from '#backend/functions/dwh/snowflake/options-to-snowflake-options/options-to-snowflake-options';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 

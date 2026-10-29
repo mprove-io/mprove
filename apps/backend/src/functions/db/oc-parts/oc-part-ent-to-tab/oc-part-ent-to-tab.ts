@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { OcPartTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
+import type {
+  OcPartEnt,
+  OcPartTab
+} from '#backend/drizzle/postgres/tables/oc-parts';
 import { getTabProps } from '#backend/functions/get-tab-props/get-tab-props';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { OcPartEntToTabError } from '#common/types/backend/function-errors/oc-part-ent-to-tab-error';

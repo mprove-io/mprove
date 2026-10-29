@@ -33,7 +33,7 @@ import {
   type WrappedError,
   wrapError
 } from '#node-common/functions/wrap-error/wrap-error';
-import type { UserTab } from './drizzle/postgres/schema/_tabs';
+import type { UserTab } from './drizzle/postgres/tables/users';
 import { Idemp } from './interfaces/idemp';
 
 type ResponseWithWrappedError = {
