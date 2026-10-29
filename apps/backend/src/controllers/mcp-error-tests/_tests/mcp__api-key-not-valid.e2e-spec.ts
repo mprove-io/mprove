@@ -5,7 +5,7 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 
 import { makeId } from '#common/functions/make-id/make-id';

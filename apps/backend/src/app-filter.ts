@@ -20,7 +20,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import type { UserTab } from './drizzle/postgres/tables/users';
-import type { Idemp } from './interfaces/idemp';
+import type { Idemp } from './types/idemp';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {

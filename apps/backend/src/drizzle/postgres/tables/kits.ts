@@ -32,4 +32,4 @@ export const kitsTable = pgTable(
 export type KitEnt = InferSelectModel<typeof kitsTable>;
 export type KitEntIns = InferInsertModel<typeof kitsTable>;
 
-export interface KitTab extends Omit<KitEnt, 'st' | 'lt'>, KitSt, KitLt {}
+export type KitTab = Omit<KitEnt, 'st' | 'lt'> & KitSt & KitLt;

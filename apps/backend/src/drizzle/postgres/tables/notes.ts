@@ -28,4 +28,4 @@ export const notesTable = pgTable(
 export type NoteEnt = InferSelectModel<typeof notesTable>;
 export type NoteEntIns = InferInsertModel<typeof notesTable>;
 
-export interface NoteTab extends Omit<NoteEnt, 'st' | 'lt'>, NoteSt, NoteLt {}
+export type NoteTab = Omit<NoteEnt, 'st' | 'lt'> & NoteSt & NoteLt;

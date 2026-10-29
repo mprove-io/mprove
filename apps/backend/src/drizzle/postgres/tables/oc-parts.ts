@@ -39,7 +39,4 @@ export const ocPartsTable = pgTable(
 export type OcPartEnt = InferSelectModel<typeof ocPartsTable>;
 export type OcPartEntIns = InferInsertModel<typeof ocPartsTable>;
 
-export interface OcPartTab
-  extends Omit<OcPartEnt, 'st' | 'lt'>,
-    OcPartSt,
-    OcPartLt {}
+export type OcPartTab = Omit<OcPartEnt, 'st' | 'lt'> & OcPartSt & OcPartLt;

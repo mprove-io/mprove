@@ -51,7 +51,4 @@ export const bridgesTable = pgTable(
 export type BridgeEnt = InferSelectModel<typeof bridgesTable>;
 export type BridgeEntIns = InferInsertModel<typeof bridgesTable>;
 
-export interface BridgeTab
-  extends Omit<BridgeEnt, 'st' | 'lt'>,
-    BridgeSt,
-    BridgeLt {}
+export type BridgeTab = Omit<BridgeEnt, 'st' | 'lt'> & BridgeSt & BridgeLt;

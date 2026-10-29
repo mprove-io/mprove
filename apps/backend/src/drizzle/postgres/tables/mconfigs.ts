@@ -45,7 +45,4 @@ export const mconfigsTable = pgTable(
 export type MconfigEnt = InferSelectModel<typeof mconfigsTable>;
 export type MconfigEntIns = InferInsertModel<typeof mconfigsTable>;
 
-export interface MconfigTab
-  extends Omit<MconfigEnt, 'st' | 'lt'>,
-    MconfigSt,
-    MconfigLt {}
+export type MconfigTab = Omit<MconfigEnt, 'st' | 'lt'> & MconfigSt & MconfigLt;

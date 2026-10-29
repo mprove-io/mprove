@@ -11,10 +11,10 @@ import { AppModule } from '#backend/app.module';
 import { backendPackageJson } from '#backend/backend-package-json.js';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
-import type { Prep } from '#backend/interfaces/prep';
 import { EmailService } from '#backend/services/email/email.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { Prep } from '#backend/types/prep';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 const { json, urlencoded } = bodyParser;

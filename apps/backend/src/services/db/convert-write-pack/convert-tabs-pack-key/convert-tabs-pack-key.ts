@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
-import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
+import type { DbTabsPack } from '#backend/types/db-tabs-pack';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConvertTabsPackKeyError } from '#common/types/backend/function-errors/convert-tabs-pack-key-error';
 

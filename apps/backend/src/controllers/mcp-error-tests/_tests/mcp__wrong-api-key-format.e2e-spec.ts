@@ -4,7 +4,7 @@ import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 
 let testId = 'backend-mcp__wrong-api-key-format';

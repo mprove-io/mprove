@@ -12,7 +12,7 @@ import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepar
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import type { PrepTest } from '#backend/interfaces/prep-test';
+import type { PrepTest } from '#backend/types/prep-test';
 import {
   MCP_TOOL_READ_DOCS,
   MCP_TOOL_SEARCH_DOCS,

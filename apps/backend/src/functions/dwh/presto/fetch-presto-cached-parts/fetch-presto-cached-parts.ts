@@ -5,7 +5,7 @@ import type {
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToPrestoClientConfig } from '#backend/functions/dwh/presto/options-to-presto-client-config/options-to-presto-client-config';
 import { PrestoClient } from '#backend/functions/dwh/presto/presto-client';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function fetchPrestoCachedParts(item: {

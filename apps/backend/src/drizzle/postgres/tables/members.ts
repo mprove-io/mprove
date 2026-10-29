@@ -51,7 +51,4 @@ export const membersTable = pgTable(
 export type MemberEnt = InferSelectModel<typeof membersTable>;
 export type MemberEntIns = InferInsertModel<typeof membersTable>;
 
-export interface MemberTab
-  extends Omit<MemberEnt, 'st' | 'lt'>,
-    MemberSt,
-    MemberLt {}
+export type MemberTab = Omit<MemberEnt, 'st' | 'lt'> & MemberSt & MemberLt;

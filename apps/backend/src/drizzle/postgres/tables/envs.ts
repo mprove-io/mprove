@@ -47,4 +47,4 @@ export const envsTable = pgTable(
 export type EnvEnt = InferSelectModel<typeof envsTable>;
 export type EnvEntIns = InferInsertModel<typeof envsTable>;
 
-export interface EnvTab extends Omit<EnvEnt, 'st' | 'lt'>, EnvSt, EnvLt {}
+export type EnvTab = Omit<EnvEnt, 'st' | 'lt'> & EnvSt & EnvLt;

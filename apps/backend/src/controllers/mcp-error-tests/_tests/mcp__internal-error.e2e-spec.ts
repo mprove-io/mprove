@@ -4,7 +4,7 @@ import type { Response } from 'supertest';
 import { ListDocsService } from '#backend/controllers/mcp-tools/list-docs/list-docs.service';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import type { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 import { MCP_TOOL_LIST_DOCS } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
 

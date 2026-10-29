@@ -72,7 +72,4 @@ export const queriesTable = pgTable(
 export type QueryEnt = InferSelectModel<typeof queriesTable>;
 export type QueryEntIns = InferInsertModel<typeof queriesTable>;
 
-export interface QueryTab
-  extends Omit<QueryEnt, 'st' | 'lt'>,
-    QuerySt,
-    QueryLt {}
+export type QueryTab = Omit<QueryEnt, 'st' | 'lt'> & QuerySt & QueryLt;

@@ -49,7 +49,4 @@ export const reportsTable = pgTable(
 export type ReportEnt = InferSelectModel<typeof reportsTable>;
 export type ReportEntIns = InferInsertModel<typeof reportsTable>;
 
-export interface ReportTab
-  extends Omit<ReportEnt, 'st' | 'lt'>,
-    ReportSt,
-    ReportLt {}
+export type ReportTab = Omit<ReportEnt, 'st' | 'lt'> & ReportSt & ReportLt;

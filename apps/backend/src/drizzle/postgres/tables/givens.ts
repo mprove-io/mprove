@@ -44,7 +44,4 @@ export const givensTable = pgTable(
 export type GivenEnt = InferSelectModel<typeof givensTable>;
 export type GivenEntIns = InferInsertModel<typeof givensTable>;
 
-export interface GivenTab
-  extends Omit<GivenEnt, 'st' | 'lt'>,
-    GivenSt,
-    GivenLt {}
+export type GivenTab = Omit<GivenEnt, 'st' | 'lt'> & GivenSt & GivenLt;

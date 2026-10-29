@@ -6,7 +6,7 @@ import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections
 import { optionsToSnowflakeOptions } from '#backend/functions/dwh/snowflake/options-to-snowflake-options/options-to-snowflake-options';
 import { snowflakeConnectionExecute } from '#backend/functions/dwh/snowflake/snowflake-connection-execute/snowflake-connection-execute';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

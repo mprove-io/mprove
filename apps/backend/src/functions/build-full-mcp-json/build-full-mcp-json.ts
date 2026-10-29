@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { rewriteSharedRefsRecursive } from '#backend/functions/build-full-mcp-json/rewrite-shared-refs-recursive/rewrite-shared-refs-recursive';
 import { mcpToolsRegistry } from '#common/constants/mcp-tools-registry';
-export interface FullMcpJsonTool {
+export type FullMcpJsonTool = {
   name: string;
   description: string;
   input: {
@@ -10,12 +10,12 @@ export interface FullMcpJsonTool {
   output: {
     $ref: string;
   };
-}
-export interface FullMcpJson {
+};
+export type FullMcpJson = {
   $schema: string;
   tools: FullMcpJsonTool[];
   $defs: Record<string, unknown>;
-}
+};
 export function buildFullMcpJson(): FullMcpJson {
   // Build a private registry seeded with only the 12 tool input/output
   // schemas. Walking `z.globalRegistry` directly would fail with

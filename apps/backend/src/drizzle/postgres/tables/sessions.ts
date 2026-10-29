@@ -86,7 +86,4 @@ export type SessionEnt = InferSelectModel<typeof sessionsTable>;
 
 export type SessionEntIns = InferInsertModel<typeof sessionsTable>;
 
-export interface SessionTab
-  extends Omit<SessionEnt, 'st' | 'lt'>,
-    SessionSt,
-    SessionLt {}
+export type SessionTab = Omit<SessionEnt, 'st' | 'lt'> & SessionSt & SessionLt;

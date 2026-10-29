@@ -2,9 +2,9 @@ import type { ExecutionContext } from 'ava';
 import { eq } from 'drizzle-orm';
 import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
-import { Prep } from '#backend/interfaces/prep';
 import { DbService } from '#backend/services/db/db.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import type { Prep } from '#backend/types/prep';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
 

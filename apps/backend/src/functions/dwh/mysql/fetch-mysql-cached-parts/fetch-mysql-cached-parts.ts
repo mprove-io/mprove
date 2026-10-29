@@ -5,7 +5,7 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToMysqlOptions } from '#backend/functions/dwh/mysql/options-to-mysql-options/options-to-mysql-options';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

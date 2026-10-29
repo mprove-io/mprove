@@ -32,7 +32,4 @@ export const avatarsTable = pgTable(
 export type AvatarEnt = InferSelectModel<typeof avatarsTable>;
 export type AvatarEntIns = InferInsertModel<typeof avatarsTable>;
 
-export interface AvatarTab
-  extends Omit<AvatarEnt, 'st' | 'lt'>,
-    AvatarSt,
-    AvatarLt {}
+export type AvatarTab = Omit<AvatarEnt, 'st' | 'lt'> & AvatarSt & AvatarLt;

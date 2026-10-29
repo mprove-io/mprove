@@ -37,4 +37,4 @@ export const favoritesTable = pgTable(
 export type FavoriteEnt = InferSelectModel<typeof favoritesTable>;
 export type FavoriteEntIns = InferInsertModel<typeof favoritesTable>;
 
-export interface FavoriteTab extends Omit<FavoriteEnt, 'favoriteFullId'> {}
+export type FavoriteTab = Omit<FavoriteEnt, 'favoriteFullId'>;

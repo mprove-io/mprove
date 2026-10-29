@@ -117,5 +117,4 @@ export type ModelFieldLeafEntIns = InferInsertModel<
   typeof modelFieldLeafsTable
 >;
 
-export interface ModelFieldLeafTab
-  extends Omit<ModelFieldLeafEnt, 'modelFieldLeafFullId'> {}
+export type ModelFieldLeafTab = Omit<ModelFieldLeafEnt, 'modelFieldLeafFullId'>;

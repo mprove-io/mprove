@@ -8,8 +8,8 @@ import { forTestsWaitForTurnEnded } from '#backend/functions/top/for-tests-run-e
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
-import { Prep } from '#backend/interfaces/prep';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
+import type { Prep } from '#backend/types/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 
 import { makeId } from '#common/functions/make-id/make-id';

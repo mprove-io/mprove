@@ -46,7 +46,4 @@ export const modelsTable = pgTable(
 export type ModelEnt = InferSelectModel<typeof modelsTable>;
 export type ModelEntIns = InferInsertModel<typeof modelsTable>;
 
-export interface ModelTab
-  extends Omit<ModelEnt, 'st' | 'lt'>,
-    ModelSt,
-    ModelLt {}
+export type ModelTab = Omit<ModelEnt, 'st' | 'lt'> & ModelSt & ModelLt;

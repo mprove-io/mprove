@@ -39,7 +39,4 @@ export const ocEventsTable = pgTable(
 export type OcEventEnt = InferSelectModel<typeof ocEventsTable>;
 export type OcEventEntIns = InferInsertModel<typeof ocEventsTable>;
 
-export interface OcEventTab
-  extends Omit<OcEventEnt, 'st' | 'lt'>,
-    OcEventSt,
-    OcEventLt {}
+export type OcEventTab = Omit<OcEventEnt, 'st' | 'lt'> & OcEventSt & OcEventLt;

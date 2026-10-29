@@ -12,7 +12,7 @@ import {
 } from '#backend/functions/dwh/databricks/options-to-databricks-config/options-to-databricks-config';
 import { quietLogger } from '#backend/functions/dwh/databricks/quiet-logger';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

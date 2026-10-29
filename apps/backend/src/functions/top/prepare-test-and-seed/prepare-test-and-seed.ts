@@ -1,7 +1,7 @@
 import { BackendConfig } from '#backend/config/backend-config';
 import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-seed/prepare-seed';
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
-import { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 import type { ToBackendDeleteRecordsRequest } from '#common/types/backend/routes/test-routes/delete-records/delete-records-request';
 import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';

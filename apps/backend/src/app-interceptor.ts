@@ -34,7 +34,7 @@ import {
   wrapError
 } from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/tables/users';
-import { Idemp } from './interfaces/idemp';
+import type { Idemp } from './types/idemp';
 
 type ResponseWithWrappedError = {
   response: ToBackendResponse;

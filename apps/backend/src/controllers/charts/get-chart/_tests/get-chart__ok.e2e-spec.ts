@@ -6,7 +6,7 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-seed/prepare-seed';
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
-import { PrepTest } from '#backend/interfaces/prep-test';
+import type { PrepTest } from '#backend/types/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 

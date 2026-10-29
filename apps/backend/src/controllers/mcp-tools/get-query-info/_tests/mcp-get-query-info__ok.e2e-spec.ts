@@ -7,7 +7,7 @@ import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepar
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import { PrepTest } from '#backend/interfaces/prep-test';
+import type { PrepTest } from '#backend/types/prep-test';
 import { MCP_TOOL_GET_QUERY_INFO } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';

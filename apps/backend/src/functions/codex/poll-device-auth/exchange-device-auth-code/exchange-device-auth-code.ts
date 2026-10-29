@@ -5,12 +5,12 @@ import {
 } from '#backend/functions/codex/start-device-auth/start-device-auth';
 import type { ExchangeDeviceAuthCodeError } from '#common/types/backend/function-errors/exchange-device-auth-code-error';
 
-export interface CodexTokenResponse {
+export type CodexTokenResponse = {
   id_token: string;
   access_token: string;
   refresh_token: string;
   expires_in?: number;
-}
+};
 
 const CODEX_DEVICE_REDIRECT_URI = `${CODEX_ISSUER}/deviceauth/callback`;
 

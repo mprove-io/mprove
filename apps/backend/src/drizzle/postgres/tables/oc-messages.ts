@@ -43,7 +43,6 @@ export const ocMessagesTable = pgTable(
 export type OcMessageEnt = InferSelectModel<typeof ocMessagesTable>;
 export type OcMessageEntIns = InferInsertModel<typeof ocMessagesTable>;
 
-export interface OcMessageTab
-  extends Omit<OcMessageEnt, 'st' | 'lt'>,
-    OcMessageSt,
-    OcMessageLt {}
+export type OcMessageTab = Omit<OcMessageEnt, 'st' | 'lt'> &
+  OcMessageSt &
+  OcMessageLt;

@@ -45,7 +45,4 @@ export const branchesTable = pgTable(
 export type BranchEnt = InferSelectModel<typeof branchesTable>;
 export type BranchEntIns = InferInsertModel<typeof branchesTable>;
 
-export interface BranchTab
-  extends Omit<BranchEnt, 'st' | 'lt'>,
-    BranchSt,
-    BranchLt {}
+export type BranchTab = Omit<BranchEnt, 'st' | 'lt'> & BranchSt & BranchLt;

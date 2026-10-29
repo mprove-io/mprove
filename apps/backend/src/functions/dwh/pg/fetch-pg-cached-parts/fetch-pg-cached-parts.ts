@@ -2,7 +2,7 @@ import pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToPgOptions } from '#backend/functions/dwh/pg/options-to-pg-options/options-to-pg-options';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function fetchPgCachedParts(item: {

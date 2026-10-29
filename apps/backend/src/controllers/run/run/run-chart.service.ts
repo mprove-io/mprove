@@ -13,17 +13,17 @@ import type { PrepareRunChartError } from '#common/types/backend/function-errors
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 
-interface RunChartPrep {
+type RunChartPrep = {
   title: string;
   chartId: string;
   url: string;
   queryId: string;
-}
+};
 
-interface RunChartMconfigPart {
+type RunChartMconfigPart = {
   mconfigId: string;
   queryId: string;
-}
+};
 
 export type PrepareRunChartOutput = {
   prepCharts: RunChartPrep[];

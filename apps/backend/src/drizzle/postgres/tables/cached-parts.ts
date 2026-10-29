@@ -83,7 +83,6 @@ export const cachedPartsTable = pgTable(
 export type CachedPartsEnt = InferSelectModel<typeof cachedPartsTable>;
 export type CachedPartsEntIns = InferInsertModel<typeof cachedPartsTable>;
 
-export interface CachedPartTab
-  extends Omit<CachedPartsEnt, 'st' | 'lt'>,
-    CachedPartSt,
-    CachedPartLt {}
+export type CachedPartTab = Omit<CachedPartsEnt, 'st' | 'lt'> &
+  CachedPartSt &
+  CachedPartLt;

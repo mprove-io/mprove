@@ -48,7 +48,4 @@ export const projectsTable = pgTable(
 export type ProjectEnt = InferSelectModel<typeof projectsTable>;
 export type ProjectEntIns = InferInsertModel<typeof projectsTable>;
 
-export interface ProjectTab
-  extends Omit<ProjectEnt, 'st' | 'lt'>,
-    ProjectSt,
-    ProjectLt {}
+export type ProjectTab = Omit<ProjectEnt, 'st' | 'lt'> & ProjectSt & ProjectLt;

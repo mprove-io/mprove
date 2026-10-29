@@ -4,7 +4,7 @@ import { Sandbox } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
 import { forTestsStartOpencodeServer } from '#backend/functions/top/for-tests-start-opencode-server/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
-import { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});

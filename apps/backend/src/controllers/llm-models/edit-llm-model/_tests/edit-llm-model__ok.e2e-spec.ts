@@ -10,8 +10,8 @@ import {
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
-import type { Prep } from '#backend/interfaces/prep';
 import { DbService } from '#backend/services/db/db.service';
+import type { Prep } from '#backend/types/prep';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';

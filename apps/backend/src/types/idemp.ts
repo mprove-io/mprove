@@ -1,7 +1,7 @@
-export interface Idemp {
+export type Idemp = {
   idempotencyKey: string;
   stId: string;
   req: any;
   resp: any;
   serverTs: number;
-}
+};

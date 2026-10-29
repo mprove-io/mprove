@@ -52,7 +52,4 @@ export const chartsTable = pgTable(
 export type ChartEnt = InferSelectModel<typeof chartsTable>;
 export type ChartEntIns = InferInsertModel<typeof chartsTable>;
 
-export interface ChartTab
-  extends Omit<ChartEnt, 'st' | 'lt'>,
-    ChartSt,
-    ChartLt {}
+export type ChartTab = Omit<ChartEnt, 'st' | 'lt'> & ChartSt & ChartLt;

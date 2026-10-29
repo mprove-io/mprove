@@ -18,10 +18,10 @@ import { schemaPostgres } from './postgres/schema-postgres';
 
 export const DRIZZLE = 'DRIZZLE';
 
-export interface DbExtra {
+export type DbExtra = {
   drizzle: NodePgDatabase<typeof schemaPostgres>;
   pool: PoolType;
-}
+};
 
 @Module({
   imports: [

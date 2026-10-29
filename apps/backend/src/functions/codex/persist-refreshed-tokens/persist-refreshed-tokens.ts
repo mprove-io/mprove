@@ -3,12 +3,12 @@ import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-e
 import type { DbService } from '#backend/services/db/db.service';
 import type { PersistRefreshedTokensError } from '#common/types/backend/function-errors/persist-refreshed-tokens-error';
 
-export interface CodexTokenState {
+export type CodexTokenState = {
   access: string;
   refresh: string;
   expires: number;
   accountId?: string;
-}
+};
 
 export async function persistRefreshedTokens(item: {
   userId: string;

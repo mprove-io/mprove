@@ -11,22 +11,22 @@ import type { PrepareRunDashboardError } from '#common/types/backend/function-er
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 
-interface RunDashboardPrepTile {
+type RunDashboardPrepTile = {
   title: string;
   queryId: string;
-}
+};
 
-interface RunDashboardPrep {
+type RunDashboardPrep = {
   title: string;
   dashboardId: string;
   url: string;
   tiles: RunDashboardPrepTile[];
-}
+};
 
-interface RunDashboardMconfigPart {
+type RunDashboardMconfigPart = {
   mconfigId: string;
   queryId: string;
-}
+};
 
 export type PrepareRunDashboardOutput = {
   prepDashboards: RunDashboardPrep[];

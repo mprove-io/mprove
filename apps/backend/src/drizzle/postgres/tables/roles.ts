@@ -38,4 +38,4 @@ export const rolesTable = pgTable(
 export type RoleEnt = InferSelectModel<typeof rolesTable>;
 export type RoleEntIns = InferInsertModel<typeof rolesTable>;
 
-export interface RoleTab extends Omit<RoleEnt, 'st' | 'lt'>, RoleSt, RoleLt {}
+export type RoleTab = Omit<RoleEnt, 'st' | 'lt'> & RoleSt & RoleLt;

@@ -7,7 +7,7 @@ import { makeSessionId } from '#backend/functions/make-session-id/make-session-i
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
-import { Prep } from '#backend/interfaces/prep';
+import type { Prep } from '#backend/types/prep';
 import { MCP_TOOL_GET_STATE } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';

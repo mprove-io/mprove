@@ -30,18 +30,18 @@ import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 const { forEachSeries } = pIteration;
 export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';
-export interface CreateSandboxResult {
+export type CreateSandboxResult = {
   sandboxId: string;
   sandboxBaseUrl: string;
   opencodePassword: string;
   sandbox: Sandbox;
   sandboxInfo: SandboxInfo;
-}
-export interface ProviderConfigResult {
+};
+export type ProviderConfigResult = {
   envs: Record<string, string>;
   content: string;
   hash: string;
-}
+};
 @Injectable()
 export class EditorOpencodeService {
   private opencodeClients: {

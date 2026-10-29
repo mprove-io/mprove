@@ -5,7 +5,7 @@ import {
 } from '@google-cloud/bigquery';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { optionsToBigqueryOptions } from '#backend/functions/dwh/bigquery/options-to-bigquery-options/options-to-bigquery-options';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function fetchBigqueryCachedParts(item: {

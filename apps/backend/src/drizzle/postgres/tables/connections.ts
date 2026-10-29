@@ -54,7 +54,6 @@ export const connectionsTable = pgTable(
 export type ConnectionEnt = InferSelectModel<typeof connectionsTable>;
 export type ConnectionEntIns = InferInsertModel<typeof connectionsTable>;
 
-export interface ConnectionTab
-  extends Omit<ConnectionEnt, 'st' | 'lt'>,
-    ConnectionSt,
-    ConnectionLt {}
+export type ConnectionTab = Omit<ConnectionEnt, 'st' | 'lt'> &
+  ConnectionSt &
+  ConnectionLt;

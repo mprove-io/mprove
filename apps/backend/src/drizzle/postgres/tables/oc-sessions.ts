@@ -35,7 +35,6 @@ export type OcSessionEnt = InferSelectModel<typeof ocSessionsTable>;
 
 export type OcSessionEntIns = InferInsertModel<typeof ocSessionsTable>;
 
-export interface OcSessionTab
-  extends Omit<OcSessionEnt, 'st' | 'lt'>,
-    OcSessionSt,
-    OcSessionLt {}
+export type OcSessionTab = Omit<OcSessionEnt, 'st' | 'lt'> &
+  OcSessionSt &
+  OcSessionLt;

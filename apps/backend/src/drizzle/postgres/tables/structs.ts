@@ -35,7 +35,4 @@ export const structsTable = pgTable(
 export type StructEnt = InferSelectModel<typeof structsTable>;
 export type StructEntIns = InferInsertModel<typeof structsTable>;
 
-export interface StructTab
-  extends Omit<StructEnt, 'st' | 'lt'>,
-    StructSt,
-    StructLt {}
+export type StructTab = Omit<StructEnt, 'st' | 'lt'> & StructSt & StructLt;

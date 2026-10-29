@@ -32,7 +32,4 @@ export const uconfigsTable = pgTable(
 export type UconfigEnt = InferSelectModel<typeof uconfigsTable>;
 export type UconfigEntIns = InferInsertModel<typeof uconfigsTable>;
 
-export interface UconfigTab
-  extends Omit<UconfigEnt, 'st' | 'lt'>,
-    UconfigSt,
-    UconfigLt {}
+export type UconfigTab = Omit<UconfigEnt, 'st' | 'lt'> & UconfigSt & UconfigLt;

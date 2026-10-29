@@ -37,4 +37,4 @@ export const orgsTable = pgTable(
 export type OrgEnt = InferSelectModel<typeof orgsTable>;
 export type OrgEntIns = InferInsertModel<typeof orgsTable>;
 
-export interface OrgTab extends Omit<OrgEnt, 'st' | 'lt'>, OrgSt, OrgLt {}
+export type OrgTab = Omit<OrgEnt, 'st' | 'lt'> & OrgSt & OrgLt;

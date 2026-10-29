@@ -7,11 +7,11 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 
-export interface StoreUserCodeReturn {
+export type StoreUserCodeReturn = {
   userCode: string;
   result: string;
   errorMessage: string;
-}
+};
 
 export async function transformStoreRequest(item: {
   input: string;

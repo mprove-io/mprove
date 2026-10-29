@@ -15,7 +15,6 @@ import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { convertWritePack } from '#backend/services/db/convert-write-pack/convert-write-pack';
 import {
   createDbTableRegistry,
@@ -30,6 +29,7 @@ import { rewriteTableRecords } from '#backend/services/db/rewrite-table-records/
 import { transaction } from '#backend/services/db/transaction/transaction';
 import { writeDbTable } from '#backend/services/db/write-db-table/write-db-table';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { DbTabsPack } from '#backend/types/db-tabs-pack';
 import type { RewriteRecordsError } from '#backend/types/function-errors/rewrite-records-error';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';

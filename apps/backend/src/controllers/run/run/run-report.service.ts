@@ -13,22 +13,22 @@ import type { PrepareRunReportError } from '#common/types/backend/function-error
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 import type { RunReport } from '#common/types/backend/parts/run/run-report';
 
-interface RunReportPrepRow {
+type RunReportPrepRow = {
   title: string;
   queryId: string;
-}
+};
 
-interface RunReportPrep {
+type RunReportPrep = {
   title: string;
   reportId: string;
   url: string;
   rows: RunReportPrepRow[];
-}
+};
 
-interface RunReportMconfigPart {
+type RunReportMconfigPart = {
   mconfigId: string;
   queryId: string;
-}
+};
 
 export type PrepareRunReportOutput = {
   prepReports: RunReportPrep[];

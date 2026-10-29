@@ -8,7 +8,7 @@ import {
   type OptionsToDuckdbOptionsOutput,
   optionsToDuckdbOptions
 } from '#backend/functions/dwh/duckdb/options-to-duckdb-options/options-to-duckdb-options';
-import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import type { CachedPartsResult } from '#backend/types/cached-parts-result';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function fetchDuckdbCachedParts(item: {

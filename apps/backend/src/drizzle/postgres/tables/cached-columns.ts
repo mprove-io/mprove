@@ -85,7 +85,6 @@ export const cachedColumnsTable = pgTable(
 export type CachedColumnsEnt = InferSelectModel<typeof cachedColumnsTable>;
 export type CachedColumnsEntIns = InferInsertModel<typeof cachedColumnsTable>;
 
-export interface CachedColumnTab
-  extends Omit<CachedColumnsEnt, 'st' | 'lt'>,
-    CachedColumnSt,
-    CachedColumnLt {}
+export type CachedColumnTab = Omit<CachedColumnsEnt, 'st' | 'lt'> &
+  CachedColumnSt &
+  CachedColumnLt;

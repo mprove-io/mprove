@@ -3,8 +3,8 @@ import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
-import type { Prep } from '#backend/interfaces/prep';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
+import type { Prep } from '#backend/types/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 
 import { makeId } from '#common/functions/make-id/make-id';

@@ -2,12 +2,12 @@ import { Result } from '@praha/byethrow';
 import { CODEX_USER_AGENT_VERSION } from '#backend/functions/codex/build-codex-fetch/build-codex-fetch';
 import type { StartDeviceAuthError } from '#common/types/backend/function-errors/start-device-auth-error';
 
-export interface CodexDeviceAuthStart {
+export type CodexDeviceAuthStart = {
   deviceAuthId: string;
   userCode: string;
   intervalSec: number;
   verificationUrl: string;
-}
+};
 
 export const CODEX_ISSUER = 'https://auth.openai.com';
 

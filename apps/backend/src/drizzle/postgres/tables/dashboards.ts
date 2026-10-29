@@ -48,7 +48,6 @@ export const dashboardsTable = pgTable(
 export type DashboardEnt = InferSelectModel<typeof dashboardsTable>;
 export type DashboardEntIns = InferInsertModel<typeof dashboardsTable>;
 
-export interface DashboardTab
-  extends Omit<DashboardEnt, 'st' | 'lt'>,
-    DashboardSt,
-    DashboardLt {}
+export type DashboardTab = Omit<DashboardEnt, 'st' | 'lt'> &
+  DashboardSt &
+  DashboardLt;

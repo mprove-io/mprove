@@ -20,7 +20,6 @@ import {
 import type { AnyPgColumn, PgColumn, PgTable } from 'drizzle-orm/pg-core';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 import type { DbService } from '#backend/services/db/db.service';
 import {
@@ -33,6 +32,7 @@ import {
 } from '#backend/services/db/db-entity-registry';
 import type { DbTable } from '#backend/services/db/db-table';
 import type { TabService } from '#backend/services/tab/tab.service';
+import type { DbTabsPack } from '#backend/types/db-tabs-pack';
 import type { RewriteTableRecordsError } from '#backend/types/function-errors/rewrite-table-records-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
