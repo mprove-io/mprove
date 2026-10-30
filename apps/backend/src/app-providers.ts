@@ -1,7 +1,16 @@
+import type { Provider } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import {
+  MCP_HTTP_HANDLER,
+  MCP_STRATEGY,
+  type McpHttpHandler,
+  McpStrategy,
+  StreamableHttpTransport
+} from '@rekog/mcp-nest';
 import { JwtStrategy } from '#backend/auth-strategies/jwt/jwt.strategy';
 import { LocalStrategy } from '#backend/auth-strategies/local-strategy/local-strategy.strategy';
+import { backendPackageJson } from '#backend/backend-package-json';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
@@ -57,11 +66,46 @@ import { GetModelsToolService } from './services/explorer/tools/get-models/get-m
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { SearchModelFieldsToolService } from './services/explorer/tools/search-model-fields/search-model-fields.tool';
 
+const mcpProviders: Provider[] = [
+  {
+    provide: StreamableHttpTransport,
+    useFactory: (): StreamableHttpTransport => {
+      let transport: StreamableHttpTransport = new StreamableHttpTransport({
+        enableJsonResponse: true
+      });
+
+      return transport;
+    }
+  },
+  {
+    provide: MCP_HTTP_HANDLER,
+    inject: [StreamableHttpTransport],
+    useFactory: (transport: StreamableHttpTransport): McpHttpHandler => {
+      let handlers: McpHttpHandler = transport.httpHandlers;
+
+      return handlers;
+    }
+  },
+  {
+    provide: MCP_STRATEGY,
+    inject: [StreamableHttpTransport],
+    useFactory: (transport: StreamableHttpTransport): McpStrategy => {
+      let strategy: McpStrategy = new McpStrategy({
+        name: 'mprove',
+        version: backendPackageJson.version,
+        transports: [transport],
+        isValidateResponse: false
+      });
+
+      return strategy;
+    }
+  }
+];
+
 export const appProviders = [
   LocalStrategy,
   JwtStrategy,
   //
-  // ClickHouseService,
   AscendingIdService,
   DbService,
   CalcDbService,
@@ -145,5 +189,6 @@ export const appProviders = [
       Logger,
       DbService
     ]
-  }
+  },
+  ...mcpProviders
 ];

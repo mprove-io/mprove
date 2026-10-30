@@ -73,7 +73,6 @@ import { orgsTable } from './drizzle/postgres/tables/orgs';
 import { projectsTable } from './drizzle/postgres/tables/projects';
 import { uconfigsTable } from './drizzle/postgres/tables/uconfigs';
 import { usersTable } from './drizzle/postgres/tables/users';
-import { mcpProviders } from './mcp-providers';
 
 const { Client } = pg;
 
@@ -155,7 +154,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
   providers: [
     Logger,
     ...appProviders,
-    ...mcpProviders,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
