@@ -13,7 +13,7 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { usersTable } from '#backend/drizzle/postgres/tables/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
-import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { makeUserAlias } from '#backend/functions/db/users/make-user-alias/make-user-alias';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import {
   type CreateSaltAndHashOutput,
@@ -114,7 +114,7 @@ export class RegisterUserController {
       Result.bind('alias', async v =>
         isDefined(v.user)
           ? Result.succeed(undefined)
-          : makeAlias({
+          : makeUserAlias({
               email: v.email,
               db: this.db
             })

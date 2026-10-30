@@ -21,7 +21,6 @@ import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-c
 import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';
 import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { runBigqueryQuery } from '#backend/functions/dwh/bigquery/run-bigquery-query/run-bigquery-query';
 import { runDatabricksQuery } from '#backend/functions/dwh/databricks/run-databricks-query/run-databricks-query';
@@ -33,6 +32,7 @@ import { runSnowflakeQuery } from '#backend/functions/dwh/snowflake/run-snowflak
 import { runTrinoQuery } from '#backend/functions/dwh/trino/run-trino-query/run-trino-query';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { runQuery } from '#backend/functions/store/run-query/run-query';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';

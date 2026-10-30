@@ -12,7 +12,7 @@ import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { providersTable } from '#backend/drizzle/postgres/tables/providers';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
-import { checkLlmModelDoesNotExist } from '#backend/functions/db/providers/check-llm-model-does-not-exist/check-llm-model-does-not-exist';
+import { checkProviderModelDoesNotExist } from '#backend/functions/db/providers/check-provider-model-does-not-exist/check-provider-model-does-not-exist';
 import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -82,7 +82,7 @@ export class CreateLlmModelController {
         })
       ),
       Result.andThrough(v =>
-        checkLlmModelDoesNotExist({
+        checkProviderModelDoesNotExist({
           provider: v.provider,
           modelId: v.modelId
         })

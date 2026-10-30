@@ -17,7 +17,7 @@ import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/
 import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
+import { getUserSelectedGivens } from '#backend/functions/db/users/get-user-selected-givens/get-user-selected-givens';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';
@@ -182,7 +182,7 @@ export async function getDashboardData(item: {
       })
     ),
     Result.bind('selectedGivens', v =>
-      getSelectedGivens({
+      getUserSelectedGivens({
         user: v.user,
         projectId: v.projectId,
         db: v.db

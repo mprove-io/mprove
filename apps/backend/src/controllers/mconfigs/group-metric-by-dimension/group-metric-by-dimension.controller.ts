@@ -23,11 +23,11 @@ import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-t
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
 import { prepStoreMconfigQuery } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { editMalloyQuery } from '#backend/functions/malloy/edit-malloy-query/edit-malloy-query';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

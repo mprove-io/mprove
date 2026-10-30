@@ -24,7 +24,7 @@ import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import { makeOcMessage } from '#backend/functions/db/oc-messages/make-oc-message/make-oc-message';
 import { makeOcPart } from '#backend/functions/db/oc-parts/make-oc-part/make-oc-part';
-import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
+import { makeOcSession } from '#backend/functions/db/oc-sessions/make-oc-session/make-oc-session';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
 import {

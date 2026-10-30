@@ -21,13 +21,13 @@ import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import {
   type RunBigqueryQueryDryOutput,
   runBigqueryQueryDry
 } from '#backend/functions/dwh/bigquery/run-bigquery-query-dry/run-bigquery-query-dry';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

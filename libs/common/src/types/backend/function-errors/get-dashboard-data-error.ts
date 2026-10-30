@@ -21,13 +21,13 @@ import {
   zGetModelPartXsError
 } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import {
-  type GetSelectedGivensError,
-  zGetSelectedGivensError
-} from '#common/types/backend/function-errors/get-selected-givens-error';
-import {
   type GetStructCheckExistsError,
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import {
+  type GetUserSelectedGivensError,
+  zGetUserSelectedGivensError
+} from '#common/types/backend/function-errors/get-user-selected-givens-error';
 import {
   type ProcessDashboardError,
   zProcessDashboardError
@@ -44,7 +44,7 @@ import {
 export type GetDashboardDataError =
   | GetStructCheckExistsError
   | GetDashboardXCheckExistsAndAccessError
-  | GetSelectedGivensError
+  | GetUserSelectedGivensError
   | RebuildStructError
   | BackendGetDashboardFailError
   | ProcessDashboardError
@@ -56,7 +56,7 @@ export type GetDashboardDataError =
 export const zGetDashboardDataError = z.union([
   zGetStructCheckExistsError,
   zGetDashboardXCheckExistsAndAccessError,
-  zGetSelectedGivensError,
+  zGetUserSelectedGivensError,
   zRebuildStructError,
   zBackendGetDashboardFailError,
   zProcessDashboardError,

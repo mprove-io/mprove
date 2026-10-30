@@ -11,7 +11,7 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
-import { selectUnselectedGivens } from '#backend/functions/db/users/select-unselected-givens/select-unselected-givens';
+import { selectUserUnselectedGivens } from '#backend/functions/db/users/select-user-unselected-givens/select-user-unselected-givens';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -51,7 +51,7 @@ export class GetUserGivensController {
         })
       ),
       Result.andThrough(v =>
-        selectUnselectedGivens({
+        selectUserUnselectedGivens({
           user: v.user,
           projectId: v.projectId,
           db: this.db

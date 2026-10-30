@@ -24,12 +24,12 @@ import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';
-import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
-import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
+import { makeOcSession } from '#backend/functions/db/oc-sessions/make-oc-session/make-oc-session';
+import { getProviderModelSelection } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { makeSession } from '#backend/functions/db/sessions/make-session/make-session';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -135,7 +135,7 @@ export class CreateExplorerSessionController {
         })
       ),
       Result.bind('modelSelection', v =>
-        getModelSelection({
+        getProviderModelSelection({
           projectId: v.projectId,
           providerId: v.providerId,
           modelId: v.modelId,

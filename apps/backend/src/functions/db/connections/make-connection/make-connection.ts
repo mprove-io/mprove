@@ -1,5 +1,5 @@
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
-import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
+import { cleanConnectionInternalFields } from '#backend/functions/db/connections/clean-connection-internal-fields/clean-connection-internal-fields';
 import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -15,7 +15,7 @@ export function makeConnection(item: {
 }): ConnectionTab {
   let { projectId, connectionId, envId, type, options } = item;
 
-  cleanInternalFields({ options: options });
+  cleanConnectionInternalFields({ options: options });
 
   if (isDefined(options.storeGoogleApi)) {
     options.storeGoogleApi.googleCloudProject =

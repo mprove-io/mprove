@@ -35,13 +35,13 @@ import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
 import {
   type EditMalloyQueryOutput,
   editMalloyQuery
 } from '#backend/functions/malloy/edit-malloy-query/edit-malloy-query';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

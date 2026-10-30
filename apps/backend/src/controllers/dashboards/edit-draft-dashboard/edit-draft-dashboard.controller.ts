@@ -21,10 +21,10 @@ import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboa
 import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
-import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
+import { getUserSelectedGivens } from '#backend/functions/db/users/get-user-selected-givens/get-user-selected-givens';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
@@ -285,7 +285,7 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('selectedGivens', v =>
-        getSelectedGivens({
+        getUserSelectedGivens({
           user: v.user,
           projectId: v.projectId,
           db: this.db

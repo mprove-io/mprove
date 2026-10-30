@@ -28,7 +28,7 @@ import { checkMemberDoesNotExist } from '#backend/functions/db/members/check-mem
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { makeMember } from '#backend/functions/db/members/make-member/make-member';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
-import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { makeUserAlias } from '#backend/functions/db/users/make-user-alias/make-user-alias';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -60,7 +60,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
+import type { MakeUserAliasError } from '#common/types/backend/function-errors/make-user-alias-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/members/create-member/create-member-output';
@@ -146,8 +146,8 @@ export class CreateMemberController {
           return Result.succeed(undefined);
         }
 
-        let aliasResult: Result.Result<string, MakeAliasError> =
-          await makeAlias({
+        let aliasResult: Result.Result<string, MakeUserAliasError> =
+          await makeUserAlias({
             email: v.email,
             db: this.db
           });

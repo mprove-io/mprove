@@ -25,7 +25,7 @@ import {
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { calculateReportData } from '#backend/functions/db/reports/get-report-data/calculate-report-data/calculate-report-data';
-import { getTimeColumns } from '#backend/functions/db/reports/get-report-data/get-time-columns/get-time-columns';
+import { getReportTimeColumns } from '#backend/functions/db/reports/get-report-data/get-report-time-columns/get-report-time-columns';
 import { reportTabToApi } from '#backend/functions/db/reports/get-report-data/report-tab-to-api/report-tab-to-api';
 import { makeReportDataColumns } from '#backend/functions/db/reports/make-report-data-columns/make-report-data-columns';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
@@ -123,8 +123,8 @@ export async function getReportData(item: {
 }): Result.ResultAsync<ReportX, GetReportDataError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('getTimeColumnsOutput', v =>
-      getTimeColumns({
+    Result.bind('getReportTimeColumnsOutput', v =>
+      getReportTimeColumns({
         traceId: v.traceId,
         timezone: v.timezone,
         timeSpec: v.timeSpec,
@@ -136,35 +136,35 @@ export async function getReportData(item: {
     ),
     Result.bind('prepareMetricRangePayload', v => {
       let metricsStartDateYYYYMMDD: string = isUndefined(
-        v.getTimeColumnsOutput.rangeStart
+        v.getReportTimeColumnsOutput.rangeStart
       )
         ? undefined
         : getYYYYMMDDFromEpochUtcByTimezone({
             timezone: v.timezone,
-            secondsEpochUTC: v.getTimeColumnsOutput.rangeStart
+            secondsEpochUTC: v.getReportTimeColumnsOutput.rangeStart
           });
 
       let metricsEndDateExcludedYYYYMMDD: string = isUndefined(
-        v.getTimeColumnsOutput.rangeEnd
+        v.getReportTimeColumnsOutput.rangeEnd
       )
         ? undefined
         : getYYYYMMDDFromEpochUtcByTimezone({
             timezone: v.timezone,
-            secondsEpochUTC: v.getTimeColumnsOutput.rangeEnd
+            secondsEpochUTC: v.getReportTimeColumnsOutput.rangeEnd
           });
 
       let metricsEndDateIncludedYYYYMMDD: string = isUndefined(
-        v.getTimeColumnsOutput.rangeEnd
+        v.getReportTimeColumnsOutput.rangeEnd
       )
         ? undefined
         : getYYYYMMDDFromEpochUtcByTimezone({
             timezone: v.timezone,
             secondsEpochUTC:
-              v.getTimeColumnsOutput.rangeEnd -
-                v.getTimeColumnsOutput.rangeStart >=
+              v.getReportTimeColumnsOutput.rangeEnd -
+                v.getReportTimeColumnsOutput.rangeStart >=
               24 * 60 * 60
-                ? v.getTimeColumnsOutput.rangeEnd - 24 * 60 * 60
-                : v.getTimeColumnsOutput.rangeEnd
+                ? v.getReportTimeColumnsOutput.rangeEnd - 24 * 60 * 60
+                : v.getReportTimeColumnsOutput.rangeEnd
           });
 
       let modelIds: string[] = v.metrics
@@ -326,7 +326,7 @@ export async function getReportData(item: {
           let rq: Rq = x.rqs.find(
             y =>
               y.fractionBrick ===
-                v.getTimeColumnsOutput.timeRangeFraction.brick &&
+                v.getReportTimeColumnsOutput.timeRangeFraction.brick &&
               y.timeSpec === v.timeSpec &&
               y.timezone === v.timezone
           );
@@ -422,7 +422,8 @@ export async function getReportData(item: {
                   ['TsIsBefore', 'TsIsThrough'] satisfies FractionType[]
                 ).findIndex(
                   candidate =>
-                    candidate === v.getTimeColumnsOutput.timeRangeFraction.type
+                    candidate ===
+                    v.getReportTimeColumnsOutput.timeRangeFraction.type
                 ) > -1
                   ? true
                   : false;
@@ -438,7 +439,7 @@ export async function getReportData(item: {
                 ? undefined
                 : {
                     fieldId: timeFieldIdSpec,
-                    fractions: [v.getTimeColumnsOutput.timeRangeFraction]
+                    fractions: [v.getReportTimeColumnsOutput.timeRangeFraction]
                   };
 
               let filters: Filter[] =
@@ -491,7 +492,7 @@ export async function getReportData(item: {
                 limit:
                   model.type === 'Malloy'
                     ? undefined
-                    : v.getTimeColumnsOutput.timeColumnsLimit,
+                    : v.getReportTimeColumnsOutput.timeColumnsLimit,
                 filters: model.type === 'Malloy' ? [] : filters,
                 chart: makeCopy(DEFAULT_CHART),
                 sessionId: undefined,
@@ -586,7 +587,7 @@ export async function getReportData(item: {
                     {
                       type: 'Limit',
                       timezone: v.timezone,
-                      limit: v.getTimeColumnsOutput.timeColumnsLimit
+                      limit: v.getReportTimeColumnsOutput.timeColumnsLimit
                     },
                     {
                       type: 'WhereOrHaving',
@@ -630,13 +631,14 @@ export async function getReportData(item: {
             }
 
             let newRq: Rq = {
-              fractionBrick: v.getTimeColumnsOutput.timeRangeFraction.brick,
+              fractionBrick:
+                v.getReportTimeColumnsOutput.timeRangeFraction.brick,
               timeSpec: v.timeSpec,
               timezone: v.timezone,
-              timeStartTs: v.getTimeColumnsOutput.columns[0].columnId,
+              timeStartTs: v.getReportTimeColumnsOutput.columns[0].columnId,
               timeEndTs:
-                v.getTimeColumnsOutput.columns[
-                  v.getTimeColumnsOutput.columns.length - 1
+                v.getReportTimeColumnsOutput.columns[
+                  v.getReportTimeColumnsOutput.columns.length - 1
                 ].columnId,
               mconfigId: newMconfig?.mconfigId,
               queryId: newMconfig?.queryId,
@@ -743,7 +745,7 @@ export async function getReportData(item: {
         let rq: Rq = x.rqs.find(
           y =>
             y.fractionBrick ===
-              v.getTimeColumnsOutput.timeRangeFraction.brick &&
+              v.getReportTimeColumnsOutput.timeRangeFraction.brick &&
             y.timeSpec === v.timeSpec &&
             y.timezone === v.timezone
         );
@@ -778,22 +780,22 @@ export async function getReportData(item: {
         report: v.report,
         models: modelsApi,
         member: v.apiUserMember,
-        columns: v.getTimeColumnsOutput.columns,
+        columns: v.getReportTimeColumnsOutput.columns,
         timezone: v.timezone,
         timeSpec: v.timeSpec,
-        timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
-        rangeStart: v.getTimeColumnsOutput.rangeStart,
-        rangeEnd: v.getTimeColumnsOutput.rangeEnd,
+        timeRangeFraction: v.getReportTimeColumnsOutput.timeRangeFraction,
+        rangeStart: v.getReportTimeColumnsOutput.rangeStart,
+        rangeEnd: v.getReportTimeColumnsOutput.rangeEnd,
         metricsStartDateYYYYMMDD:
           v.prepareMetricRangePayload.metricsStartDateYYYYMMDD,
         metricsEndDateExcludedYYYYMMDD:
           v.prepareMetricRangePayload.metricsEndDateExcludedYYYYMMDD,
         metricsEndDateIncludedYYYYMMDD:
           v.prepareMetricRangePayload.metricsEndDateIncludedYYYYMMDD,
-        timeColumnsLimit: v.getTimeColumnsOutput.timeColumnsLimit,
-        timeColumnsLength: v.getTimeColumnsOutput.columns.length,
+        timeColumnsLimit: v.getReportTimeColumnsOutput.timeColumnsLimit,
+        timeColumnsLength: v.getReportTimeColumnsOutput.columns.length,
         isTimeColumnsLimitExceeded:
-          v.getTimeColumnsOutput.isTimeColumnsLimitExceeded
+          v.getReportTimeColumnsOutput.isTimeColumnsLimitExceeded
       });
 
       let formulaRows: Row[] = reportApi.rows.filter(
@@ -804,7 +806,7 @@ export async function getReportData(item: {
         let rq: Rq = row.rqs.find(
           y =>
             y.fractionBrick ===
-              v.getTimeColumnsOutput.timeRangeFraction.brick &&
+              v.getReportTimeColumnsOutput.timeRangeFraction.brick &&
             y.timeSpec === v.timeSpec &&
             y.timezone === v.timezone
         );
@@ -825,7 +827,7 @@ export async function getReportData(item: {
           let rq: Rq = row.rqs.find(
             y =>
               y.fractionBrick ===
-                v.getTimeColumnsOutput.timeRangeFraction.brick &&
+                v.getReportTimeColumnsOutput.timeRangeFraction.brick &&
               y.timeSpec === v.timeSpec &&
               y.timezone === v.timezone
           );
@@ -866,7 +868,7 @@ export async function getReportData(item: {
           report: v.prepareReportCalculationPayload.reportApi,
           timezone: v.timezone,
           timeSpec: v.timeSpec,
-          timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
+          timeRangeFraction: v.getReportTimeColumnsOutput.timeRangeFraction,
           db: v.db,
           calcDb: v.calcDb
         });
@@ -897,7 +899,7 @@ export async function getReportData(item: {
           let rq: Rq = row.rqs.find(
             y =>
               y.fractionBrick ===
-                v.getTimeColumnsOutput.timeRangeFraction.brick &&
+                v.getReportTimeColumnsOutput.timeRangeFraction.brick &&
               y.timeSpec === v.timeSpec &&
               y.timezone === v.timezone
           );

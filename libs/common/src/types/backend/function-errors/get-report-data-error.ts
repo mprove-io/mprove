@@ -25,9 +25,9 @@ import {
   zEditMalloyQueryError
 } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import {
-  type GetTimeColumnsError,
-  zGetTimeColumnsError
-} from '#common/types/backend/function-errors/get-time-columns-error';
+  type GetReportTimeColumnsError,
+  zGetReportTimeColumnsError
+} from '#common/types/backend/function-errors/get-report-time-columns-error';
 import {
   type MakeReportDataColumnsError,
   zMakeReportDataColumnsError
@@ -44,7 +44,7 @@ import {
 export type GetReportDataError =
   | CalculateReportDataError
   | MakeReportDataColumnsError
-  | GetTimeColumnsError
+  | GetReportTimeColumnsError
   | PrepStoreMconfigQueryError
   | EditMalloyQueryError
   | WriteError
@@ -56,7 +56,7 @@ export type GetReportDataError =
 export const zGetReportDataError = z.union([
   zCalculateReportDataError,
   zMakeReportDataColumnsError,
-  zGetTimeColumnsError,
+  zGetReportTimeColumnsError,
   zPrepStoreMconfigQueryError,
   zEditMalloyQueryError,
   zWriteError,

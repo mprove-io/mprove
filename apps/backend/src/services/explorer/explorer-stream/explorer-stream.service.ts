@@ -29,9 +29,9 @@ import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { buildCodexFetch } from '#backend/functions/codex/build-codex-fetch/build-codex-fetch';
 import {
-  type GetModelSelectionOutput,
-  getModelSelection
-} from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+  type GetProviderModelSelectionOutput,
+  getProviderModelSelection
+} from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
@@ -65,7 +65,7 @@ import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/
 import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
-import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
+import type { GetProviderModelSelectionError } from '#common/types/backend/function-errors/get-provider-model-selection-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { LoadMessageHistoryError } from '#common/types/backend/function-errors/load-message-history-error';
@@ -663,9 +663,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let user: UserTab = userResult.value;
 
     let modelSelectionResult: Result.Result<
-      GetModelSelectionOutput,
-      GetModelSelectionError
-    > = await getModelSelection({
+      GetProviderModelSelectionOutput,
+      GetProviderModelSelectionError
+    > = await getProviderModelSelection({
       projectId: session.projectId,
       providerId: provider,
       modelId: modelId,
@@ -679,7 +679,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
       return modelSelectionResult;
     }
 
-    let modelSelection: GetModelSelectionOutput = modelSelectionResult.value;
+    let modelSelection: GetProviderModelSelectionOutput =
+      modelSelectionResult.value;
 
     let isCodex = modelSelection.provider.type === 'OpenAICodex';
 

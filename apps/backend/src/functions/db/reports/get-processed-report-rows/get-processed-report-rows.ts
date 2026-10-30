@@ -1,5 +1,5 @@
 import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
-import { clearRowsCache } from '#backend/functions/db/reports/get-processed-report-rows/clear-rows-cache/clear-rows-cache';
+import { clearReportRowsCache } from '#backend/functions/db/reports/get-processed-report-rows/clear-report-rows-cache/clear-report-rows-cache';
 import { processReportRowIds } from '#backend/functions/db/reports/process-report-row-ids/process-report-row-ids';
 import { reportRowIdLetterToNumber } from '#backend/functions/db/reports/report-row-id-letter-to-number/report-row-id-letter-to-number';
 import { reportRowIdNumberToLetter } from '#backend/functions/db/reports/report-row-id-number-to-letter/report-row-id-number-to-letter';
@@ -346,7 +346,7 @@ export function getProcessedReportRows(item: {
       row.rowId === editRow.rowId ? editRow : row
     );
   } else if (changeType === 'EditFormula') {
-    clearRowsCache({
+    clearReportRowsCache({
       processedRows: processedRows,
       changedRowIds: [rowChange.rowId],
       timezone: timezone,
@@ -371,7 +371,7 @@ export function getProcessedReportRows(item: {
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
   } else if (changeType === 'EditParameters') {
-    clearRowsCache({
+    clearReportRowsCache({
       processedRows: processedRows,
       changedRowIds: [],
       timezone: timezone,
@@ -400,7 +400,7 @@ export function getProcessedReportRows(item: {
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
   } else if (changeType === 'EditListeners') {
-    clearRowsCache({
+    clearReportRowsCache({
       processedRows: processedRows,
       changedRowIds: [],
       timezone: timezone,
@@ -480,7 +480,7 @@ export function getProcessedReportRows(item: {
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
   } else if (changeType === 'Delete') {
-    clearRowsCache({
+    clearReportRowsCache({
       processedRows: processedRows,
       changedRowIds: rowIds,
       timezone: timezone,

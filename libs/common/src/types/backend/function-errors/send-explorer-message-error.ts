@@ -17,9 +17,9 @@ import {
   zDbOcMessagesFindFirstError
 } from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-first-error';
 import {
-  type GetModelSelectionError,
-  zGetModelSelectionError
-} from '#common/types/backend/function-errors/get-model-selection-error';
+  type GetProviderModelSelectionError,
+  zGetProviderModelSelectionError
+} from '#common/types/backend/function-errors/get-provider-model-selection-error';
 import {
   type PrewarmCodexAuthError,
   zPrewarmCodexAuthError
@@ -34,7 +34,7 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type SendExplorerMessageError =
-  | GetModelSelectionError
+  | GetProviderModelSelectionError
   | PrewarmCodexAuthError
   | WriteError
   | PublishInteractCommandError
@@ -44,7 +44,7 @@ export type SendExplorerMessageError =
   | DbOcMessagesFindFirstError;
 
 export let zSendExplorerMessageError = z.union([
-  zGetModelSelectionError,
+  zGetProviderModelSelectionError,
   zPrewarmCodexAuthError,
   zWriteError,
   zPublishInteractCommandError,

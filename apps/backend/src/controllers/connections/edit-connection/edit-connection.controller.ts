@@ -12,7 +12,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
+import { cleanConnectionInternalFields } from '#backend/functions/db/connections/clean-connection-internal-fields/clean-connection-internal-fields';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -134,7 +134,7 @@ export class EditConnectionController {
           : Result.succeed();
       }),
       Result.map(v => {
-        cleanInternalFields({ options: v.options });
+        cleanConnectionInternalFields({ options: v.options });
 
         v.connection.options = v.options;
 

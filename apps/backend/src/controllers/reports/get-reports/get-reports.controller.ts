@@ -20,9 +20,9 @@ import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-c
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { getReportsCatalog } from '#backend/functions/db/reports/get-reports-catalog/get-reports-catalog';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

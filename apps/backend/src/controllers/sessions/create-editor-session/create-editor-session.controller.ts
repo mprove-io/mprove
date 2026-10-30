@@ -28,8 +28,8 @@ import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/pr
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
-import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
-import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
+import { makeOcSession } from '#backend/functions/db/oc-sessions/make-oc-session/make-oc-session';
+import { getProviderModelSelection } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { makeSession } from '#backend/functions/db/sessions/make-session/make-session';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
@@ -159,7 +159,7 @@ export class CreateEditorSessionController {
           : Result.succeed()
       ),
       Result.bind('modelSelection', v =>
-        getModelSelection({
+        getProviderModelSelection({
           projectId: v.projectId,
           providerId: v.providerId,
           modelId: v.modelId,

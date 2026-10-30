@@ -35,13 +35,13 @@ import { getReportData } from '#backend/functions/db/reports/get-report-data/get
 import { getReportsCatalog } from '#backend/functions/db/reports/get-reports-catalog/get-reports-catalog';
 import { makeReportFileText } from '#backend/functions/db/reports/make-report-file-text/make-report-file-text';
 import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getSpaceFromFilePath } from '#backend/functions/space/get-space-from-file-path/get-space-from-file-path';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

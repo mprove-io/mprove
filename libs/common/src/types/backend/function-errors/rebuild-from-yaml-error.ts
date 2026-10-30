@@ -29,10 +29,6 @@ import {
   zGetModelCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
 import {
-  type GetSelectedGivensError,
-  zGetSelectedGivensError
-} from '#common/types/backend/function-errors/get-selected-givens-error';
-import {
   type GetStructCheckExistsError,
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
@@ -41,6 +37,10 @@ import {
   zGetUserCheckExistsError
 } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import {
+  type GetUserSelectedGivensError,
+  zGetUserSelectedGivensError
+} from '#common/types/backend/function-errors/get-user-selected-givens-error';
+import {
   type RebuildStructError,
   zRebuildStructError
 } from '#common/types/backend/function-errors/rebuild-struct-error';
@@ -48,7 +48,7 @@ import {
 export type RebuildFromYamlError =
   | DbProjectsFindFirstCheckExistsError
   | GetUserCheckExistsError
-  | GetSelectedGivensError
+  | GetUserSelectedGivensError
   | DbMembersFindFirstCheckExistsError
   | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
@@ -61,7 +61,7 @@ export type RebuildFromYamlError =
 export const zRebuildFromYamlError = z.union([
   zDbProjectsFindFirstCheckExistsError,
   zGetUserCheckExistsError,
-  zGetSelectedGivensError,
+  zGetUserSelectedGivensError,
   zDbMembersFindFirstCheckExistsError,
   zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,

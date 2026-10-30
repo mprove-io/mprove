@@ -48,13 +48,13 @@ import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/mod
 import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
 import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getSpaceFromFilePath } from '#backend/functions/space/get-space-from-file-path/get-space-from-file-path';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';

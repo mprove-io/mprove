@@ -5,9 +5,9 @@ import {
   zGetApiEnvConnectionsWithFallbackError
 } from '#common/types/backend/function-errors/get-api-env-connections-with-fallback-error';
 import {
-  type GetSelectedGivensError,
-  zGetSelectedGivensError
-} from '#common/types/backend/function-errors/get-selected-givens-error';
+  type GetUserSelectedGivensError,
+  zGetUserSelectedGivensError
+} from '#common/types/backend/function-errors/get-user-selected-givens-error';
 import {
   type MakeMalloyQueryError,
   zMakeMalloyQueryError
@@ -15,12 +15,12 @@ import {
 
 export type EditMalloyQueryError =
   | GetApiEnvConnectionsWithFallbackError
-  | GetSelectedGivensError
+  | GetUserSelectedGivensError
   | MakeMalloyQueryError;
 
 export const zEditMalloyQueryError = z.union([
   zGetApiEnvConnectionsWithFallbackError,
-  zGetSelectedGivensError,
+  zGetUserSelectedGivensError,
   zMakeMalloyQueryError
 ]);
 

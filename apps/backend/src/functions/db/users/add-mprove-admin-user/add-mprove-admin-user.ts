@@ -1,5 +1,5 @@
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { makeAliasUnwrap } from '#backend/functions/db/users/make-alias-unwrap/make-alias-unwrap';
+import { makeUserAliasUnwrap } from '#backend/functions/db/users/make-user-alias-unwrap/make-user-alias-unwrap';
 import {
   type CreateSaltAndHashOutput,
   createSaltAndHash
@@ -20,7 +20,7 @@ export async function addMproveAdminUser(item: {
     input: password
   });
 
-  let alias: string = await makeAliasUnwrap({
+  let alias: string = await makeUserAliasUnwrap({
     email: email,
     db: db
   });

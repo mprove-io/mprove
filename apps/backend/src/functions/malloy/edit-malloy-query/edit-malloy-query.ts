@@ -10,7 +10,7 @@ import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab
 import { getApiEnvConnectionsWithFallback } from '#backend/functions/db/envs/get-api-env-connections-with-fallback/get-api-env-connections-with-fallback';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
 import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
-import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
+import { getUserSelectedGivens } from '#backend/functions/db/users/get-user-selected-givens/get-user-selected-givens';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import type { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -97,7 +97,7 @@ export async function editMalloyQuery(item: {
       return Result.succeed(resolveQueryConnectionsPayload);
     }),
     Result.bind('selectedGivens', v =>
-      getSelectedGivens({
+      getUserSelectedGivens({
         user: v.user,
         projectId: v.projectId,
         db: v.db

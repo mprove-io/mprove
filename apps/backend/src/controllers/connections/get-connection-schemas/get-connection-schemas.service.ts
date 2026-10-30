@@ -10,7 +10,7 @@ import { cachedColumnsTable } from '#backend/drizzle/postgres/tables/cached-colu
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
-import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
+import { cachedColumnTabToApi } from '#backend/functions/db/cached-columns/cached-column-tab-to-api/cached-column-tab-to-api';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';

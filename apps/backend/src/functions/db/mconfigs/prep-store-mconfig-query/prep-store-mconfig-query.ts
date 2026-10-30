@@ -8,7 +8,7 @@ import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { adjustMconfig } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/adjust-mconfig/adjust-mconfig';
-import { transformStoreRequest } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-request/transform-store-request';
+import { transformStoreMconfigRequest } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-mconfig-request/transform-store-mconfig-request';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -95,7 +95,7 @@ export async function prepStoreMconfigQuery(item: {
     ),
     Result.bind('processedRequest', async v => {
       return Result.succeed(
-        await transformStoreRequest({
+        await transformStoreMconfigRequest({
           input: v.model.storeContent.request,
           mconfig: v.newMconfig,
           storeModel: v.model,

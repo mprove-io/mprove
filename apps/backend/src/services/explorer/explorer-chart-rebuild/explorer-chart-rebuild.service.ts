@@ -19,8 +19,8 @@ import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-t
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
 import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
-import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
+import { getUserSelectedGivens } from '#backend/functions/db/users/get-user-selected-givens/get-user-selected-givens';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -202,7 +202,7 @@ export class ExplorerChartRebuildService {
         return Result.succeed(prepareChartFilePayload);
       }),
       Result.bind('selectedGivens', v =>
-        getSelectedGivens({
+        getUserSelectedGivens({
           user: v.user,
           projectId: v.session.projectId,
           db: this.db

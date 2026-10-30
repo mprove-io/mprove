@@ -6,7 +6,7 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
+import { getCacheEnvId } from '#backend/functions/db/envs/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { DbService } from '#backend/services/db/db.service';
 import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values/search-cached-field-values.service';

@@ -24,7 +24,7 @@ import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
-import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { getProviderModelSelection } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -149,7 +149,7 @@ export class SendMessageToEditorSessionController {
       ),
       Result.bind('modelSelection', async v =>
         v.interactionType === 'Message'
-          ? getModelSelection({
+          ? getProviderModelSelection({
               projectId: v.session.projectId,
               providerId: v.providerId,
               modelId: v.modelId,

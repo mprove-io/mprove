@@ -10,9 +10,9 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { wrapToApiEnvUser } from '#backend/functions/db/envs/wrap-to-api-env-user/wrap-to-api-env-user';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { memberTabToApiEnvUser } from '#backend/functions/db/members/member-tab-to-api-env-user/member-tab-to-api-env-user';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -62,7 +62,7 @@ export class GetMembersListController {
             member: v.userMember
           }),
           membersList: v.members.map(member =>
-            wrapToApiEnvUser({ member: member })
+            memberTabToApiEnvUser({ member: member })
           )
         })
       )

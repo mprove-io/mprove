@@ -18,7 +18,7 @@ import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
-import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { getProviderModelSelection } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -173,7 +173,7 @@ export class SendMessageToExplorerSessionController {
           : Result.succeed()
       ),
       Result.bind('modelSelection', v =>
-        getModelSelection({
+        getProviderModelSelection({
           projectId: v.session.projectId,
           providerId: v.providerId,
           modelId: v.modelId,

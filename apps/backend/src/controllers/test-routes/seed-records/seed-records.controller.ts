@@ -51,7 +51,7 @@ import { modelApiToTab } from '#backend/functions/db/models/model-api-to-tab/mod
 import { makeProvider } from '#backend/functions/db/providers/make-provider/make-provider';
 import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
 import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
-import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { makeUserAlias } from '#backend/functions/db/users/make-user-alias/make-user-alias';
 import { createSaltAndHash } from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
@@ -74,8 +74,8 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
+import type { MakeUserAliasError } from '#common/types/backend/function-errors/make-user-alias-error';
 import type { ParseApiKeyError } from '#common/types/backend/function-errors/parse-api-key-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
@@ -195,9 +195,12 @@ export class SeedRecordsController {
             inputs: v.payloadUsers,
             callback: async (
               x: ToBackendSeedRecordsInputUsersItem
-            ): Result.ResultAsync<void, MakeAliasError | ParseApiKeyError> => {
-              let aliasResult: Result.Result<string, MakeAliasError> =
-                await makeAlias({
+            ): Result.ResultAsync<
+              void,
+              MakeUserAliasError | ParseApiKeyError
+            > => {
+              let aliasResult: Result.Result<string, MakeUserAliasError> =
+                await makeUserAlias({
                   email: x.email,
                   db: this.db
                 });
