@@ -8,7 +8,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { rebuildBlockmlBranchBridges } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridges';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { makeMember } from '#backend/functions/db/members/make-member/make-member';
@@ -144,7 +144,7 @@ export async function addMemberToDemoProject(item: {
     Result.andThrough(v =>
       isUndefined(v.newMember)
         ? Result.succeed()
-        : rebuildBranchBridges({
+        : rebuildBlockmlBranchBridges({
             branchBridges: v.devBranchBridges,
             envId: PROJECT_ENV_PROD,
             traceId: v.traceId,

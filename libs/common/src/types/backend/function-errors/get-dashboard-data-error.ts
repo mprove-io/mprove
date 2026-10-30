@@ -33,9 +33,9 @@ import {
   zProcessDashboardError
 } from '#common/types/backend/function-errors/process-dashboard-error';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBlockmlStructError,
+  zRebuildBlockmlStructError
+} from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import {
   type WriteError,
   zWriteError
@@ -45,7 +45,7 @@ export type GetDashboardDataError =
   | GetStructCheckExistsError
   | GetDashboardXCheckExistsAndAccessError
   | GetUserSelectedGivensError
-  | RebuildStructError
+  | RebuildBlockmlStructError
   | BackendGetDashboardFailError
   | ProcessDashboardError
   | WriteError
@@ -57,7 +57,7 @@ export const zGetDashboardDataError = z.union([
   zGetStructCheckExistsError,
   zGetDashboardXCheckExistsAndAccessError,
   zGetUserSelectedGivensError,
-  zRebuildStructError,
+  zRebuildBlockmlStructError,
   zBackendGetDashboardFailError,
   zProcessDashboardError,
   zWriteError,

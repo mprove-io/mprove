@@ -23,7 +23,7 @@ import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
-import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { rebuildBlockmlBranchBridges } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridges';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
@@ -702,7 +702,7 @@ export class CreateEditorSessionController {
         )
       ),
       Result.andThrough(v =>
-        rebuildBranchBridges({
+        rebuildBlockmlBranchBridges({
           branchBridges: v.sessionBranchBridges,
           envId: v.envId,
           traceId: v.traceId,

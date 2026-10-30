@@ -1,13 +1,13 @@
 import { Result } from '@praha/byethrow';
 import axios from 'axios';
 import { and, eq } from 'drizzle-orm';
+import { transformStoreResponseData } from '#backend/controllers/queries/run-queries/run-query/transform-store-response-data/transform-store-response-data';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { StoreUserCodeReturn } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-mconfig-request/transform-store-mconfig-request';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { transformStoreResponseData } from '#backend/functions/store/run-query/transform-store-response-data/transform-store-response-data';
 import type { DbService } from '#backend/services/db/db.service';
 import type { UrlService } from '#backend/services/url/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';

@@ -22,9 +22,9 @@ import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
@@ -58,7 +58,7 @@ import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/fun
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
 import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -396,10 +396,10 @@ export class SaveCreateReportController {
         return Result.succeed(prepareRebuildPayload);
       }),
       Result.bind('rebuild', async v => {
-        let rebuildStructOutput: Result.Result<
-          RebuildStructOutput,
-          RebuildStructError
-        > = await rebuildStruct({
+        let rebuildBlockmlStructOutput: Result.Result<
+          RebuildBlockmlStructOutput,
+          RebuildBlockmlStructError
+        > = await rebuildBlockmlStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -422,11 +422,12 @@ export class SaveCreateReportController {
           logger: this.logger
         });
 
-        if (Result.isFailure(rebuildStructOutput)) {
-          return rebuildStructOutput;
+        if (Result.isFailure(rebuildBlockmlStructOutput)) {
+          return rebuildBlockmlStructOutput;
         }
 
-        let rebuild: RebuildStructOutput = rebuildStructOutput.value;
+        let rebuild: RebuildBlockmlStructOutput =
+          rebuildBlockmlStructOutput.value;
 
         v.currentStruct.errors = [
           ...v.currentStruct.errors,

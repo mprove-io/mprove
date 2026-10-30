@@ -14,7 +14,7 @@ import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { rebuildBlockmlBranchBridges } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridges';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
@@ -135,7 +135,7 @@ export class SaveFileController {
         })
       ),
       Result.andThrough(v =>
-        rebuildBranchBridges({
+        rebuildBlockmlBranchBridges({
           branchBridges: v.branchBridges,
           envId: v.envId,
           traceId: v.traceId,

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { rewriteSharedRefsRecursive } from '#backend/functions/build-full-mcp-json/rewrite-shared-refs-recursive/rewrite-shared-refs-recursive';
+import { rewriteSharedRefsRecursive } from '#backend/functions/mcp/build-full-mcp-json/rewrite-shared-refs-recursive/rewrite-shared-refs-recursive';
 import { mcpToolsRegistry } from '#common/constants/mcp-tools-registry';
 export type FullMcpJsonTool = {
   name: string;

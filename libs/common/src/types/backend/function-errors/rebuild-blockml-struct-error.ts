@@ -17,19 +17,22 @@ import {
   zSendToBlockmlError
 } from '#common/types/backend/function-errors/send-to-blockml-error';
 
-export type RebuildStructError =
+export type RebuildBlockmlStructError =
   | GetApiEnvsError
   | SendToBlockmlError
   | DbErrorToError
   | DbConnectionsFindManyError;
 
-export let zRebuildStructError = z.union([
+export let zRebuildBlockmlStructError = z.union([
   zGetApiEnvsError,
   zSendToBlockmlError,
   zDbErrorToError,
   zDbConnectionsFindManyError
 ]);
 
-assertTypesEqual<RebuildStructError, z.infer<typeof zRebuildStructError>>({
+assertTypesEqual<
+  RebuildBlockmlStructError,
+  z.infer<typeof zRebuildBlockmlStructError>
+>({
   value: true
 });

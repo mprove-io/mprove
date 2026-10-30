@@ -36,9 +36,9 @@ import {
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
@@ -77,7 +77,7 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { MakeUserAliasError } from '#common/types/backend/function-errors/make-user-alias-error';
 import type { ParseApiKeyError } from '#common/types/backend/function-errors/parse-api-key-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -467,7 +467,7 @@ export class SeedRecordsController {
               x: ToBackendSeedRecordsInputProjectsItem
             ): Result.ResultAsync<
               void,
-              SendToDiskError | RebuildStructError
+              SendToDiskError | RebuildBlockmlStructError
             > => {
               let newProject: ProjectTab = {
                 orgId: x.orgId,
@@ -534,9 +534,9 @@ export class SeedRecordsController {
                 );
 
               let devRebuildStructOutput: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await rebuildStruct({
+                RebuildBlockmlStructOutput,
+                RebuildBlockmlStructError
+              > = await rebuildBlockmlStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,
@@ -573,9 +573,9 @@ export class SeedRecordsController {
               } = devRebuildStructOutput.value;
 
               let prodRebuildStructOutput: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await rebuildStruct({
+                RebuildBlockmlStructOutput,
+                RebuildBlockmlStructError
+              > = await rebuildBlockmlStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,

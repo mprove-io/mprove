@@ -3,11 +3,11 @@ import { and, eq, isNull, or } from 'drizzle-orm';
 import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
 import { addModelLevelToChartSpaceNodesRecursive } from '#backend/functions/db/charts/get-charts-catalog/add-model-level-to-chart-space-nodes-recursive/add-model-level-to-chart-space-nodes-recursive';
 import { makeChartSpaceUnit } from '#backend/functions/db/charts/get-charts-catalog/make-chart-space-unit/make-chart-space-unit';
 import { makeChartUnit } from '#backend/functions/db/charts/get-charts-catalog/make-chart-unit/make-chart-unit';
 import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { makeSpaceNodes } from '#backend/functions/space/make-space-nodes/make-space-nodes';
 import type { DbService } from '#backend/services/db/db.service';
@@ -70,7 +70,7 @@ export async function getChartsCatalog(item: {
             return isModelAccessGranted === true;
           }
 
-          let isChartAccessGranted: boolean = checkAccess({
+          let isChartAccessGranted: boolean = checkMemberAccess({
             member: v.apiUserMember,
             accessRoles: chart.accessRolesCombined,
             filePath: chart.filePath

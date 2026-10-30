@@ -6,7 +6,7 @@ import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import type { ZodSafeParseResult } from 'zod';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { calculateDiskShard } from '#backend/functions/calculate-disk-shard/calculate-disk-shard';
+import { calculateDiskShard } from '#backend/services/rpc/calculate-disk-shard/calculate-disk-shard';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
 import {

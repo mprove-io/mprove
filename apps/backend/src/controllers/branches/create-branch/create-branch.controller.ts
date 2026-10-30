@@ -14,7 +14,7 @@ import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { rebuildBlockmlBranchBridges } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridges';
 import { checkBranchDoesNotExist } from '#backend/functions/db/branches/check-branch-does-not-exist/check-branch-does-not-exist';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
@@ -162,7 +162,7 @@ export class CreateBranchController {
         )
       ),
       Result.andThrough(v =>
-        rebuildBranchBridges({
+        rebuildBlockmlBranchBridges({
           branchBridges: v.newBranchBridges,
           envId: PROJECT_ENV_PROD,
           traceId: v.traceId,

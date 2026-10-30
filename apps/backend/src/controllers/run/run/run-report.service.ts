@@ -4,7 +4,7 @@ import { and, eq, or } from 'drizzle-orm';
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
 import { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -70,7 +70,7 @@ export class RunReportService {
           v.reports.filter(
             x =>
               x.draft === true ||
-              checkAccess({
+              checkMemberAccess({
                 member: v.userMember,
                 accessRoles: x.accessRolesCombined,
                 filePath: x.filePath

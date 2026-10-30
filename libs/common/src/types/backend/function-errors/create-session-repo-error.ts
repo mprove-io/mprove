@@ -9,9 +9,9 @@ import {
   zDbBridgesFindManyError
 } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBlockmlStructError,
+  zRebuildBlockmlStructError
+} from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -23,14 +23,14 @@ import {
 
 export type CreateSessionRepoError =
   | SendToDiskError
-  | RebuildStructError
+  | RebuildBlockmlStructError
   | WriteError
   | DbBranchesFindFirstError
   | DbBridgesFindManyError;
 
 export let zCreateSessionRepoError = z.union([
   zSendToDiskError,
-  zRebuildStructError,
+  zRebuildBlockmlStructError,
   zWriteError,
   zDbBranchesFindFirstError,
   zDbBridgesFindManyError

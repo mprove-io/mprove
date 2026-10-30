@@ -41,9 +41,9 @@ import {
   zGetUserSelectedGivensError
 } from '#common/types/backend/function-errors/get-user-selected-givens-error';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBlockmlStructError,
+  zRebuildBlockmlStructError
+} from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 
 export type RebuildFromYamlError =
   | DbProjectsFindFirstCheckExistsError
@@ -55,7 +55,7 @@ export type RebuildFromYamlError =
   | DbBridgesFindFirstCheckExistsError
   | GetStructCheckExistsError
   | GetModelCheckExistsAndAccessError
-  | RebuildStructError
+  | RebuildBlockmlStructError
   | BackendCreateChartFailError;
 
 export const zRebuildFromYamlError = z.union([
@@ -68,7 +68,7 @@ export const zRebuildFromYamlError = z.union([
   zDbBridgesFindFirstCheckExistsError,
   zGetStructCheckExistsError,
   zGetModelCheckExistsAndAccessError,
-  zRebuildStructError,
+  zRebuildBlockmlStructError,
   zBackendCreateChartFailError
 ]);
 

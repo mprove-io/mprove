@@ -13,11 +13,11 @@ import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
 import { getChartUrl } from '#backend/functions/db/charts/get-chart-url/get-chart-url';
 import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
 import { getDashboardUrl } from '#backend/functions/db/dashboards/get-dashboard-url/get-dashboard-url';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
@@ -202,7 +202,7 @@ export class GetStateService {
       Result.bind('reportsGrantedAccess', v =>
         Result.succeed(
           v.structReports.filter(report =>
-            checkAccess({
+            checkMemberAccess({
               member: v.userMember,
               accessRoles: report.accessRolesCombined,
               filePath: report.filePath

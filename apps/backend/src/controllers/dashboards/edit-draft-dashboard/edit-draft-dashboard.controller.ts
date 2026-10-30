@@ -16,7 +16,7 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+import { rebuildBlockmlStruct } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { makeDashboardFileText } from '#backend/functions/db/dashboards/make-dashboard-file-text/make-dashboard-file-text';
 import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
@@ -292,7 +292,7 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('rebuild', v =>
-        rebuildStruct({
+        rebuildBlockmlStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,

@@ -43,7 +43,7 @@ import {
   ZodUnion,
   z
 } from 'zod';
-import { applyMeta } from '#backend/functions/zod/apply-meta/apply-meta';
+import { zodApplyMeta } from '#backend/functions/zod/zod-apply-meta/zod-apply-meta';
 import { rebuildZodCustomSchema } from '#backend/functions/zod/zod-strip-custom-internal/build-custom-stripped-schema/rebuild-zod-custom-schema/rebuild-zod-custom-schema';
 import { zodStripCustomInternal } from '#backend/functions/zod/zod-strip-custom-internal/zod-strip-custom-internal';
 export function buildCustomStrippedSchema<T extends z.core.SomeType>(
@@ -54,7 +54,7 @@ export function buildCustomStrippedSchema<T extends z.core.SomeType>(
     // The sole intended transformation: replace custom types with `z.any()`
     // so the schema is representable in JSON Schema. Keep meta so ids,
     // descriptions, and other annotations survive.
-    return applyMeta(z.any(), schema);
+    return zodApplyMeta({ result: z.any(), src: schema });
   }
   if (schema instanceof ZodArray) {
     let element = zodStripCustomInternal(schema.def.element, cache);

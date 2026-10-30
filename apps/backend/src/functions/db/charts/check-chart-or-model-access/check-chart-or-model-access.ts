@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import type { ChartTab } from '#backend/drizzle/postgres/tables/charts';
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
-import { checkAccess } from '#backend/functions/check-access/check-access';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
 import type { Member } from '#common/types/backend/parts/member';
@@ -19,7 +19,7 @@ export function checkChartOrModelAccess(item: {
 }): Result.Result<CheckChartOrModelAccessOutput, CheckChartOrModelAccessError> {
   let { chart, model, userMember } = item;
 
-  let hasChartAccess: boolean = checkAccess({
+  let hasChartAccess: boolean = checkMemberAccess({
     member: userMember,
     accessRoles: chart.accessRolesCombined,
     filePath: chart.filePath

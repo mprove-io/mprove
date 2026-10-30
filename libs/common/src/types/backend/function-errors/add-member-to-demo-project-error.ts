@@ -17,9 +17,9 @@ import {
   zDbProjectsFindFirstError
 } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-error';
 import {
-  type RebuildBranchBridgesError,
-  zRebuildBranchBridgesError
-} from '#common/types/backend/function-errors/rebuild-branch-bridges-error';
+  type RebuildBlockmlBranchBridgesError,
+  zRebuildBlockmlBranchBridgesError
+} from '#common/types/backend/function-errors/rebuild-blockml-branch-bridges-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -31,7 +31,7 @@ import {
 
 export type AddMemberToDemoProjectError =
   | SendToDiskError
-  | RebuildBranchBridgesError
+  | RebuildBlockmlBranchBridgesError
   | WriteError
   | DbProjectsFindFirstError
   | DbMembersFindFirstError
@@ -40,7 +40,7 @@ export type AddMemberToDemoProjectError =
 
 export const zAddMemberToDemoProjectError = z.union([
   zSendToDiskError,
-  zRebuildBranchBridgesError,
+  zRebuildBlockmlBranchBridgesError,
   zWriteError,
   zDbProjectsFindFirstError,
   zDbMembersFindFirstError,

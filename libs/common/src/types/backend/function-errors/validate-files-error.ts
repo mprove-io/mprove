@@ -37,9 +37,9 @@ import {
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBlockmlStructError,
+  zRebuildBlockmlStructError
+} from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -57,7 +57,7 @@ export type ValidateFilesError =
   | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
   | SendToDiskError
-  | RebuildStructError
+  | RebuildBlockmlStructError
   | WriteError
   | GetStructCheckExistsError
   | GetModelPartXsError
@@ -71,7 +71,7 @@ export let zValidateFilesError = z.union([
   zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
   zSendToDiskError,
-  zRebuildStructError,
+  zRebuildBlockmlStructError,
   zWriteError,
   zGetStructCheckExistsError,
   zGetModelPartXsError,

@@ -20,7 +20,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { usersTable } from '#backend/drizzle/postgres/tables/users';
-import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { rebuildBlockmlBranchBridges } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridges';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
@@ -269,7 +269,7 @@ export class CreateMemberController {
         )
       ),
       Result.andThrough(v =>
-        rebuildBranchBridges({
+        rebuildBlockmlBranchBridges({
           branchBridges: v.devBranchBridges,
           envId: PROJECT_ENV_PROD,
           traceId: v.traceId,

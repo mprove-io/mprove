@@ -6,9 +6,9 @@ import type { Request } from 'express';
 import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
-import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
-import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
-import { validateMcpProjectRepoBranchEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-project-repo-branch-env-access/validate-mcp-project-repo-branch-env-access';
+import { makeMcpOutputSchema } from '#backend/functions/mcp/make-mcp-output-schema/make-mcp-output-schema';
+import { makeMcpToolResponse } from '#backend/functions/mcp/make-mcp-tool-response/make-mcp-tool-response';
+import { validateMcpProjectRepoBranchEnvAccess } from '#backend/functions/mcp/validate-mcp-project-repo-branch-env-access/validate-mcp-project-repo-branch-env-access';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
 import {
   MCP_TOOL_RUN,

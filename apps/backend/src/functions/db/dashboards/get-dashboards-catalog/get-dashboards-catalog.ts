@@ -2,10 +2,10 @@ import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
 import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
 import { makeDashboardSpaceUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-space-unit/make-dashboard-space-unit';
 import { makeDashboardUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-unit/make-dashboard-unit';
 import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { makeSpaceNodes } from '#backend/functions/space/make-space-nodes/make-space-nodes';
 import type { DbService } from '#backend/services/db/db.service';
 import { MY_DASHBOARDS_SPACE_TITLE } from '#common/constants/top';
@@ -49,7 +49,7 @@ export async function getDashboardsCatalog(item: {
         v.dashboards.filter(dashboard =>
           dashboard.draft === true
             ? true
-            : checkAccess({
+            : checkMemberAccess({
                 member: v.apiUserMember,
                 accessRoles: dashboard.accessRolesCombined,
                 filePath: dashboard.filePath

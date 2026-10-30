@@ -3,7 +3,7 @@ import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/tables/model-f
 import {
   collectMalloyFieldLeafInfosFromSourceRecursive,
   type MalloyFieldLeafInfo
-} from '#backend/functions/blockml/rebuild-struct/build-model-field-leafs/collect-malloy-field-leaf-infos-from-source-recursive/collect-malloy-field-leaf-infos-from-source-recursive';
+} from '#backend/functions/blockml/rebuild-blockml-struct/build-model-field-leafs/collect-malloy-field-leaf-infos-from-source-recursive/collect-malloy-field-leaf-infos-from-source-recursive';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Model } from '#common/types/blockml/parts/model/model';
 

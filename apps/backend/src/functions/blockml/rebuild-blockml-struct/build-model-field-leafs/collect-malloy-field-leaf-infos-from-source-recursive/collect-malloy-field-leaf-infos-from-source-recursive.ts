@@ -2,7 +2,7 @@ import type {
   FieldDef as MalloyFieldDef,
   SourceDef as MalloySourceDef
 } from '@malloydata/malloy';
-import { getMalloyFieldName } from '#backend/functions/blockml/rebuild-struct/build-model-field-leafs/collect-malloy-field-leaf-infos-from-source-recursive/get-malloy-field-name/get-malloy-field-name';
+import { getMalloyFieldName } from '#backend/functions/blockml/rebuild-blockml-struct/build-model-field-leafs/collect-malloy-field-leaf-infos-from-source-recursive/get-malloy-field-name/get-malloy-field-name';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export type MalloyFieldLeafInfo = {

@@ -10,9 +10,9 @@ import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
@@ -24,7 +24,7 @@ import type { TabService } from '#backend/services/tab/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Ev } from '#common/types/backend/parts/ev';
@@ -173,51 +173,55 @@ export async function addProject(item: {
     needValidate: false
   });
 
-  let prodStructResult: Result.Result<RebuildStructOutput, RebuildStructError> =
-    await rebuildStruct({
-      traceId: traceId,
-      orgId: newProject.orgId,
-      projectId: newProject.projectId,
-      repoId: PROD_REPO_ID,
-      structId: prodStructId,
-      diskFiles: diskCreateProjectOutput.prodFiles,
-      mproveDir: diskCreateProjectOutput.mproveDir,
-      envId: PROJECT_ENV_PROD,
-      selectedGivens: [],
-      overrideTimezone: undefined,
-      evs: evs,
-      connections: connections,
-      db: db,
-      tabService: tabService,
-      rpcService: rpcService,
-      cs: cs,
-      logger: logger
-    });
+  let prodStructResult: Result.Result<
+    RebuildBlockmlStructOutput,
+    RebuildBlockmlStructError
+  > = await rebuildBlockmlStruct({
+    traceId: traceId,
+    orgId: newProject.orgId,
+    projectId: newProject.projectId,
+    repoId: PROD_REPO_ID,
+    structId: prodStructId,
+    diskFiles: diskCreateProjectOutput.prodFiles,
+    mproveDir: diskCreateProjectOutput.mproveDir,
+    envId: PROJECT_ENV_PROD,
+    selectedGivens: [],
+    overrideTimezone: undefined,
+    evs: evs,
+    connections: connections,
+    db: db,
+    tabService: tabService,
+    rpcService: rpcService,
+    cs: cs,
+    logger: logger
+  });
 
   if (Result.isFailure(prodStructResult)) {
     return prodStructResult;
   }
 
-  let devStructResult: Result.Result<RebuildStructOutput, RebuildStructError> =
-    await rebuildStruct({
-      traceId: traceId,
-      orgId: newProject.orgId,
-      projectId: newProject.projectId,
-      repoId: user.userId,
-      structId: devStructId,
-      diskFiles: diskCreateProjectOutput.prodFiles,
-      mproveDir: diskCreateProjectOutput.mproveDir,
-      envId: PROJECT_ENV_PROD,
-      selectedGivens: [],
-      overrideTimezone: undefined,
-      evs: evs,
-      connections: connections,
-      db: db,
-      tabService: tabService,
-      rpcService: rpcService,
-      cs: cs,
-      logger: logger
-    });
+  let devStructResult: Result.Result<
+    RebuildBlockmlStructOutput,
+    RebuildBlockmlStructError
+  > = await rebuildBlockmlStruct({
+    traceId: traceId,
+    orgId: newProject.orgId,
+    projectId: newProject.projectId,
+    repoId: user.userId,
+    structId: devStructId,
+    diskFiles: diskCreateProjectOutput.prodFiles,
+    mproveDir: diskCreateProjectOutput.mproveDir,
+    envId: PROJECT_ENV_PROD,
+    selectedGivens: [],
+    overrideTimezone: undefined,
+    evs: evs,
+    connections: connections,
+    db: db,
+    tabService: tabService,
+    rpcService: rpcService,
+    cs: cs,
+    logger: logger
+  });
 
   if (Result.isFailure(devStructResult)) {
     return devStructResult;

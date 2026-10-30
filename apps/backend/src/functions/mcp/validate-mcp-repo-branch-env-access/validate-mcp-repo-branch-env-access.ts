@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import { validateMcpEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-env-access/validate-mcp-env-access';
+import { validateMcpEnvAccess } from '#backend/functions/mcp/validate-mcp-env-access/validate-mcp-env-access';
 import type { ValidateMcpRepoBranchEnvAccessError } from '#common/types/backend/function-errors/validate-mcp-repo-branch-env-access-error';
 import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 import { validateMcpSessionBranchId } from './validate-mcp-session-branch-id/validate-mcp-session-branch-id';

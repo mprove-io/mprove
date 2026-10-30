@@ -8,7 +8,7 @@ import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections
 import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
 import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/tables/model-field-leafs';
 import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
-import { buildModelFieldLeafs } from '#backend/functions/blockml/rebuild-struct/build-model-field-leafs/build-model-field-leafs';
+import { buildModelFieldLeafs } from '#backend/functions/blockml/rebuild-blockml-struct/build-model-field-leafs/build-model-field-leafs';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { tabToBaseConnection } from '#backend/functions/db/connections/tab-to-base-connection/tab-to-base-connection';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
@@ -29,7 +29,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { Env } from '#common/types/backend/parts/env';
@@ -48,7 +48,7 @@ import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/
 import type { ToBlockmlRebuildStructRequest } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-request';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
-export type RebuildStructOutput = {
+export type RebuildBlockmlStructOutput = {
   struct: StructTab;
   models: Model[];
   reports: Report[];
@@ -59,7 +59,7 @@ export type RebuildStructOutput = {
   queries: Query[];
 };
 
-export async function rebuildStruct(item: {
+export async function rebuildBlockmlStruct(item: {
   traceId: string;
   orgId: string;
   projectId: string;
@@ -82,7 +82,7 @@ export async function rebuildStruct(item: {
   rpcService: RpcService;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
-}): Result.ResultAsync<RebuildStructOutput, RebuildStructError> {
+}): Result.ResultAsync<RebuildBlockmlStructOutput, RebuildBlockmlStructError> {
   let {
     traceId,
     structId,
@@ -279,7 +279,7 @@ export async function rebuildStruct(item: {
     }
   }
 
-  let value: RebuildStructOutput = {
+  let value: RebuildBlockmlStructOutput = {
     struct: struct,
     models: rs.models,
     reports: rs.reports,

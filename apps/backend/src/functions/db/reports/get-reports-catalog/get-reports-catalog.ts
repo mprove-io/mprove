@@ -3,8 +3,8 @@ import { and, eq, or } from 'drizzle-orm';
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
 import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { makeReportSpaceUnit } from '#backend/functions/db/reports/get-reports-catalog/make-report-space-unit/make-report-space-unit';
 import { makeReportUnit } from '#backend/functions/db/reports/get-reports-catalog/make-report-unit/make-report-unit';
 import { makeSpaceNodes } from '#backend/functions/space/make-space-nodes/make-space-nodes';
@@ -55,7 +55,7 @@ export async function getReportsCatalog(item: {
     Result.bind('reportsGrantedAccess', v =>
       Result.succeed(
         v.savedReports.filter(report =>
-          checkAccess({
+          checkMemberAccess({
             member: v.userMember,
             accessRoles: report.accessRolesCombined,
             filePath: report.filePath

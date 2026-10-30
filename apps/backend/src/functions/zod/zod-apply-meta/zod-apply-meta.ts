@@ -22,11 +22,21 @@
 //   - `z.lazy()` placeholder pre-seeded before recursion to survive
 //     self-referential getters (e.g. `zModelNode.children`).
 import type { z } from 'zod';
-import { getZodCustomMeta } from '#backend/functions/zod/apply-meta/get-zod-custom-meta/get-zod-custom-meta';
-export function applyMeta<T extends z.ZodType>(result: T, src: unknown): T {
-  let meta = getZodCustomMeta(src);
+import { getZodCustomMeta } from '#backend/functions/zod/zod-apply-meta/get-zod-custom-meta/get-zod-custom-meta';
+
+export function zodApplyMeta<T extends z.ZodType>(item: {
+  result: T;
+  src: unknown;
+}): T {
+  let { result, src } = item;
+
+  let meta: Record<string, unknown> = getZodCustomMeta(src);
+
   if (meta && Object.keys(meta).length > 0) {
-    return result.meta(meta) as T;
+    let schema: T = result.meta(meta) as T;
+
+    return schema;
   }
+
   return result;
 }

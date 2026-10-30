@@ -4,7 +4,7 @@ import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import { makeReport } from '#backend/functions/db/reports/make-report/make-report';
 import type { DbService } from '#backend/services/db/db.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
@@ -65,7 +65,7 @@ export async function getReportCheckExistsAndAccess(item: {
     ),
     Result.andThrough(v =>
       v.report.draft === false &&
-      checkAccess({
+      checkMemberAccess({
         member: v.userMember,
         accessRoles: v.report.accessRolesCombined,
         filePath: v.report.filePath

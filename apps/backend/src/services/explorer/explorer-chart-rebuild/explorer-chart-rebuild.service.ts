@@ -12,7 +12,7 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
-import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+import { rebuildBlockmlStruct } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
@@ -209,7 +209,7 @@ export class ExplorerChartRebuildService {
         })
       ),
       Result.bind('rebuild', v =>
-        rebuildStruct({
+        rebuildBlockmlStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.session.projectId,

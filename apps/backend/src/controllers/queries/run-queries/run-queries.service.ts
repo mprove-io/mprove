@@ -4,6 +4,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import { type Credentials, JWT } from 'google-auth-library';
 import type { BackendConfig } from '#backend/config/backend-config';
+import { runQuery } from '#backend/controllers/queries/run-queries/run-query/run-query';
 import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
@@ -33,7 +34,6 @@ import { runTrinoQuery } from '#backend/functions/dwh/trino/run-trino-query/run-
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
-import { runQuery } from '#backend/functions/store/run-query/run-query';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
 import { UrlService } from '#backend/services/url/url.service';

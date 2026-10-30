@@ -8,9 +8,9 @@ import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
 import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
@@ -24,7 +24,7 @@ import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { ValidateFilesError } from '#common/types/backend/function-errors/validate-files-error';
 import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/files/validate-files/validate-files-output';
 
@@ -124,14 +124,14 @@ export class ValidateFilesService {
           v.branchBridges,
           async (
             bridge: BridgeTab
-          ): Result.ResultAsync<void, RebuildStructError> => {
+          ): Result.ResultAsync<void, RebuildBlockmlStructError> => {
             if (bridge.envId === v.envId) {
               let structId: string = makeId();
 
               let result: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await rebuildStruct({
+                RebuildBlockmlStructOutput,
+                RebuildBlockmlStructError
+              > = await rebuildBlockmlStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,

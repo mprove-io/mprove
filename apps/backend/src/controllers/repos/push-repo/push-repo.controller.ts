@@ -17,9 +17,9 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
@@ -44,7 +44,7 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPushRepoOutput } from '#common/types/backend/routes/repos/push-repo/push-repo-output';
 
@@ -201,14 +201,16 @@ export class PushRepoController {
       Result.andThrough(v =>
         Result.sequence(
           v.prodBranchBridges,
-          async (bridge): Result.ResultAsync<void, RebuildStructError> => {
+          async (
+            bridge
+          ): Result.ResultAsync<void, RebuildBlockmlStructError> => {
             if (bridge.envId === PROJECT_ENV_PROD || bridge.envId === v.envId) {
               let structId: string = makeId();
 
               let result: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await rebuildStruct({
+                RebuildBlockmlStructOutput,
+                RebuildBlockmlStructError
+              > = await rebuildBlockmlStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,

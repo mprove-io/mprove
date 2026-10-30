@@ -3,15 +3,15 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
-import { rebuildBranchBridge } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridge/rebuild-branch-bridge';
+import { rebuildBlockmlBranchBridge } from '#backend/functions/blockml/rebuild-blockml-branch-bridges/rebuild-blockml-branch-bridge/rebuild-blockml-branch-bridge';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';
 import type { TabService } from '#backend/services/tab/tab.service';
-import type { RebuildBranchBridgeError } from '#common/types/backend/function-errors/rebuild-branch-bridge-error';
-import type { RebuildBranchBridgesError } from '#common/types/backend/function-errors/rebuild-branch-bridges-error';
+import type { RebuildBlockmlBranchBridgeError } from '#common/types/backend/function-errors/rebuild-blockml-branch-bridge-error';
+import type { RebuildBlockmlBranchBridgesError } from '#common/types/backend/function-errors/rebuild-blockml-branch-bridges-error';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
-export async function rebuildBranchBridges(item: {
+export async function rebuildBlockmlBranchBridges(item: {
   branchBridges: BridgeTab[];
   envId: string;
   traceId: string;
@@ -25,7 +25,7 @@ export async function rebuildBranchBridges(item: {
   rpcService: RpcService;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
-}): Result.ResultAsync<void, RebuildBranchBridgesError> {
+}): Result.ResultAsync<void, RebuildBlockmlBranchBridgesError> {
   return Result.pipe(
     Result.succeed(item),
     Result.andThrough(v =>
@@ -33,8 +33,8 @@ export async function rebuildBranchBridges(item: {
         v.branchBridges,
         (
           bridge: BridgeTab
-        ): Result.ResultAsync<void, RebuildBranchBridgeError> =>
-          rebuildBranchBridge({
+        ): Result.ResultAsync<void, RebuildBlockmlBranchBridgeError> =>
+          rebuildBlockmlBranchBridge({
             bridge: bridge,
             envId: v.envId,
             traceId: v.traceId,

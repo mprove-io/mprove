@@ -16,9 +16,9 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import {
-  type RebuildStructOutput,
-  rebuildStruct
-} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+  type RebuildBlockmlStructOutput,
+  rebuildBlockmlStruct
+} from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -31,7 +31,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { RebuildBlockmlStructError } from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { BridgeItem } from '#common/types/backend/parts/special/bridge-item';
@@ -148,7 +148,10 @@ export class SpecialRebuildStructsController {
           v.bridges,
           async (
             bridge: BridgeTab
-          ): Result.ResultAsync<void, RebuildStructError | DbErrorToError> => {
+          ): Result.ResultAsync<
+            void,
+            RebuildBlockmlStructError | DbErrorToError
+          > => {
             let project: ProjectTab = v.projects.find(
               project => project.projectId === bridge.projectId
             );
@@ -203,9 +206,9 @@ export class SpecialRebuildStructsController {
               let structId: string = makeId();
 
               let rebuildResult: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await rebuildStruct({
+                RebuildBlockmlStructOutput,
+                RebuildBlockmlStructError
+              > = await rebuildBlockmlStruct({
                 traceId: v.traceId,
                 orgId: project.orgId,
                 projectId: project.projectId,

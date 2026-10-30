@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBlockmlStructError,
+  zRebuildBlockmlStructError
+} from '#common/types/backend/function-errors/rebuild-blockml-struct-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -13,11 +13,14 @@ import {
   zWriteError
 } from '#common/types/backend/function-errors/write-error';
 
-export type AddProjectError = SendToDiskError | RebuildStructError | WriteError;
+export type AddProjectError =
+  | SendToDiskError
+  | RebuildBlockmlStructError
+  | WriteError;
 
 export let zAddProjectError = z.union([
   zSendToDiskError,
-  zRebuildStructError,
+  zRebuildBlockmlStructError,
   zWriteError
 ]);
 

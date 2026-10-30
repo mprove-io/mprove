@@ -3,7 +3,7 @@ import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import type { Member } from '#common/types/backend/parts/member';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
-export function checkAccess(item: {
+export function checkMemberAccess(item: {
   member: MemberTab | Member;
   accessRoles: AccessRoleCombined[];
   filePath?: string;

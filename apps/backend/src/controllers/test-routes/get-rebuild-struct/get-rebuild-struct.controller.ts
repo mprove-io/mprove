@@ -25,7 +25,7 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only
-// backend use apps/backend/src/services/blockml.service.ts -> rebuildStruct
+// backend use apps/backend/src/services/blockml.service.ts -> rebuildBlockmlStruct
 @SkipJwtCheck()
 @SkipThrottle()
 @UseGuards(TestRoutesGuard)

@@ -8,7 +8,7 @@ import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
+import { rebuildBlockmlStruct } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { getDashboardXUsingDashboardTab } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/get-dashboard-x-using-dashboard-tab';
@@ -189,7 +189,7 @@ export async function getDashboardData(item: {
       })
     ),
     Result.bind('rebuild', v =>
-      rebuildStruct({
+      rebuildBlockmlStruct({
         traceId: v.traceId,
         orgId: v.project.orgId,
         projectId: v.projectId,

@@ -5,8 +5,8 @@ import {
   dashboardsTable
 } from '#backend/drizzle/postgres/tables/dashboards';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
 import { tabToDashboardPart } from '#backend/functions/db/dashboards/get-dashboard-parts/tab-to-dashboard-part/tab-to-dashboard-part';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
@@ -56,7 +56,7 @@ export async function getDashboardParts(item: {
         v.dashboards.filter(dashboard =>
           dashboard.draft === true
             ? true
-            : checkAccess({
+            : checkMemberAccess({
                 member: v.apiUserMember,
                 accessRoles: dashboard.accessRolesCombined,
                 filePath: dashboard.filePath

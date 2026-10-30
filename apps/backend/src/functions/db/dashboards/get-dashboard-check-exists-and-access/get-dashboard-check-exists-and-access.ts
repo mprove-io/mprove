@@ -4,7 +4,7 @@ import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
 import { dashboardsTable } from '#backend/drizzle/postgres/tables/dashboards';
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkAccess } from '#backend/functions/check-access/check-access';
+import { checkMemberAccess } from '#backend/functions/db/members/check-member-access/check-member-access';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
 import type { Member } from '#common/types/backend/parts/member';
@@ -33,7 +33,7 @@ export async function getDashboardCheckExistsAndAccess(item: {
     ),
     Result.andThrough(v =>
       v.dashboard.draft === false &&
-      checkAccess({
+      checkMemberAccess({
         member: v.userMember,
         accessRoles: v.dashboard.accessRolesCombined,
         filePath: v.dashboard.filePath
