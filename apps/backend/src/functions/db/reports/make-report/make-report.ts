@@ -1,5 +1,5 @@
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
-import { makeReportFullId } from '#backend/functions/hash/make-report-full-id/make-report-full-id';
+import { makeReportFullId } from '#backend/functions/db/reports/make-report-full-id/make-report-full-id';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { ReportField } from '#common/types/blockml/parts/report/report-field';

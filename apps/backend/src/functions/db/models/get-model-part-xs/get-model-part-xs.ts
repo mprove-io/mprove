@@ -4,7 +4,7 @@ import {
   type ModelEnt,
   modelsTable
 } from '#backend/drizzle/postgres/tables/models';
-import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { tabToModelPart } from '#backend/functions/db/models/get-model-part-xs/tab-to-model-part/tab-to-model-part';
 import type { DbService } from '#backend/services/db/db.service';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';

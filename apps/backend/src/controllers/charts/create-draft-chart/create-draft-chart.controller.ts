@@ -20,9 +20,9 @@ import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
+import { makeChartFullId } from '#backend/functions/db/charts/make-chart-full-id/make-chart-full-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
@@ -31,12 +31,12 @@ import {
   prepStoreMconfigQuery
 } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
 import {
   type EditMalloyQueryOutput,
   editMalloyQuery

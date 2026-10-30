@@ -3,8 +3,8 @@ import type {
   ChartEnt,
   ChartTab
 } from '#backend/drizzle/postgres/tables/charts';
+import { makeChartFullId } from '#backend/functions/db/charts/make-chart-full-id/make-chart-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ChartLt } from '#common/types/shared/st-lt/charts/chart-lt';
 import type { ChartSt } from '#common/types/shared/st-lt/charts/chart-st';

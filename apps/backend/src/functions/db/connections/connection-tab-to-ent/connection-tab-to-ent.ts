@@ -3,8 +3,8 @@ import type {
   ConnectionEnt,
   ConnectionTab
 } from '#backend/drizzle/postgres/tables/connections';
+import { makeConnectionFullId } from '#backend/functions/db/connections/make-connection-full-id/make-connection-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';

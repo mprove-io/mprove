@@ -1,5 +1,5 @@
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
-import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
+import { makeUserFullName } from '#backend/functions/db/users/make-user-full-name/make-user-full-name';
 import type { Member } from '#common/types/backend/parts/member';
 
 export function memberTabToApi(item: { member: MemberTab }): Member {
@@ -12,7 +12,7 @@ export function memberTabToApi(item: { member: MemberTab }): Member {
     alias: member.alias,
     firstName: member.firstName,
     lastName: member.lastName,
-    fullName: makeFullName({
+    fullName: makeUserFullName({
       firstName: member.firstName,
       lastName: member.lastName
     }),

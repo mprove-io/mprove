@@ -1,5 +1,5 @@
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
-import { makeReportFullId } from '#backend/functions/hash/make-report-full-id/make-report-full-id';
+import { makeReportFullId } from '#backend/functions/db/reports/make-report-full-id/make-report-full-id';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Report } from '#common/types/blockml/parts/report/report';
 

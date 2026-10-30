@@ -3,8 +3,8 @@ import type {
   ModelEnt,
   ModelTab
 } from '#backend/drizzle/postgres/tables/models';
+import { makeModelFullId } from '#backend/functions/db/models/make-model-full-id/make-model-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeModelFullId } from '#backend/functions/hash/make-model-full-id/make-model-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
 import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';

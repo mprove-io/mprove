@@ -21,7 +21,7 @@ import type { ProjectTab } from '#backend/drizzle/postgres/tables/projects';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { usersTable } from '#backend/drizzle/postgres/tables/users';
-import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
+import { makeUserFullName } from '#backend/functions/db/users/make-user-full-name/make-user-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -169,7 +169,7 @@ export class GetServerUsersController {
             alias: user.alias,
             firstName: user.firstName,
             lastName: user.lastName,
-            fullName: makeFullName({
+            fullName: makeUserFullName({
               firstName: user.firstName,
               lastName: user.lastName
             }),

@@ -3,7 +3,7 @@ import retry from 'async-retry';
 import test from 'ava';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
-import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { makeSessionId } from '#backend/functions/db/sessions/make-session-id/make-session-id';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';

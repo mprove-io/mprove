@@ -1,6 +1,6 @@
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import { cleanConnectionInternalFields } from '#backend/functions/db/connections/clean-connection-internal-fields/clean-connection-internal-fields';
-import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
+import { makeConnectionFullId } from '#backend/functions/db/connections/make-connection-full-id/make-connection-full-id';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';

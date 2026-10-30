@@ -1,5 +1,5 @@
 import type { BranchTab } from '#backend/drizzle/postgres/tables/branches';
-import { makeBranchFullId } from '#backend/functions/hash/make-branch-full-id/make-branch-full-id';
+import { makeBranchFullId } from '#backend/functions/db/branches/make-branch-full-id/make-branch-full-id';
 
 export function makeBranch(item: {
   projectId: string;

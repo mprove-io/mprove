@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { EnvEnt, EnvTab } from '#backend/drizzle/postgres/tables/envs';
+import { makeEnvFullId } from '#backend/functions/db/envs/make-env-full-id/make-env-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeEnvFullId } from '#backend/functions/hash/make-env-full-id/make-env-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { EnvLt } from '#common/types/shared/st-lt/envs/env-lt';
 import type { EnvSt } from '#common/types/shared/st-lt/envs/env-st';

@@ -3,8 +3,8 @@ import type {
   BranchEnt,
   BranchTab
 } from '#backend/drizzle/postgres/tables/branches';
+import { makeBranchFullId } from '#backend/functions/db/branches/make-branch-full-id/make-branch-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeBranchFullId } from '#backend/functions/hash/make-branch-full-id/make-branch-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
 import type { BranchSt } from '#common/types/shared/st-lt/branches/branch-st';

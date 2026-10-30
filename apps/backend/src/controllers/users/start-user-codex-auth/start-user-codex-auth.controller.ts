@@ -8,8 +8,8 @@ import {
 } from '#backend/controllers/users/start-user-codex-auth/start-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { startDeviceAuth } from '#backend/functions/codex/start-device-auth/start-device-auth';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { startCodexAuthDevice } from '#backend/functions/llm-providers/codex/auth/start-codex-auth-device/start-codex-auth-device';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -42,7 +42,7 @@ export class StartUserCodexAuthController {
           user: v.user
         })
       ),
-      Result.bind('started', v => startDeviceAuth()),
+      Result.bind('started', v => startCodexAuthDevice()),
       Result.map(
         (v): ToBackendStartUserCodexAuthOutput => ({
           userCode: v.started.userCode,

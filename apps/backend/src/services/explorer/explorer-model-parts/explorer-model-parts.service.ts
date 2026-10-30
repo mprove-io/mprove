@@ -7,11 +7,11 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
-import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
-import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
 import type {

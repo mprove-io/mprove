@@ -8,10 +8,10 @@ import {
 } from '#backend/controllers/users/poll-user-codex-auth/poll-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { pollDeviceAuth } from '#backend/functions/codex/poll-device-auth/poll-device-auth';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
+import { pollCodexAuthDevice } from '#backend/functions/llm-providers/codex/auth/poll-codex-auth-device/poll-codex-auth-device';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -51,7 +51,7 @@ export class PollUserCodexAuthController {
         })
       ),
       Result.bind('status', v =>
-        pollDeviceAuth({
+        pollCodexAuthDevice({
           userId: v.user.userId,
           deviceAuthId: v.deviceAuthId,
           userCode: v.userCode,

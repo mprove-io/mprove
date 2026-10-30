@@ -11,7 +11,7 @@ import OpenAI from 'openai';
 import {
   type GetCodexModelsOutput,
   getCodexModels
-} from '#backend/functions/codex/get-codex-models/get-codex-models';
+} from '#backend/functions/llm-providers/codex/get-codex-models/get-codex-models';
 import { isCodexModelSupportedByOpencode } from '#backend/functions/llm-providers/codex/is-codex-model-supported-by-opencode/is-codex-model-supported-by-opencode';
 import { DbService } from '#backend/services/db/db.service';
 import { anthropicModelToLlmModelPart } from '#backend/services/llm-model/anthropic-model-to-llm-model-part/anthropic-model-to-llm-model-part';

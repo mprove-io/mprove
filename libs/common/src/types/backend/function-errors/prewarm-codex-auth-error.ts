@@ -1,33 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type LoadAuthError,
-  zLoadAuthError
-} from '#common/types/backend/function-errors/load-auth-error';
+  type LoadCodexAuthError,
+  zLoadCodexAuthError
+} from '#common/types/backend/function-errors/load-codex-auth-error';
 import {
-  type PersistRefreshedTokensError,
-  zPersistRefreshedTokensError
-} from '#common/types/backend/function-errors/persist-refreshed-tokens-error';
+  type PersistCodexAuthTokensError,
+  zPersistCodexAuthTokensError
+} from '#common/types/backend/function-errors/persist-codex-auth-tokens-error';
 import {
-  type RefreshAccessTokenError,
-  zRefreshAccessTokenError
-} from '#common/types/backend/function-errors/refresh-access-token-error';
+  type RefreshCodexAuthAccessTokenError,
+  zRefreshCodexAuthAccessTokenError
+} from '#common/types/backend/function-errors/refresh-codex-auth-access-token-error';
 import {
-  type ValidateExpiresInError,
-  zValidateExpiresInError
-} from '#common/types/backend/function-errors/validate-expires-in-error';
+  type ValidateCodexAuthExpiresInError,
+  zValidateCodexAuthExpiresInError
+} from '#common/types/backend/function-errors/validate-codex-auth-expires-in-error';
 
 export type PrewarmCodexAuthError =
-  | LoadAuthError
-  | RefreshAccessTokenError
-  | ValidateExpiresInError
-  | PersistRefreshedTokensError;
+  | LoadCodexAuthError
+  | RefreshCodexAuthAccessTokenError
+  | ValidateCodexAuthExpiresInError
+  | PersistCodexAuthTokensError;
 
 export let zPrewarmCodexAuthError = z.union([
-  zLoadAuthError,
-  zRefreshAccessTokenError,
-  zValidateExpiresInError,
-  zPersistRefreshedTokensError
+  zLoadCodexAuthError,
+  zRefreshCodexAuthAccessTokenError,
+  zValidateCodexAuthExpiresInError,
+  zPersistCodexAuthTokensError
 ]);
 
 assertTypesEqual<PrewarmCodexAuthError, z.infer<typeof zPrewarmCodexAuthError>>(

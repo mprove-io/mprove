@@ -3,8 +3,8 @@ import type {
   BridgeEnt,
   BridgeTab
 } from '#backend/drizzle/postgres/tables/bridges';
+import { makeBridgeFullId } from '#backend/functions/db/bridges/make-bridge-full-id/make-bridge-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeBridgeFullId } from '#backend/functions/hash/make-bridge-full-id/make-bridge-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { BridgeLt } from '#common/types/shared/st-lt/bridges/bridge-lt';
 import type { BridgeSt } from '#common/types/shared/st-lt/bridges/bridge-st';

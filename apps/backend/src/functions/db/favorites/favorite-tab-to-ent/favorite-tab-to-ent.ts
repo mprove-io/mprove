@@ -3,7 +3,7 @@ import type {
   FavoriteEnt,
   FavoriteTab
 } from '#backend/drizzle/postgres/tables/favorites';
-import { makeFavoriteFullId } from '#backend/functions/hash/make-favorite-full-id/make-favorite-full-id';
+import { makeFavoriteFullId } from '#backend/functions/db/favorites/make-favorite-full-id/make-favorite-full-id';
 
 export function favoriteTabToEnt(item: {
   tab: FavoriteTab;

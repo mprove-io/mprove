@@ -19,6 +19,8 @@ import { connectionsTable } from '#backend/drizzle/postgres/tables/connections';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { cachedColumnTabToApi } from '#backend/functions/db/cached-columns/cached-column-tab-to-api/cached-column-tab-to-api';
+import { makeCachedColumnFullId } from '#backend/functions/db/cached-columns/make-cached-column-full-id/make-cached-column-full-id';
+import { makeCachedPartFullId } from '#backend/functions/db/cached-parts/make-cached-part-full-id/make-cached-part-full-id';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getCacheEnvId } from '#backend/functions/db/envs/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
@@ -33,8 +35,6 @@ import { fetchPgCachedParts } from '#backend/functions/dwh/pg/fetch-pg-cached-pa
 import { fetchPrestoCachedParts } from '#backend/functions/dwh/presto/fetch-presto-cached-parts/fetch-presto-cached-parts';
 import { fetchSnowflakeCachedParts } from '#backend/functions/dwh/snowflake/fetch-snowflake-cached-parts/fetch-snowflake-cached-parts';
 import { fetchTrinoCachedParts } from '#backend/functions/dwh/trino/fetch-trino-cached-parts/fetch-trino-cached-parts';
-import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
-import { makeCachedPartFullId } from '#backend/functions/hash/make-cached-part-full-id/make-cached-part-full-id';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

@@ -19,7 +19,7 @@ import {
   type RebuildStructOutput,
   rebuildStruct
 } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
-import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';

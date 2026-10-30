@@ -3,8 +3,8 @@ import type {
   CachedPartsEnt,
   CachedPartTab
 } from '#backend/drizzle/postgres/tables/cached-parts';
+import { makeCachedPartFullId } from '#backend/functions/db/cached-parts/make-cached-part-full-id/make-cached-part-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeCachedPartFullId } from '#backend/functions/hash/make-cached-part-full-id/make-cached-part-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { CachedPartLt } from '#common/types/shared/st-lt/cached-parts/cached-part-lt';
 import type { CachedPartSt } from '#common/types/shared/st-lt/cached-parts/cached-part-st';

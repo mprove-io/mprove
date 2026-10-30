@@ -3,8 +3,8 @@ import type {
   DashboardEnt,
   DashboardTab
 } from '#backend/drizzle/postgres/tables/dashboards';
+import { makeDashboardFullId } from '#backend/functions/db/dashboards/make-dashboard-full-id/make-dashboard-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeDashboardFullId } from '#backend/functions/hash/make-dashboard-full-id/make-dashboard-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { DashboardLt } from '#common/types/shared/st-lt/dashboards/dashboard-lt';
 import type { DashboardSt } from '#common/types/shared/st-lt/dashboards/dashboard-st';

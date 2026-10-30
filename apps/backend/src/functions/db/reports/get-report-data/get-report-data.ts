@@ -16,12 +16,12 @@ import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
 import {
   type PrepStoreMconfigQueryOutput,
   prepStoreMconfigQuery
 } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { calculateReportData } from '#backend/functions/db/reports/get-report-data/calculate-report-data/calculate-report-data';

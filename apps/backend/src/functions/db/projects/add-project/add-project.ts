@@ -17,7 +17,7 @@ import { makeBranch } from '#backend/functions/db/branches/make-branch/make-bran
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
 import { makeMember } from '#backend/functions/db/members/make-member/make-member';
-import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';
 import type { TabService } from '#backend/services/tab/tab.service';

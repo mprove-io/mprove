@@ -3,8 +3,8 @@ import type {
   ReportEnt,
   ReportTab
 } from '#backend/drizzle/postgres/tables/reports';
+import { makeReportFullId } from '#backend/functions/db/reports/make-report-full-id/make-report-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeReportFullId } from '#backend/functions/hash/make-report-full-id/make-report-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ReportLt } from '#common/types/shared/st-lt/reports/report-lt';
 import type { ReportSt } from '#common/types/shared/st-lt/reports/report-st';

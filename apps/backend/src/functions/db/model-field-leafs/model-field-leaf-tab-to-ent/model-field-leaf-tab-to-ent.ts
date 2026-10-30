@@ -3,7 +3,7 @@ import type {
   ModelFieldLeafEnt,
   ModelFieldLeafTab
 } from '#backend/drizzle/postgres/tables/model-field-leafs';
-import { makeModelFieldLeafFullId } from '#backend/functions/hash/make-model-field-leaf-full-id/make-model-field-leaf-full-id';
+import { makeModelFieldLeafFullId } from '#backend/functions/db/model-field-leafs/model-field-leaf-tab-to-ent/make-model-field-leaf-full-id/make-model-field-leaf-full-id';
 
 export function modelFieldLeafTabToEnt(item: {
   tab: ModelFieldLeafTab;

@@ -3,8 +3,8 @@ import type {
   ProviderEnt,
   ProviderTab
 } from '#backend/drizzle/postgres/tables/providers';
+import { makeProviderFullId } from '#backend/functions/db/providers/make-provider-full-id/make-provider-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeProviderFullId } from '#backend/functions/hash/make-provider-full-id/make-provider-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';

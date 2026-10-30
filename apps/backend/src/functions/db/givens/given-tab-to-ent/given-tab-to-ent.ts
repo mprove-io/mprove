@@ -3,8 +3,8 @@ import type {
   GivenEnt,
   GivenTab
 } from '#backend/drizzle/postgres/tables/givens';
+import { makeGivenFullId } from '#backend/functions/db/givens/make-given-full-id/make-given-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeGivenFullId } from '#backend/functions/hash/make-given-full-id/make-given-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
 import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';

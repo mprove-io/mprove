@@ -1,5 +1,5 @@
 import type { BridgeTab } from '#backend/drizzle/postgres/tables/bridges';
-import { makeBridgeFullId } from '#backend/functions/hash/make-bridge-full-id/make-bridge-full-id';
+import { makeBridgeFullId } from '#backend/functions/db/bridges/make-bridge-full-id/make-bridge-full-id';
 
 export function makeBridge(item: {
   projectId: string;

@@ -13,7 +13,7 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { archiveSession } from '#backend/functions/session-archive/archive-session/archive-session';
+import { archiveSession } from '#backend/functions/db/sessions/archive-session/archive-session';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';

@@ -3,8 +3,8 @@ import type {
   CachedColumnsEnt,
   CachedColumnTab
 } from '#backend/drizzle/postgres/tables/cached-columns';
+import { makeCachedColumnFullId } from '#backend/functions/db/cached-columns/make-cached-column-full-id/make-cached-column-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { CachedColumnLt } from '#common/types/shared/st-lt/cached-columns/cached-column-lt';
 import type { CachedColumnSt } from '#common/types/shared/st-lt/cached-columns/cached-column-st';

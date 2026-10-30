@@ -21,14 +21,14 @@ import type { OcSessionTab } from '#backend/drizzle/postgres/tables/oc-sessions'
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';
 import { makeOcSession } from '#backend/functions/db/oc-sessions/make-oc-session/make-oc-session';
 import { getProviderModelSelection } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { makeSession } from '#backend/functions/db/sessions/make-session/make-session';
+import { makeSessionId } from '#backend/functions/db/sessions/make-session-id/make-session-id';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { prewarmCodexAuth } from '#backend/functions/llm-providers/codex/auth/prewarm-codex-auth/prewarm-codex-auth';
 import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';

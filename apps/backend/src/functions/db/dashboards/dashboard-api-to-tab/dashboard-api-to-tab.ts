@@ -1,5 +1,5 @@
 import type { DashboardTab } from '#backend/drizzle/postgres/tables/dashboards';
-import { makeDashboardFullId } from '#backend/functions/hash/make-dashboard-full-id/make-dashboard-full-id';
+import { makeDashboardFullId } from '#backend/functions/db/dashboards/make-dashboard-full-id/make-dashboard-full-id';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 

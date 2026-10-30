@@ -27,13 +27,13 @@ import type { SessionTab } from '#backend/drizzle/postgres/tables/sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/tables/sessions';
 import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { buildCodexFetch } from '#backend/functions/codex/build-codex-fetch/build-codex-fetch';
 import {
   type GetProviderModelSelectionOutput,
   getProviderModelSelection
 } from '#backend/functions/db/providers/get-provider-model-selection/get-provider-model-selection';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
+import { buildCodexFetch } from '#backend/functions/llm-providers/codex/build-codex-fetch/build-codex-fetch';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';

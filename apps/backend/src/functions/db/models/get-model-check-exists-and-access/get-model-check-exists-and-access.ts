@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm';
 import type { MemberTab } from '#backend/drizzle/postgres/tables/members';
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
-import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
 import type { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';

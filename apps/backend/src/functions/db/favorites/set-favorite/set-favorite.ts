@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import { favoritesTable } from '#backend/drizzle/postgres/tables/favorites';
-import { makeFavoriteFullId } from '#backend/functions/db/favorites/set-favorite/make-favorite-full-id/make-favorite-full-id';
+import { makeFavoriteFullId } from '#backend/functions/db/favorites/make-favorite-full-id/make-favorite-full-id';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite-type';

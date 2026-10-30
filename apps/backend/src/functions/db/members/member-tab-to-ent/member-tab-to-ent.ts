@@ -3,9 +3,9 @@ import type {
   MemberEnt,
   MemberTab
 } from '#backend/drizzle/postgres/tables/members';
+import { makeMemberFullId } from '#backend/functions/db/members/make-member-full-id/make-member-full-id';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
-import { makeMemberFullId } from '#backend/functions/hash/make-member-full-id/make-member-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { MemberTabToEntError } from '#common/types/backend/function-errors/member-tab-to-ent-error';
 import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';

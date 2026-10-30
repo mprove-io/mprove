@@ -1,5 +1,5 @@
 import type { GivenTab } from '#backend/drizzle/postgres/tables/givens';
-import { makeGivenFullId } from '#backend/functions/hash/make-given-full-id/make-given-full-id';
+import { makeGivenFullId } from '#backend/functions/db/givens/make-given-full-id/make-given-full-id';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 
 export function makeGiven(item: {

@@ -1,0 +1,17 @@
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+
+export function makeUserFullName(item: {
+  firstName: string;
+  lastName: string;
+}) {
+  return isDefined(item.firstName) && isDefined(item.lastName)
+    ? capitalizeFirstLetter(item.firstName) +
+        ' ' +
+        capitalizeFirstLetter(item.lastName)
+    : isDefined(item.firstName)
+      ? capitalizeFirstLetter(item.firstName)
+      : isDefined(item.lastName)
+        ? capitalizeFirstLetter(item.lastName)
+        : undefined;
+}
