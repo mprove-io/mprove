@@ -54,7 +54,7 @@ import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/qu
 import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
 import { makeUserAlias } from '#backend/functions/db/users/make-user-alias/make-user-alias';
 import { createSaltAndHash } from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
-import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
+import { makeTsUsingOffsetFromNow } from '#backend/functions/ts/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';

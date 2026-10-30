@@ -27,7 +27,7 @@ import {
   type GetEntPropsOutput,
   getEntProps
 } from '#backend/functions/get-ent-props/get-ent-props';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';

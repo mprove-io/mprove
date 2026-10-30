@@ -1,5 +1,5 @@
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
-import { getUnitAuthor } from '#backend/functions/units/get-unit-author/get-unit-author';
+import { getUnitAuthor } from '#backend/functions/get-unit-author/get-unit-author';
 import type { Member } from '#common/types/backend/parts/member';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 

@@ -15,6 +15,7 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
@@ -22,7 +23,6 @@ import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/mod
 import { getReportsCatalog } from '#backend/functions/db/reports/get-reports-catalog/get-reports-catalog';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

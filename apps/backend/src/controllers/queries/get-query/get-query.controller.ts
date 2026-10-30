@@ -15,10 +15,10 @@ import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkParentMemberAccess } from '#backend/functions/db/members/check-parent-member-access/check-parent-member-access';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
-import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -134,7 +134,7 @@ export class GetQueryController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        checkParentAccess({
+        checkParentMemberAccess({
           parentId: v.mconfig.parentId,
           parentType: v.mconfig.parentType,
           modelId: v.mconfig.modelId,

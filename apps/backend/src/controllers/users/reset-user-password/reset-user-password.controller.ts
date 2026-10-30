@@ -12,7 +12,7 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { checkUserPasswordHashIsDefined } from '#backend/functions/db/users/check-user-password-hash-is-defined/check-user-password-hash-is-defined';
 import { getUserByEmailCheckExists } from '#backend/functions/db/users/get-user-by-email-check-exists/get-user-by-email-check-exists';
-import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
+import { makeTsUsingOffsetFromNow } from '#backend/functions/ts/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { EmailService } from '#backend/services/email/email.service';

@@ -20,6 +20,7 @@ import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { ReportTab } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
@@ -31,8 +32,7 @@ import { getReportsCatalog } from '#backend/functions/db/reports/get-reports-cat
 import { makeReport } from '#backend/functions/db/reports/make-report/make-report';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';

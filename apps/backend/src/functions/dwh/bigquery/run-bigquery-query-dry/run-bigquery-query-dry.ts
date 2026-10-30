@@ -1,7 +1,7 @@
 import { BigQuery, type JobResponse } from '@google-cloud/bigquery';
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 

@@ -1,4 +1,4 @@
-import { getYYYYMMDDCurrentDateByTimezone } from '#backend/functions/get-yyyymmdd-current-date-by-timezone/get-yyyymmdd-current-date-by-timezone';
+import { getYYYYMMDDCurrentDateByTimezone } from '#backend/functions/yyyymmdd/get-yyyymmdd-current-date-by-timezone/get-yyyymmdd-current-date-by-timezone';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { DASHBOARD_FIELD_DEFAULT_HIDDEN } from '#common/constants/top';
 

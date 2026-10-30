@@ -9,10 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';

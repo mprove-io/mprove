@@ -14,10 +14,10 @@ import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-m
 import { getReportCheckExistsAndAccess } from '#backend/functions/db/reports/get-report-check-exists-and-access/get-report-check-exists-and-access';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
+import type { CheckParentMemberAccessError } from '#common/types/backend/function-errors/check-parent-member-access-error';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
-export async function checkParentAccess(item: {
+export async function checkParentMemberAccess(item: {
   user: UserTab;
   userMember: MemberTab;
   structId: string;
@@ -30,7 +30,7 @@ export async function checkParentAccess(item: {
   suggestRowId?: string;
   suggestModel?: ModelTab;
   db: DbService;
-}): Result.ResultAsync<void, CheckParentAccessError> {
+}): Result.ResultAsync<void, CheckParentMemberAccessError> {
   return Result.pipe(
     Result.succeed({
       ...item,

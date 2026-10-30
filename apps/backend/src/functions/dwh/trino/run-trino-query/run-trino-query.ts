@@ -5,7 +5,7 @@ import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToTrinoOptions } from '#backend/functions/dwh/trino/options-to-trino-options/options-to-trino-options';
 import { processTrinoError } from '#backend/functions/dwh/trino/run-trino-query/process-trino-error/process-trino-error';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';

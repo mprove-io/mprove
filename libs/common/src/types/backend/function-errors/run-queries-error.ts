@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type CheckParentAccessError,
-  zCheckParentAccessError
-} from '#common/types/backend/function-errors/check-parent-access-error';
+  type CheckParentMemberAccessError,
+  zCheckParentMemberAccessError
+} from '#common/types/backend/function-errors/check-parent-member-access-error';
 import {
   type CheckRepoIdError,
   zCheckRepoIdError
@@ -61,7 +61,7 @@ export type RunQueriesError =
   | GetEnvCheckExistsAndAccessError
   | DbBridgesFindFirstCheckExistsError
   | GetStructCheckExistsError
-  | CheckParentAccessError
+  | CheckParentMemberAccessError
   | GetQueriesCheckExistSkipSqlDataError
   | WriteError
   | DbMconfigsFindManyError
@@ -76,7 +76,7 @@ export const zRunQueriesError = z.union([
   zGetEnvCheckExistsAndAccessError,
   zDbBridgesFindFirstCheckExistsError,
   zGetStructCheckExistsError,
-  zCheckParentAccessError,
+  zCheckParentMemberAccessError,
   zGetQueriesCheckExistSkipSqlDataError,
   zWriteError,
   zDbMconfigsFindManyError,

@@ -23,6 +23,7 @@ import {
   type RebuildBlockmlStructOutput,
   rebuildBlockmlStruct
 } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { getDashboardsCatalog } from '#backend/functions/db/dashboards/get-dashboards-catalog/get-dashboards-catalog';
@@ -39,7 +40,6 @@ import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-c
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';

@@ -29,7 +29,7 @@ import {
   zGetReportCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 
-export type CheckParentAccessError =
+export type CheckParentMemberAccessError =
   | BackendSuggestFieldNotFoundError
   | GetDashboardCheckExistsAndAccessError
   | GetReportCheckExistsAndAccessError
@@ -38,7 +38,7 @@ export type CheckParentAccessError =
   | GetModelCheckExistsAndAccessError
   | CheckChartOrModelAccessError;
 
-export let zCheckParentAccessError = z.union([
+export let zCheckParentMemberAccessError = z.union([
   zBackendSuggestFieldNotFoundError,
   zGetDashboardCheckExistsAndAccessError,
   zGetReportCheckExistsAndAccessError,
@@ -49,6 +49,6 @@ export let zCheckParentAccessError = z.union([
 ]);
 
 assertTypesEqual<
-  CheckParentAccessError,
-  z.infer<typeof zCheckParentAccessError>
+  CheckParentMemberAccessError,
+  z.infer<typeof zCheckParentMemberAccessError>
 >({ value: true });

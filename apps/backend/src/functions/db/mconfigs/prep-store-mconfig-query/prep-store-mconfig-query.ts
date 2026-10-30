@@ -9,7 +9,7 @@ import type { StructTab } from '#backend/drizzle/postgres/tables/structs';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { adjustMconfig } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/adjust-mconfig/adjust-mconfig';
 import { transformStoreMconfigRequest } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-mconfig-request/transform-store-mconfig-request';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';

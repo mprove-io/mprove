@@ -1,6 +1,6 @@
 import ivm from 'isolated-vm';
 
-export async function runOnly(item: { userCode: string }): Promise<any> {
+export async function runUserCode(item: { userCode: string }): Promise<any> {
   let { userCode } = item;
 
   let isolate: ivm.Isolate = new ivm.Isolate({ memoryLimit: 8 });

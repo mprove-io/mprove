@@ -14,7 +14,7 @@ import {
   createSaltAndHash
 } from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
 import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

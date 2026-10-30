@@ -12,9 +12,9 @@ import {
   dconfigsTable
 } from '#backend/drizzle/postgres/tables/dconfigs';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { convertWritePack } from '#backend/services/db/convert-write-pack/convert-write-pack';
 import {
   createDbTableRegistry,

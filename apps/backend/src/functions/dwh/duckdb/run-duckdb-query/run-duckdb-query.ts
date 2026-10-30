@@ -13,7 +13,7 @@ import {
   optionsToDuckdbOptions
 } from '#backend/functions/dwh/duckdb/options-to-duckdb-options/options-to-duckdb-options';
 import { processDuckdbError } from '#backend/functions/dwh/duckdb/run-duckdb-query/process-duckdb-error/process-duckdb-error';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

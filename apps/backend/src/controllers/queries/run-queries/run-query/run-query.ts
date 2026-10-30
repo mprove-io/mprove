@@ -7,7 +7,7 @@ import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { StoreUserCodeReturn } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-mconfig-request/transform-store-mconfig-request';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import type { UrlService } from '#backend/services/url/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';

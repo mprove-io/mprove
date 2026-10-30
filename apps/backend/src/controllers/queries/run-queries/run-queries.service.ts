@@ -17,8 +17,10 @@ import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkParentMemberAccess } from '#backend/functions/db/members/check-parent-member-access/check-parent-member-access';
 import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';
 import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
@@ -31,10 +33,8 @@ import { runPgQuery } from '#backend/functions/dwh/pg/run-pg-query/run-pg-query'
 import { runPrestoQuery } from '#backend/functions/dwh/presto/run-presto-query/run-presto-query';
 import { runSnowflakeQuery } from '#backend/functions/dwh/snowflake/run-snowflake-query/run-snowflake-query';
 import { runTrinoQuery } from '#backend/functions/dwh/trino/run-trino-query/run-trino-query';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
 import { UrlService } from '#backend/services/url/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -42,7 +42,7 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
+import type { CheckParentMemberAccessError } from '#common/types/backend/function-errors/check-parent-member-access-error';
 import type { CustomAsyncPoolError } from '#common/types/backend/function-errors/custom-async-pool-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import type { GetQueryExecutionContextError } from '#common/types/backend/function-errors/get-query-execution-context-error';
@@ -642,20 +642,20 @@ export class RunQueriesService {
       Result.andThrough(async v => {
         let parentAccessChecksResult: Result.Result<
           void[],
-          CheckParentAccessError
+          CheckParentMemberAccessError
         > = await Result.sequence(
           v.uniqueParentIds,
           async (
             parentId
-          ): Result.ResultAsync<void, CheckParentAccessError> => {
+          ): Result.ResultAsync<void, CheckParentMemberAccessError> => {
             let mconfig: MconfigTab = v.mconfigs.find(
               x => x.parentId === parentId
             );
 
             let parentAccessResult: Result.Result<
               void,
-              CheckParentAccessError
-            > = await checkParentAccess({
+              CheckParentMemberAccessError
+            > = await checkParentMemberAccess({
               parentId: mconfig.parentId,
               parentType: mconfig.parentType,
               modelId: mconfig.modelId,

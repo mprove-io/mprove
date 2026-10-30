@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

@@ -11,7 +11,7 @@ import { branchesTable } from '#backend/drizzle/postgres/tables/branches';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

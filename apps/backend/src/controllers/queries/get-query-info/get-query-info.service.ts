@@ -8,6 +8,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getChartData } from '#backend/functions/db/charts/get-chart-data/get-chart-data';
 import { getChartUrl } from '#backend/functions/db/charts/get-chart-url/get-chart-url';
 import { getDashboardData } from '#backend/functions/db/dashboards/get-dashboard-data/get-dashboard-data';
@@ -15,7 +16,6 @@ import { getDashboardUrl } from '#backend/functions/db/dashboards/get-dashboard-
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getQueryInfoReportData } from '#backend/functions/db/reports/get-query-info-report-data/get-query-info-report-data';
 import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';

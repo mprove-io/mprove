@@ -8,6 +8,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/tables/bridges';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { checkModelAccess } from '#backend/functions/db/models/check-model-access/check-model-access';
@@ -15,7 +16,6 @@ import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/g
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { DbService } from '#backend/services/db/db.service';
 import type { GetModelError } from '#common/types/backend/function-errors/get-model-error';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';

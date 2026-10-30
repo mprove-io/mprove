@@ -9,7 +9,7 @@ import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToPrestoClientConfig } from '#backend/functions/dwh/presto/options-to-presto-client-config/options-to-presto-client-config';
 import { PrestoClient } from '#backend/functions/dwh/presto/presto-client';
 import { processPrestoError } from '#backend/functions/dwh/presto/run-presto-query/process-presto-error/process-presto-error';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 

@@ -15,8 +15,8 @@ import {
 } from '#backend/functions/dwh/databricks/options-to-databricks-config/options-to-databricks-config';
 import { quietLogger } from '#backend/functions/dwh/databricks/quiet-logger';
 import { processDatabricksError } from '#backend/functions/dwh/databricks/run-databricks-query/process-databricks-error/process-databricks-error';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import type { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';

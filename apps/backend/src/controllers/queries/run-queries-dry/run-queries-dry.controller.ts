@@ -17,8 +17,10 @@ import type { MconfigTab } from '#backend/drizzle/postgres/tables/mconfigs';
 import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/tables/members';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkParentMemberAccess } from '#backend/functions/db/members/check-parent-member-access/check-parent-member-access';
 import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
@@ -26,8 +28,6 @@ import {
   type RunBigqueryQueryDryOutput,
   runBigqueryQueryDry
 } from '#backend/functions/dwh/bigquery/run-bigquery-query-dry/run-bigquery-query-dry';
-import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -136,7 +136,7 @@ export class RunQueriesDryController {
             x => x.parentId === parentId
           );
 
-          return checkParentAccess({
+          return checkParentMemberAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId, // for chart as parent

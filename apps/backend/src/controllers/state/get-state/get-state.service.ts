@@ -13,6 +13,7 @@ import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { reportsTable } from '#backend/drizzle/postgres/tables/reports';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getChartUrl } from '#backend/functions/db/charts/get-chart-url/get-chart-url';
 import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
 import { getDashboardUrl } from '#backend/functions/db/dashboards/get-dashboard-url/get-dashboard-url';
@@ -23,7 +24,6 @@ import { checkModelAccess } from '#backend/functions/db/models/check-model-acces
 import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';

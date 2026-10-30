@@ -35,7 +35,7 @@ import { fetchPgCachedParts } from '#backend/functions/dwh/pg/fetch-pg-cached-pa
 import { fetchPrestoCachedParts } from '#backend/functions/dwh/presto/fetch-presto-cached-parts/fetch-presto-cached-parts';
 import { fetchSnowflakeCachedParts } from '#backend/functions/dwh/snowflake/fetch-snowflake-cached-parts/fetch-snowflake-cached-parts';
 import { fetchTrinoCachedParts } from '#backend/functions/dwh/trino/fetch-trino-cached-parts/fetch-trino-cached-parts';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';

@@ -11,6 +11,7 @@ import {
   type RebuildBlockmlStructOutput,
   rebuildBlockmlStruct
 } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
@@ -19,7 +20,6 @@ import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/chec
 import { projectTabToBaseProject } from '#backend/functions/db/projects/project-tab-to-base-project/project-tab-to-base-project';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';

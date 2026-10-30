@@ -21,13 +21,13 @@ import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import { queriesTable } from '#backend/drizzle/postgres/tables/queries';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
 import { prepStoreMconfigQuery } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { checkParentMemberAccess } from '#backend/functions/db/members/check-parent-member-access/check-parent-member-access';
 import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
-import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
+import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/yyyymmdd/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -180,7 +180,7 @@ export class SuggestDimensionValuesController {
         })
       ),
       Result.andThrough(v =>
-        checkParentAccess({
+        checkParentMemberAccess({
           parentId: v.prepareParentPayload.parentId,
           parentType: v.prepareParentPayload.parentType,
           modelId: v.modelId,

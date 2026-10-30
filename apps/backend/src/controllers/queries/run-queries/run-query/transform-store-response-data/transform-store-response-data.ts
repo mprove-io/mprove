@@ -1,6 +1,6 @@
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { StoreUserCodeReturn } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/transform-store-mconfig-request/transform-store-mconfig-request';
-import { runOnly } from '#backend/functions/user-code/run-only/run-only';
+import { runUserCode } from '#backend/functions/run-user-code/run-user-code';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
@@ -60,7 +60,7 @@ export async function transformStoreResponseData(item: {
         ${inputSub}
         })())`;
 
-    let userCodeResult: any = await runOnly({
+    let userCodeResult: any = await runUserCode({
       userCode: userCode
     });
 

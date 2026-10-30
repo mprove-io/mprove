@@ -25,6 +25,7 @@ import {
   type RebuildBlockmlStructOutput,
   rebuildBlockmlStruct
 } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
@@ -41,7 +42,6 @@ import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CalcDbService } from '#backend/services/calc-db/calc-db.service';

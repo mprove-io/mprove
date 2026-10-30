@@ -6,7 +6,7 @@ import {
 import type { ConnectionTab } from '#backend/drizzle/postgres/tables/connections';
 import type { QueryTab } from '#backend/drizzle/postgres/tables/queries';
 import { optionsToBigqueryOptions } from '#backend/functions/dwh/bigquery/options-to-bigquery-options/options-to-bigquery-options';
-import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeTsNumber } from '#backend/functions/ts/make-ts-number/make-ts-number';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function runBigqueryQuery(item: {

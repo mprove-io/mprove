@@ -17,6 +17,7 @@ import { modelsTable } from '#backend/drizzle/postgres/tables/models';
 import { projectsTable } from '#backend/drizzle/postgres/tables/projects';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { rebuildBlockmlStruct } from '#backend/functions/blockml/rebuild-blockml-struct/rebuild-blockml-struct';
+import { checkRepoId } from '#backend/functions/check-repo-id/check-repo-id';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { makeDashboardFileText } from '#backend/functions/db/dashboards/make-dashboard-file-text/make-dashboard-file-text';
 import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
@@ -24,7 +25,6 @@ import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-c
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { getUserSelectedGivens } from '#backend/functions/db/users/get-user-selected-givens/get-user-selected-givens';
-import { checkRepoId } from '#backend/functions/repos/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
