@@ -1,4 +1,293 @@
-# Composer Instructions
+# Project
+
+## Mprove
+
+Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
+
+## Architecture
+
+Parts:
+
+| App     | Purpose                                     |
+| ------- | ------------------------------------------- |
+| backend | Core API, auth, DB, DWH queries             |
+| blockml | Malloy and BlockML (YAML) model compilation |
+| disk    | File system & git repo management           |
+| front   | Web UI                                      |
+| mcli    | Command-line interface                      |
+
+Communication:
+
+- frontend to backend - HTTP API
+- mcli to backend - HTTP API
+- backend to blockml - RPC using Groupmq and Valkey (Redis) pub/sub
+- backend to disk - RPC using Groupmq and Valkey (Redis) pub/sub
+
+### Blockml
+
+Malloy/BlockML model compilation service. Receives compilation requests from
+backend via Valkey (Redis) RPC and returns compiled struct.
+
+#### Purpose
+
+Compiles BlockML model definitions (YAML-based) into executable query
+structures. The compilation pipeline:
+
+1. Receives file tree from backend
+2. Parses Malloy/BlockML model definitions
+3. Validates model structure
+4. Produces compiled struct
+
+#### Communication
+
+- Listens for Valkey (Redis) RPC messages from backend
+- Returns compiled structures or compilation errors
+
+### Disk
+
+File system and git repository management service. Manages project file storage
+and git operations.
+
+#### Purpose
+
+Manages the file system layer for Mprove projects:
+
+- Git repository operations
+- File operations within repositories
+- Folder management
+- Organization/project/git-repo files tree structure
+- Seed data initialization
+
+#### Communication
+
+- Receives Valkey (Redis) RPC messages from backend
+- Operates on local filesystem (`mprove_data/` directory)
+- Uses SimpleGit for git operations
+
+### Backend
+
+Core API server handling authentication, database operations, and data warehouse
+queries.
+
+#### Database
+
+- ORM: Drizzle
+- Schema: `src/drizzle/postgres/tables/`
+- Migrations: `src/drizzle/postgres/migrations/`
+
+#### E2E Tests
+
+- Test files: `src/**/*.e2e-spec.ts`
+- Run: `pnpm e2e:backend`
+- Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
+- Tests must call `await prep.app.close()` to properly close connections
+- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
+  shutdown
+
+### Front
+
+Angular web application providing the Mprove user interface.
+
+#### Patterns
+
+- Standalone components and NgModules
+- Feature modules organized by domain
+- HTTP communication with backend via JWT-authenticated calls
+- Route guards for auth protection
+- Route resolvers for data pre-fetching
+
+### Mcli
+
+Command-line interface for Mprove
+
+#### Package Management
+
+mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
+
+#### Communication
+
+- Communicates with backend via HTTP API
+- Uses same DTOs/interfaces as the frontend
+
+### Shared Libraries
+
+| Library     | Used By                             |
+| ----------- | ----------------------------------- |
+| common      | front, backend, blockml, disk, mcli |
+| node-common | backend, blockml, disk, mcli        |
+
+## Info
+
+### Tech Stack
+
+| Layer                                      | Technology                                      |
+| ------------------------------------------ | ----------------------------------------------- |
+| Package manager                            | pnpm                                            |
+| Build orchestration                        | Turborepo                                       |
+| Backend framework                          | NestJS                                          |
+| Frontend framework                         | Angular                                         |
+| Database                                   | PostgreSQL + Drizzle ORM                        |
+| Database for simple stateless calculations | PostgreSQL                                      |
+| Message broker                             | Valkey (Redis) pub/sub                          |
+| CLI framework                              | Clipanion                                       |
+| Test runner                                | AVA                                             |
+| Linter/Formatter                           | Biome (ts/js/css), Prettier (html/scss/json/md) |
+| Telemetry                                  | OpenTelemetry                                   |
+
+### Dependencies Version Management
+
+All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
+
+| Package Type          | Version Syntax | How it works                         |
+| --------------------- | -------------- | ------------------------------------ |
+| Turbo apps (`apps/*`) | `catalog:`     | pnpm resolves versions automatically |
+| Turbo libs (`libs/*`) | explicit       | synced via `pnpm catalog-write`      |
+| mcli (bun)            | explicit       | synced via `pnpm catalog-write`      |
+
+Run `pnpm catalog-write` to sync catalog versions to `libs/common`,
+`libs/node-common`, and `mcli` package.json files.
+
+### Main package json scripts
+
+| Script          | Command                                                                 |
+| --------------- | ----------------------------------------------------------------------- |
+| check           | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
+| check-s-viewer  | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
+| repair-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts repair`                 |
+| typecheck       | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
+| lint            | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
+| circular        | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
+| build           | `pnpm build:turbo && pnpm build:mcli`                                   |
+| node-serve      | `turbo run node-serve`                                                  |
+| start           | `turbo run start`                                                       |
+| debug           | `turbo run debug`                                                       |
+| test            | `turbo run test`                                                        |
+| e2e             | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
+| inst            | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
+
+Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>`
+for specific package.
+
+**Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
+`mcli`
+
+If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds;
+`repair-s-viewer` fails. When present, validation errors or a missing CLI/bundle
+fail the command. These scripts target Mprove's manifest, not the extension's.
+
+### ESM Configuration
+
+All apps use native ESM with the following configuration:
+
+**Node.js built-ins:** Use `node:` prefix (e.g.,
+`import { createRequire } from 'node:module'`).
+
+| File            | Key Settings                                                                 |
+| --------------- | ---------------------------------------------------------------------------- |
+| `package.json`  | `"type": "module"`, `imports` field with `#app/*` aliases                    |
+| `tsconfig.json` | `"module": "ESNext"`, `"moduleResolution": "Bundler"`, paths with `#` prefix |
+| `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
+| `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
+
+### External
+
+Treat top level "external" directory as a read-only reference. Do not modify it.
+
+#### external/byethrow
+
+Source code and documentation for `@praha/byethrow`.
+
+When working with byethrow `Result` APIs, consult:
+
+- English documentation: `external/byethrow/website/docs/en/`
+- Implementation: `external/byethrow/packages/byethrow/src/`
+- Tests and type tests for exact behavior:
+  `external/byethrow/packages/byethrow/src/functions/`
+
+#### external/opencode
+
+Source code for the [OpenCode](https://github.com/anomalyco/opencode).
+
+#### external/ai
+
+Source code for @ai-sdk
+
+## Rules
+
+### Typecheck and lint
+
+Always use top `pnpm check` for typecheck or lint.
+
+### S Viewer releases
+
+For every delivered update that changes `extra/s-viewer/`, bump the extension
+version. Increment the patch version unless another version is requested. Do not
+distribute changed extension code under a previously delivered version.
+
+Keep `package.json`, `package-lock.json`, and versioned installation references
+consistent with the new version. Build and package the updated VSIX before
+handoff so the user only needs to run the installer.
+
+Provide the following repository-root command in the session chat, replacing
+`<version>` with the actual new packaged version, not a placeholder:
+
+```sh
+node extra/s-viewer/scripts/install.mjs \
+  --vsix extra/s-viewer/dist/s-viewer-<version>.vsix \
+  --require-remote
+```
+
+Tell the user to reload the VS Code window and reopen comparisons after
+installation.
+
+### Entity and Tab variable names
+
+For database entities and their converted Tab values:
+
+- End a single entity's variable name with `Ent` (for example, `projectEnt`).
+- End an entity collection's variable name with `Ents` (for example,
+  `projectEnts`).
+- Reserve the corresponding unsuffixed domain names for Tab values: `project`
+  for `ProjectTab`, `projects` for `ProjectTab[]`. Do not add a `Tab` or `Tabs`
+  suffix to these variable names.
+- Apply the same distinction to collection callback parameters, function
+  argument properties, and Result pipeline keys carrying entity or Tab values.
+- Preserve descriptive prefixes: `connectionsWithFallbackEnts` contains
+  entities, while `connectionsWithFallback` contains Tabs. API/base projections
+  use explicit prefixes such as `apiProject` and `baseProject` to distinguish
+  them from Tabs.
+
+Exception: in query promise callbacks that immediately convert entities with
+`...EntToTab` or `...EntToTabResult`, name the entity collection `xs` and each
+entity `x`. Use `x` for single-entity `.then(...)` conversion callbacks too.
+This exception includes collection conversion callbacks passed to `map` or
+`Result.sequence`, and missing-entity guards within these conversion callbacks.
+Keep entity-specific argument keys such as `queryEnt` unchanged. Entities
+retained for other operations still follow the naming rules above.
+
+```ts
+.then(xs =>
+  Result.sequence(xs, x =>
+    this.tabService.modelEntToTabResult({
+      modelEnt: x
+    })
+  )
+)
+```
+
+```ts
+let projectEnt: ProjectEnt;
+
+let project: ProjectTab;
+
+let projectEnts: ProjectEnt[];
+
+let projects: ProjectTab[];
+```
+
+# Base
+
+## Composer Instructions
 
 `AGENTS.md` is generated from the Markdown source files in `.composer/content/`.
 Do not edit `AGENTS.md` directly.
@@ -25,217 +314,9 @@ When asked to add or change a rule or section in `AGENTS.md`:
 - Run `pnpm composer .composer/COMPOSER.md .composer/content AGENTS.md` to
   regenerate `AGENTS.md`.
 
-# Mprove
+## Rules
 
-Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
-
-# Architecture
-
-Parts:
-
-| App     | Purpose                                     |
-| ------- | ------------------------------------------- |
-| backend | Core API, auth, DB, DWH queries             |
-| blockml | Malloy and BlockML (YAML) model compilation |
-| disk    | File system & git repo management           |
-| front   | Web UI                                      |
-| mcli    | Command-line interface                      |
-
-Communication:
-
-- frontend to backend - HTTP API
-- mcli to backend - HTTP API
-- backend to blockml - RPC using Groupmq and Valkey (Redis) pub/sub
-- backend to disk - RPC using Groupmq and Valkey (Redis) pub/sub
-
-## Blockml
-
-Malloy/BlockML model compilation service. Receives compilation requests from
-backend via Valkey (Redis) RPC and returns compiled struct.
-
-### Purpose
-
-Compiles BlockML model definitions (YAML-based) into executable query
-structures. The compilation pipeline:
-
-1. Receives file tree from backend
-2. Parses Malloy/BlockML model definitions
-3. Validates model structure
-4. Produces compiled struct
-
-### Communication
-
-- Listens for Valkey (Redis) RPC messages from backend
-- Returns compiled structures or compilation errors
-
-## Disk
-
-File system and git repository management service. Manages project file storage
-and git operations.
-
-### Purpose
-
-Manages the file system layer for Mprove projects:
-
-- Git repository operations
-- File operations within repositories
-- Folder management
-- Organization/project/git-repo files tree structure
-- Seed data initialization
-
-### Communication
-
-- Receives Valkey (Redis) RPC messages from backend
-- Operates on local filesystem (`mprove_data/` directory)
-- Uses SimpleGit for git operations
-
-## Backend
-
-Core API server handling authentication, database operations, and data warehouse
-queries.
-
-### Database
-
-- ORM: Drizzle
-- Schema: `src/drizzle/postgres/tables/`
-- Migrations: `src/drizzle/postgres/migrations/`
-
-### E2E Tests
-
-- Test files: `src/**/*.e2e-spec.ts`
-- Run: `pnpm e2e:backend`
-- Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
-- Tests must call `await prep.app.close()` to properly close connections
-- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
-  shutdown
-
-## Front
-
-Angular web application providing the Mprove user interface.
-
-### Patterns
-
-- Standalone components and NgModules
-- Feature modules organized by domain
-- HTTP communication with backend via JWT-authenticated calls
-- Route guards for auth protection
-- Route resolvers for data pre-fetching
-
-## Mcli
-
-Command-line interface for Mprove
-
-### Package Management
-
-mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
-
-### Communication
-
-- Communicates with backend via HTTP API
-- Uses same DTOs/interfaces as the frontend
-
-## Shared Libraries
-
-| Library     | Used By                             |
-| ----------- | ----------------------------------- |
-| common      | front, backend, blockml, disk, mcli |
-| node-common | backend, blockml, disk, mcli        |
-
-# Info
-
-## Tech Stack
-
-| Layer                                      | Technology                                      |
-| ------------------------------------------ | ----------------------------------------------- |
-| Package manager                            | pnpm                                            |
-| Build orchestration                        | Turborepo                                       |
-| Backend framework                          | NestJS                                          |
-| Frontend framework                         | Angular                                         |
-| Database                                   | PostgreSQL + Drizzle ORM                        |
-| Database for simple stateless calculations | PostgreSQL                                      |
-| Message broker                             | Valkey (Redis) pub/sub                          |
-| CLI framework                              | Clipanion                                       |
-| Test runner                                | AVA                                             |
-| Linter/Formatter                           | Biome (ts/js/css), Prettier (html/scss/json/md) |
-| Telemetry                                  | OpenTelemetry                                   |
-
-## Dependencies Version Management
-
-All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
-
-| Package Type          | Version Syntax | How it works                         |
-| --------------------- | -------------- | ------------------------------------ |
-| Turbo apps (`apps/*`) | `catalog:`     | pnpm resolves versions automatically |
-| Turbo libs (`libs/*`) | explicit       | synced via `pnpm catalog-write`      |
-| mcli (bun)            | explicit       | synced via `pnpm catalog-write`      |
-
-Run `pnpm catalog-write` to sync catalog versions to `libs/common`,
-`libs/node-common`, and `mcli` package.json files.
-
-## Main package json scripts
-
-| Script          | Command                                                                 |
-| --------------- | ----------------------------------------------------------------------- |
-| check           | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
-| check-s-viewer  | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
-| repair-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts repair`                 |
-| typecheck       | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
-| lint            | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
-| circular        | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
-| build           | `pnpm build:turbo && pnpm build:mcli`                                   |
-| node-serve      | `turbo run node-serve`                                                  |
-| start           | `turbo run start`                                                       |
-| debug           | `turbo run debug`                                                       |
-| test            | `turbo run test`                                                        |
-| e2e             | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
-| inst            | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
-
-Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>`
-for specific package.
-
-**Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
-`mcli`
-
-## ESM Configuration
-
-All apps use native ESM with the following configuration:
-
-**Node.js built-ins:** Use `node:` prefix (e.g.,
-`import { createRequire } from 'node:module'`).
-
-| File            | Key Settings                                                                 |
-| --------------- | ---------------------------------------------------------------------------- |
-| `package.json`  | `"type": "module"`, `imports` field with `#app/*` aliases                    |
-| `tsconfig.json` | `"module": "ESNext"`, `"moduleResolution": "Bundler"`, paths with `#` prefix |
-| `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
-| `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
-
-## External
-
-Treat top level "external" directory as a read-only reference. Do not modify it.
-
-### external/byethrow
-
-Source code and documentation for `@praha/byethrow`.
-
-When working with byethrow `Result` APIs, consult:
-
-- English documentation: `external/byethrow/website/docs/en/`
-- Implementation: `external/byethrow/packages/byethrow/src/`
-- Tests and type tests for exact behavior:
-  `external/byethrow/packages/byethrow/src/functions/`
-
-### external/opencode
-
-Source code for the [OpenCode](https://github.com/anomalyco/opencode).
-
-### external/ai
-
-Source code for @ai-sdk
-
-# Rules
-
-## DRY
+### DRY
 
 Keep project instructions and rules DRY (Don't Repeat Yourself). Define each
 requirement in one authoritative section. Refer to that section when another
@@ -245,69 +326,49 @@ When adding or changing a rule, check related sections for overlap. Consolidate
 duplicate requirements and keep exceptions with the rule they qualify. Examples
 may illustrate another rule without restating its requirements.
 
-## Git operations
+### Git operations
 
 Do not do git operations like stage / unstage / commit / switch branch / etc...
 Use read-only operations if needed (like status, diff, etc)
 
-## Do not run tests unless asked
+### Do not run tests unless asked
 
-## Do not write tests unless asked
+### Do not write tests unless asked
 
-## Typecheck and lint
-
-Always use top `pnpm check` for typecheck or lint.
-
-## S Viewer releases
-
-For every delivered update that changes `extra/s-viewer/`, bump the extension
-version. Increment the patch version unless another version is requested. Do not
-distribute changed extension code under a previously delivered version.
-
-Keep `package.json`, `package-lock.json`, and versioned installation references
-consistent with the new version. Build and package the updated VSIX before
-handoff so the user only needs to run the installer.
-
-Provide the following repository-root command in the session chat, replacing
-`<version>` with the actual new packaged version, not a placeholder:
-
-```sh
-node extra/s-viewer/scripts/install.mjs \
-  --vsix extra/s-viewer/dist/s-viewer-<version>.vsix \
-  --require-remote
-```
-
-Tell the user to reload the VS Code window and reopen comparisons after
-installation.
-
-## S Viewer manifest
+### S Viewer manifest
 
 Whenever changing repository files, maintain `.s-viewer/manifest.json` for the
 complete HEAD → saved working-tree change set, not session history. Preserve
 still-valid entries and provenance mappings; remove stale ones.
 
+Explicitly account for every HEAD range in a changed text file through same-file
+source mappings or `deletedRanges`. Cross-file mappings do not replace that
+file's deletion accounting.
+
 Follow [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md) for the
 schema, range/source mappings, repair behavior, and snapshot limitations.
 
-From the repository root:
+From the repository root, run the package scripts with its package manager:
 
 ```sh
 pnpm check-s-viewer
 pnpm repair-s-viewer
 ```
 
+For npm-managed repositories, use `npm run check-s-viewer` and
+`npm run repair-s-viewer` instead. Each script targets its own repository's
+manifest; checking a consumer repository does not check the extension
+repository.
+
 `check-s-viewer` is read-only and previews automatic fixes under `repairPlan`.
 Edit the manifest manually or use `repair-s-viewer`, then restore/add
 intentional provenance mappings as described in the guide.
 
 After all edits, formatting, and generated files, finish with `check-s-viewer`
-reporting no errors. `pnpm check` also runs it after typecheck and lint; neither
-command repairs automatically.
+reporting no errors. The repository's `check` script also runs it after
+typecheck and lint; neither command repairs automatically.
 
-If `extra/s-viewer` is absent, check prints a warning and succeeds; repair
-fails. When present, validation errors or a missing CLI/bundle fail the command.
-
-## One function per file
+### One function per file
 
 Each non-test file may define at most one standalone named function
 implementation.
@@ -319,7 +380,7 @@ constructors, getters, or setters.
 Types, schemas, constants, and other non-function declarations may coexist with
 the function in the same file.
 
-## Function and method args
+### Function and method args
 
 Named functions and methods must use a single object argument named `item` with
 an inline type. This rule does not apply to callbacks.
@@ -332,7 +393,7 @@ export function doSomething(item: { orgId: string; projectId: string }) {
 }
 ```
 
-## Function return types
+### Function return types
 
 Standalone named functions must declare an explicit return type. Reuse an
 existing domain or output type when it fits; do not create a new contract merely
@@ -352,7 +413,7 @@ Reserve `Payload` for new, step-specific intermediate inline pipe types as
 described in "Singular and plural names". Final pipe projections use the
 enclosing function's return or success contract, not a step-specific `Payload`.
 
-## Decorated parameters
+### Decorated parameters
 
 Keep parameter decorators on the same line as the parameter declaration,
 including constructor injection and controller handler parameters. Do not put
@@ -374,7 +435,7 @@ private db: Db
 user: UserTab,
 ```
 
-## Item destructuring
+### Item destructuring
 
 Destructure `item` inside a named function or method when individual properties
 are needed outside a `Result.pipe` pipeline.
@@ -398,12 +459,12 @@ return this.connectionSampleService.getConnectionSampleResult({
 });
 ```
 
-## Recursive function names
+### Recursive function names
 
 Functions that call themselves recursively must have the `Recursive` suffix in
 their name.
 
-## Object properties
+### Object properties
 
 Always use explicit `key: value` syntax in object literals — never use shorthand
 property names.
@@ -418,7 +479,7 @@ let payload = { models };
 doSomething({ sessionId });
 ```
 
-## No "for (let ... of ..." and "for (let ... in ..."
+### No "for (let ... of ..." and "for (let ... in ..."
 
 Use `forEach` for synchronous iteration.
 
@@ -426,7 +487,7 @@ Use `forEachSeries` when an asynchronous callback must be awaited sequentially.
 
 Exception: `for (let i = 0; i < ...; i++)` index loops are allowed.
 
-## Type-only imports
+### Type-only imports
 
 Use `import type` (or inline `import { type Foo, ... }`) for any import that is
 only used as a TypeScript type — type annotations, generics, `as` casts,
@@ -458,16 +519,16 @@ Why: the apps run via `@swc-node/register/esm-register`, which does not elide
 value-style imports of names that turn out to be type-only. Native Node ESM
 resolution then fails because the source file exports the name only as a `type`.
 
-## Import order
+### Import order
 
 Place all imports before other top-level declarations and statements, including
 types and interfaces. Import spacing follows "Empty lines between statements".
 
-## Domain literals
+### Domain literals
 
 Keep domain string literals type checked using the rules below.
 
-### Canonical values
+#### Canonical values
 
 Define each finite domain union from one canonical `as const` tuple. Reuse it
 for the type, schema when needed, and complete value lists. Export it when
@@ -483,7 +544,7 @@ export const taskStatusValues = ['queued', 'running', 'done'] as const;
 export type TaskStatus = (typeof taskStatusValues)[number];
 ```
 
-### Named declarations
+#### Named declarations
 
 Use explicit domain types for named variables, objects, parameters, and return
 types. Literal-array collections follow the "Collections" rule instead.
@@ -495,7 +556,7 @@ use `as` assertions to bypass checking.
 let status: TaskStatus = 'queued';
 ```
 
-### Inline checks
+#### Inline checks
 
 Use `satisfies` for inline expressions without a domain-checked context. Prefer
 checking the whole object or collection against an existing contract; otherwise
@@ -507,7 +568,7 @@ JSON.stringify({
 });
 ```
 
-### Typed contexts
+#### Typed contexts
 
 Do not add `satisfies` where the context already checks domain membership.
 Drizzle's `eq` and `inArray` check values against a column's
@@ -522,7 +583,7 @@ unchecked.
 inArray(tasksTable.status, ['queued', 'running']);
 ```
 
-### Angular template contexts
+#### Angular template contexts
 
 With `strictTemplates` enabled, keep domain literals inline in equality and
 inequality comparisons when Angular checks them against a finite domain union.
@@ -550,7 +611,7 @@ collections follow the separate "Angular collections" rule; checking a
 membership argument does not validate every literal in an inline array against
 the domain.
 
-### Interpolation
+#### Interpolation
 
 Interpolate domain literals using `satisfies` with their existing union type; do
 not embed domain tokens as unchecked plain text. Ordinary prose and
@@ -560,7 +621,7 @@ already-typed expressions need no checks.
 let message: string = `Task status must be "${'queued' satisfies TaskStatus}"`;
 ```
 
-### Collections
+#### Collections
 
 Separate collections must serve a distinct purpose: a subset, display order, or
 UI metadata. Complete value lists must reuse the canonical tuple.
@@ -578,7 +639,7 @@ checks. Do not widen to `string[]` or use a cast.
 export const activeTaskStatuses = ['queued', 'running'] satisfies TaskStatus[];
 ```
 
-### Angular collections
+#### Angular collections
 
 For template collections used with `indexOf` or `includes`, use an explicit
 domain-array annotation and call the method directly in the template.
@@ -590,7 +651,7 @@ collection's membership argument type.
 readonly activeTaskStatuses: TaskStatus[] = ['queued', 'running'];
 ```
 
-## Zod optional fields — use `.nullish()`
+### Zod optional fields — use `.nullish()`
 
 For optional fields in zod schemas, use `.nullish()` (not `.optional()`).
 `.nullish()` accepts both `null` and `undefined`, matching the looseness of
@@ -606,7 +667,7 @@ status: zFileStatus.nullish(),
 status: zFileStatus.optional(),
 ```
 
-## Zod schemas and native types
+### Zod schemas and native types
 
 Define each named Zod schema in a separate file with its corresponding
 handwritten TypeScript type.
@@ -662,7 +723,7 @@ assertTypesEqual<MemberWithLabel, z.infer<typeof zMemberWithLabel>>({
 });
 ```
 
-## Explicit variable types
+### Explicit variable types
 
 Always declare an explicit type for a variable assigned from a function or
 method call. Before returning a value, assign it to an explicitly typed variable
@@ -756,7 +817,7 @@ let modelParts = await this.llmModelService.getModelParts({
 return models.map(model => toDevModel(model));
 ```
 
-## Async promise chains
+### Async promise chains
 
 Use `async` for promise-chain functions or methods where TypeScript offers "This
 may be converted to an async function" (`ts(80006)`), even when their bodies
@@ -786,7 +847,7 @@ synchronous exceptions in the outer body to promise rejections. Direct returns
 from `.then(...)` follow the promise-chain exception under "Explicit variable
 types".
 
-## Fire and forget promises
+### Fire and forget promises
 
 When deliberately starting asynchronous work without waiting for it, prefix the
 promise-producing expression with `void` at the call site. Apply this inside
@@ -806,52 +867,7 @@ Result.andThrough(v => {
 });
 ```
 
-## Entity and Tab variable names
-
-For database entities and their converted Tab values:
-
-- End a single entity's variable name with `Ent` (for example, `projectEnt`).
-- End an entity collection's variable name with `Ents` (for example,
-  `projectEnts`).
-- Reserve the corresponding unsuffixed domain names for Tab values: `project`
-  for `ProjectTab`, `projects` for `ProjectTab[]`. Do not add a `Tab` or `Tabs`
-  suffix to these variable names.
-- Apply the same distinction to collection callback parameters, function
-  argument properties, and Result pipeline keys carrying entity or Tab values.
-- Preserve descriptive prefixes: `connectionsWithFallbackEnts` contains
-  entities, while `connectionsWithFallback` contains Tabs. API/base projections
-  use explicit prefixes such as `apiProject` and `baseProject` to distinguish
-  them from Tabs.
-
-Exception: in query promise callbacks that immediately convert entities with
-`...EntToTab` or `...EntToTabResult`, name the entity collection `xs` and each
-entity `x`. Use `x` for single-entity `.then(...)` conversion callbacks too.
-This exception includes collection conversion callbacks passed to `map` or
-`Result.sequence`, and missing-entity guards within these conversion callbacks.
-Keep entity-specific argument keys such as `queryEnt` unchanged. Entities
-retained for other operations still follow the naming rules above.
-
-```ts
-.then(xs =>
-  Result.sequence(xs, x =>
-    this.tabService.modelEntToTabResult({
-      modelEnt: x
-    })
-  )
-)
-```
-
-```ts
-let projectEnt: ProjectEnt;
-
-let project: ProjectTab;
-
-let projectEnts: ProjectEnt[];
-
-let projects: ProjectTab[];
-```
-
-## Singular and plural names
+### Singular and plural names
 
 Use plural names only for arrays. Use singular names for non-array variables,
 properties, pipeline bindings, and types, including objects that group arrays.
@@ -864,7 +880,7 @@ step's action name plus `Payload` for both the type and binding, such as
 `ReportQueries` / `reportQueries`. Keep array fields inside the payload plural.
 Function return contracts follow "Function return types" instead.
 
-## Local object projections
+### Local object projections
 
 For local object projections, prefer a named handwritten type over `Pick`. Use
 explicit mapping when the runtime object must contain only the projected fields.
@@ -885,7 +901,7 @@ let responseModelParts: ResponseModelPart[] = models.map(model => ({
 type ResponseModelPart = Pick<LlmModel, 'modelId' | 'name'>;
 ```
 
-## Empty lines between statements
+### Empty lines between statements
 
 Add an empty line between code statements. Do not add empty lines within a
 single multiline statement.
@@ -936,7 +952,7 @@ let devModels: DevModel[] = models.map(model => toDevModel(model));
 return devModels;
 ```
 
-## Optional TypeScript properties
+### Optional TypeScript properties
 
 Do not explicitly add `| null` or `| undefined` to TypeScript types.
 
@@ -950,18 +966,18 @@ apiKey?: string;
 apiKey?: string | null;
 ```
 
-## Discriminator property should be first
+### Discriminator property should be first
 
 In every member of a discriminated union, declare the discriminator property
 first. In corresponding object literals, also place the discriminator property
 first.
 
-## Condition expressions
+### Condition expressions
 
 Use the rules below for conditions. Collection membership follows the separate
 "Membership checks" rule.
 
-### Boolean conditions
+#### Boolean conditions
 
 Inline a boolean expression or boolean-returning call when a variable would only
 store it for one condition. Exception: name membership booleans in compound
@@ -976,7 +992,7 @@ if (isDefined(member) && sourcePath !== outputPath) {
 }
 ```
 
-### Negated comparisons
+#### Negated comparisons
 
 When negating a single comparison, use the inverse comparison operator rather
 than wrapping the comparison in `!`. Prefer `!==` over `!(... === ...)`, `===`
@@ -997,7 +1013,7 @@ if (!(parameter === ('columns' satisfies FileParameter))) {
 }
 ```
 
-### Undefined checks
+#### Undefined checks
 
 Use `isUndefined(value)`, not `!isDefined(value)`, when checking for an
 undefined value.
@@ -1008,7 +1024,7 @@ if (isUndefined(member)) {
 }
 ```
 
-### Non boolean results
+#### Non boolean results
 
 Assign a non-boolean function or method result to an explicitly typed variable
 before evaluating it in a condition.
@@ -1024,7 +1040,7 @@ if (isUndefined(member)) {
 }
 ```
 
-## Membership checks
+### Membership checks
 
 For value-based presence checks, use `.includes(value)` instead of
 `.indexOf(value) > -1`.
@@ -1071,7 +1087,7 @@ if (taskIds.indexOf(taskId) < 0) {
 }
 ```
 
-## Function folders call tree
+### Function folders call tree
 
 - A caller is a non-test file that directly imports and uses a standalone named
   project-local function. The imported function is the callee. Count each caller
@@ -1091,18 +1107,18 @@ if (taskIds.indexOf(taskId) < 0) {
 - Prefer flat pipes. Before adding another directory level, check whether the
   operation can be another step in the existing linear pipeline.
 
-## Maintain function folder call trees
+### Maintain function folder call trees
 
 When a function is already organized according to the "Function folders call
 tree" rule, reapply that rule whenever changing the root function or any
 function in its tree. Do not apply it to a function that is not already part of
 an established function folder call tree unless the user explicitly asks.
 
-## Byethrow
+### Byethrow
 
-### No nested pipes in a single function
+#### No nested pipes in a single function
 
-### Result type inference
+#### Result type inference
 
 Byethrow `Result` pipelines are exempt from the general explicit variable type
 rule in these cases:
@@ -1120,7 +1136,7 @@ rule in these cases:
 
 Standalone Result-producing functions must retain explicit return types.
 
-### Throwing adapters
+#### Throwing adapters
 
 Functions and methods that delegate to a Result-returning operation, return its
 success value, and throw on failure must use the base operation's name plus
@@ -1143,7 +1159,7 @@ in a throwing adapter.
 This rule does not apply to throw-to-Result adapters such as `dbErrorToResult`,
 or names where "Result" describes domain data, such as `getWrapResult`.
 
-### Result variable names
+#### Result variable names
 
 Use context-specific names:
 
@@ -1175,7 +1191,7 @@ names follow "Entity and Tab variable names". Do not use placeholders such as
 `boundValue`. Distinguish values with meaningful prefixes, not numeric suffixes.
 Meaningful numeric names such as `keyBase64` are allowed.
 
-### Result callback return types
+#### Result callback return types
 
 For `Result.map`, place output types according to the callback's role:
 
@@ -1279,7 +1295,7 @@ Result.map(
 );
 ```
 
-### Combine lookup and conversion
+#### Combine lookup and conversion
 
 When a database entity or entity collection is used only for conversion to a Tab
 value, combine lookup and conversion in one Result binding. Keep the entity
@@ -1314,7 +1330,7 @@ pipeline, including authorization, existence checks, or mutations. When
 combining steps, follow the preservation requirements in "Pipe step
 granularity".
 
-### Inline guarded Result callbacks
+#### Inline guarded Result callbacks
 
 Use an expression-bodied conditional for Result combinator and
 promise-conversion callbacks that only select between a fallback Result and one
@@ -1330,7 +1346,7 @@ solely to inline a callback.
 Async handling, guard ownership, and behavior preservation follow "Async promise
 chains", "Guard optional operations at caller", and "Pipe step granularity".
 
-### Function error types
+#### Function error types
 
 For every Result-producing function with anticipated errors, define a named
 `<FunctionName>Error` type in `types/function-errors/<function-name>-error.ts`.
@@ -1347,11 +1363,11 @@ lower-level function error types instead of repeating their leaf error members.
 Define single-member and pass-through aliases as function error types too, so
 every fallible function has its own error contract.
 
-### Byethrow function selection
+#### Byethrow function selection
 
 Use the Byethrow function matching the operation.
 
-#### Creating results
+##### Creating results
 
 - `succeed` creates a successful result.
 - `fail` creates a failed result.
@@ -1361,7 +1377,7 @@ Use the Byethrow function matching the operation.
 - `fn` wraps a possibly throwing function and returns a reusable
   Result-producing function.
 
-#### Composing and transforming
+##### Composing and transforming
 
 - `pipe` applies functions from left to right.
 - `map` transforms or mutates pipeline data without introducing an anticipated
@@ -1390,7 +1406,7 @@ but only `andThrough` propagates a returned Result failure. Do not discard a
 fallible Result inside either callback. Callback annotations follow "Result
 callback return types".
 
-#### Combining and validating
+##### Combining and validating
 
 - `sequence` combines results, stopping at the first failure.
 - `collect` combines results, processing all inputs and collecting every
@@ -1398,7 +1414,7 @@ callback return types".
 - `parse` validates a value with a synchronous Standard Schema and returns
   validation issues as a failure.
 
-#### Checking and asserting
+##### Checking and asserting
 
 - `isResult` checks whether an unknown value has a Result shape.
 - `isSuccess` narrows a result to a success.
@@ -1406,13 +1422,13 @@ callback return types".
 - `assertSuccess` asserts that a result with error type `never` is successful.
 - `assertFailure` asserts that a result with success type `never` is failed.
 
-#### Extracting values
+##### Extracting values
 
 - `unwrap` extracts the success value, using a default or throwing the failure.
 - `unwrapError` extracts the failure value, using a default or throwing the
   success value.
 
-### Combinator application
+#### Combinator application
 
 Pass Result combinators as steps to `Result.pipe`. Do not directly invoke the
 curried function returned by a combinator, such as
@@ -1420,19 +1436,19 @@ curried function returned by a combinator, such as
 pipe in the same function, extract the operation into a standalone function in
 its own file.
 
-### Sequence Result collections
+#### Sequence Result collections
 
 Use `Result.sequence` when applying a Result-producing operation to every item
 in a collection and processing should stop at the first failure. Do not manually
 accumulate the collection result by repeatedly applying a curried combinator.
 
-### Error policy
+#### Error policy
 
 Use `Result` failures for anticipated domain errors. Unexpected infrastructure
 errors may throw unless they are intentionally converted using `Result.try` or
 `Result.fn`.
 
-### Pipe state
+#### Pipe state
 
 **Initialization**
 
@@ -1520,7 +1536,7 @@ return Result.pipe(
 );
 ```
 
-### Pipe step granularity
+#### Pipe step granularity
 
 Prefer flat pipelines with named steps for distinct intermediate operations
 rather than putting several prerequisite queries or transformations in one
@@ -1553,7 +1569,7 @@ Result.bind('projectIds', v =>
 );
 ```
 
-### Pipe step callbacks
+#### Pipe step callbacks
 
 Pass an inline callback to every Result combinator used as a `Result.pipe` step.
 Name the callback argument `v`. Do not pass a named function directly as the
@@ -1573,12 +1589,12 @@ Result.andThrough(v =>
 Result.andThrough(validateModel);
 ```
 
-### Pipe step argument types
+#### Pipe step argument types
 
 Do not annotate the type of `v` in callbacks passed directly as `Result.pipe`
 steps. Rely on contextual inference from the preceding pipeline state.
 
-### Guard optional operations at caller
+#### Guard optional operations at caller
 
 When a Result-producing operation depends on an optional value, handle the
 absent case in the caller. Pass the narrowed, required value to the callee.
