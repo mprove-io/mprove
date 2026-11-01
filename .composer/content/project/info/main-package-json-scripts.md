@@ -21,3 +21,7 @@ for specific package.
 
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
 `mcli`
+
+If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds;
+`repair-s-viewer` fails. When present, validation errors or a missing CLI/bundle
+fail the command. These scripts target Mprove's manifest, not the extension's.
