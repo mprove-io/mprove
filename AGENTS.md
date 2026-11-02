@@ -149,21 +149,20 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`,
 
 ### Main package json scripts
 
-| Script          | Command                                                                 |
-| --------------- | ----------------------------------------------------------------------- |
-| check           | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
-| check-s-viewer  | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
-| repair-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts repair`                 |
-| typecheck       | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
-| lint            | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
-| circular        | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
-| build           | `pnpm build:turbo && pnpm build:mcli`                                   |
-| node-serve      | `turbo run node-serve`                                                  |
-| start           | `turbo run start`                                                       |
-| debug           | `turbo run debug`                                                       |
-| test            | `turbo run test`                                                        |
-| e2e             | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
-| inst            | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
+| Script         | Command                                                                 |
+| -------------- | ----------------------------------------------------------------------- |
+| check          | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
+| check-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
+| typecheck      | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
+| lint           | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
+| circular       | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
+| build          | `pnpm build:turbo && pnpm build:mcli`                                   |
+| node-serve     | `turbo run node-serve`                                                  |
+| start          | `turbo run start`                                                       |
+| debug          | `turbo run debug`                                                       |
+| test           | `turbo run test`                                                        |
+| e2e            | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
+| inst           | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>`
 for specific package.
@@ -171,9 +170,9 @@ for specific package.
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
 `mcli`
 
-If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds;
-`repair-s-viewer` fails. When present, validation errors or a missing CLI/bundle
-fail the command. These scripts target Mprove's manifest, not the extension's.
+If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds.
+When present, validation errors or a missing CLI/bundle fail the command. This
+script targets Mprove's manifest, not the extension's.
 
 ### ESM Configuration
 
@@ -211,6 +210,22 @@ Source code for the [OpenCode](https://github.com/anomalyco/opencode).
 #### external/ai
 
 Source code for @ai-sdk
+
+### Extra repositories
+
+The gitignored top level "extra" directory holds separate repositories.
+
+| Repository | Location         | Used by                               |
+| ---------- | ---------------- | ------------------------------------- |
+| S Viewer   | `extra/s-viewer` | `check-s-viewer`                      |
+| Composer   | `extra/composer` | `pnpm composer`, `pnpm test:composer` |
+
+Set up Composer once before running `pnpm composer`:
+
+```sh
+git clone https://github.com/akalitenya/composer.git extra/composer
+pnpm --dir extra/composer install
+```
 
 ## Rules
 
@@ -345,28 +360,29 @@ Explicitly account for every HEAD range in a changed text file through same-file
 source mappings or `deletedRanges`. Cross-file mappings do not replace that
 file's deletion accounting.
 
-Follow [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md) for the
-schema, range/source mappings, repair behavior, and snapshot limitations.
+Author and semantically review provenance mappings against HEAD and current
+text. Tools validate mappings; they do not generate them. Successful validation
+does not establish provenance correctness. Follow the semantic-review checklist
+in [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md), which also
+defines the schema, mapping workflow, and snapshot limitations.
 
 From the repository root, run the package scripts with its package manager:
 
 ```sh
 pnpm check-s-viewer
-pnpm repair-s-viewer
 ```
 
-For npm-managed repositories, use `npm run check-s-viewer` and
-`npm run repair-s-viewer` instead. Each script targets its own repository's
-manifest; checking a consumer repository does not check the extension
-repository.
+For npm-managed repositories, use `npm run check-s-viewer` instead. Each script
+targets its own repository's manifest; checking a consumer repository does not
+check the extension repository.
 
-`check-s-viewer` is read-only and previews automatic fixes under `repairPlan`.
-Edit the manifest manually or use `repair-s-viewer`, then restore/add
-intentional provenance mappings as described in the guide.
+`check-s-viewer` is read-only. Resolve diagnostics by inspecting the actual text
+and editing the manifest yourself, not by inventing additions or deletions just
+to satisfy coverage. Review mappings before updating content hashes.
 
 After all edits, formatting, and generated files, finish with `check-s-viewer`
 reporting no errors. The repository's `check` script also runs it after
-typecheck and lint; neither command repairs automatically.
+typecheck and lint; neither command changes the manifest.
 
 ### One function per file
 

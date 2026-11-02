@@ -8,8 +8,8 @@ let viewer: URL = new URL('extra/s-viewer', root);
 
 let command: string = process.argv[2];
 
-if (command !== 'check' && command !== 'repair') {
-  throw new Error('Expected an S Viewer manifest command: check or repair.');
+if (command !== 'check') {
+  throw new Error('Expected the S Viewer manifest command: check.');
 }
 
 let args: string[] = process.argv.slice(2);
@@ -30,12 +30,8 @@ if (existsSync(viewer)) {
   }
 
   process.exitCode = output.status ?? 1;
-} else if (command === 'check') {
+} else {
   console.warn(
     'Warning: extra/s-viewer is absent; skipping manifest validation.'
   );
-} else {
-  console.error('Cannot repair the manifest: extra/s-viewer is absent.');
-
-  process.exitCode = 1;
 }

@@ -22,7 +22,8 @@
       "!pnpm-patches/**",
       "!setup-docker/data/**",
       "!package.docker.json",
-      "!external/**"
+      "!external/**",
+      "!extra/**"
     ]
   },
   "formatter": {

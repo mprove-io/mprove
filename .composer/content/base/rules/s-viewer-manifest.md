@@ -8,25 +8,26 @@ Explicitly account for every HEAD range in a changed text file through same-file
 source mappings or `deletedRanges`. Cross-file mappings do not replace that
 file's deletion accounting.
 
-Follow [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md) for the
-schema, range/source mappings, repair behavior, and snapshot limitations.
+Author and semantically review provenance mappings against HEAD and current
+text. Tools validate mappings; they do not generate them. Successful validation
+does not establish provenance correctness. Follow the semantic-review checklist
+in [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md), which also
+defines the schema, mapping workflow, and snapshot limitations.
 
 From the repository root, run the package scripts with its package manager:
 
 ```sh
 pnpm check-s-viewer
-pnpm repair-s-viewer
 ```
 
-For npm-managed repositories, use `npm run check-s-viewer` and
-`npm run repair-s-viewer` instead. Each script targets its own repository's
-manifest; checking a consumer repository does not check the extension
-repository.
+For npm-managed repositories, use `npm run check-s-viewer` instead. Each script
+targets its own repository's manifest; checking a consumer repository does not
+check the extension repository.
 
-`check-s-viewer` is read-only and previews automatic fixes under `repairPlan`.
-Edit the manifest manually or use `repair-s-viewer`, then restore/add
-intentional provenance mappings as described in the guide.
+`check-s-viewer` is read-only. Resolve diagnostics by inspecting the actual text
+and editing the manifest yourself, not by inventing additions or deletions just
+to satisfy coverage. Review mappings before updating content hashes.
 
 After all edits, formatting, and generated files, finish with `check-s-viewer`
 reporting no errors. The repository's `check` script also runs it after
-typecheck and lint; neither command repairs automatically.
+typecheck and lint; neither command changes the manifest.

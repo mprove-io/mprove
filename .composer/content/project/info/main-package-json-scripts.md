@@ -1,20 +1,19 @@
 # Main package json scripts
 
-| Script          | Command                                                                 |
-| --------------- | ----------------------------------------------------------------------- |
-| check           | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
-| check-s-viewer  | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
-| repair-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts repair`                 |
-| typecheck       | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
-| lint            | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
-| circular        | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
-| build           | `pnpm build:turbo && pnpm build:mcli`                                   |
-| node-serve      | `turbo run node-serve`                                                  |
-| start           | `turbo run start`                                                       |
-| debug           | `turbo run debug`                                                       |
-| test            | `turbo run test`                                                        |
-| e2e             | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
-| inst            | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
+| Script         | Command                                                                 |
+| -------------- | ----------------------------------------------------------------------- |
+| check          | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
+| check-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
+| typecheck      | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
+| lint           | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
+| circular       | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
+| build          | `pnpm build:turbo && pnpm build:mcli`                                   |
+| node-serve     | `turbo run node-serve`                                                  |
+| start          | `turbo run start`                                                       |
+| debug          | `turbo run debug`                                                       |
+| test           | `turbo run test`                                                        |
+| e2e            | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
+| inst           | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>`
 for specific package.
@@ -22,6 +21,6 @@ for specific package.
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
 `mcli`
 
-If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds;
-`repair-s-viewer` fails. When present, validation errors or a missing CLI/bundle
-fail the command. These scripts target Mprove's manifest, not the extension's.
+If `extra/s-viewer` is absent, `check-s-viewer` prints a warning and succeeds.
+When present, validation errors or a missing CLI/bundle fail the command. This
+script targets Mprove's manifest, not the extension's.

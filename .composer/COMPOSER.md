@@ -16,6 +16,7 @@
 - project/info/main-package-json-scripts.md
 - project/info/esm-configuration.md
 - project/info/external.md
+- project/info/extra-repositories.md
 
 - project/rules.md
 - project/rules/typecheck-and-lint.md
