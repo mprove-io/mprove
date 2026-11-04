@@ -350,6 +350,11 @@ Use read-only operations if needed (like status, diff, etc)
 
 ### Do not write tests unless asked
 
+### Do not generate migrations unless asked
+
+Do not generate or handwrite database migrations unless explicitly asked. This
+includes migration SQL, snapshots, and migration journal updates.
+
 ### S Viewer manifest
 
 Whenever changing repository files, maintain `.s-viewer/manifest.json` for the

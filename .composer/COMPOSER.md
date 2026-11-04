@@ -32,6 +32,7 @@
 - base/rules/git-operations.md
 - base/rules/do-not-run-tests-unless-asked.md
 - base/rules/do-not-write-tests-unless-asked.md
+- base/rules/do-not-generate-migrations-unless-asked.md
 - base/rules/s-viewer-manifest.md
 - base/rules/one-function-per-file.md
 - base/rules/function-and-method-args.md
