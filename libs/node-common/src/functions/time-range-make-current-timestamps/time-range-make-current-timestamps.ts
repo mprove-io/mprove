@@ -12,7 +12,7 @@ import {
 import { toZonedTime } from 'date-fns-tz';
 import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 
-interface TimestampsResult {
+type TimestampsResult = {
   currentTs: number;
   currentSecondTs: number;
   currentMinuteTs: number;
@@ -22,7 +22,7 @@ interface TimestampsResult {
   currentMonthTs: number;
   currentQuarterTs: number;
   currentYearTs: number;
-}
+};
 
 export function timeRangeMakeCurrentTimestamps(item: {
   timezone: any;

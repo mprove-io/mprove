@@ -12,9 +12,9 @@ import { VS_LIGHT_STYLES } from './vs-light-tags';
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/dark.ts
 
-interface StyleSpec {
+type StyleSpec = {
   [propOrSelector: string]: string | number | StyleSpec | null;
-}
+};
 
 let lightSpec: {
   [selector: string]: StyleSpec;

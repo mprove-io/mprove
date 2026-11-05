@@ -10,21 +10,21 @@ const frontRequire = createRequire(
   path.resolve(__dirname, '../../apps/front/package.json')
 );
 
-interface TokenColor {
+type TokenColor = {
   scope?: string | string[];
   settings?: { foreground?: string };
-}
+};
 
-interface Theme {
+type Theme = {
   tokenColors?: TokenColor[];
   colors?: Record<string, string>;
   semanticTokenColors?: Record<string, string>;
-}
+};
 
-interface StyleEntry {
+type StyleEntry = {
   tag: string;
   color: string;
-}
+};
 
 function processTheme(theme: Theme) {
   let colorMap: Record<string, string> = {};

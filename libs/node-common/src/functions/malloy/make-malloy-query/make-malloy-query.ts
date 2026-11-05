@@ -51,12 +51,12 @@ import { getBlankMconfigAndQuery } from '#node-common/functions/malloy/make-mall
 import { isGivenTypeMalloyCompatible } from '#node-common/functions/malloy/make-malloy-query/is-given-type-malloy-compatible/is-given-type-malloy-compatible';
 import { processMalloyWhereOrHaving } from '#node-common/functions/malloy/make-malloy-query/process-malloy-where-or-having/process-malloy-where-or-having';
 
-export interface MalloyQueryResult {
+export type MalloyQueryResult = {
   isError: boolean;
   errorMessage: string;
   apiNewMconfig: Mconfig;
   apiNewQuery: Query;
-}
+};
 
 export async function makeMalloyQuery(item: {
   projectId: string;

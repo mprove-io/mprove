@@ -74,12 +74,12 @@ returns matching page ids with snippet previews.`;
 export const MCP_TOOL_VALIDATE_DESCRIPTION =
   'Validate (rebuild) Mprove files for a project branch and environment';
 
-export interface McpToolRegistryEntry {
+export type McpToolRegistryEntry = {
   name: string;
   description: string;
   inputSchema: z.ZodType;
   outputSchema: z.ZodType;
-}
+};
 
 export const mcpToolsRegistry: McpToolRegistryEntry[] = [
   {

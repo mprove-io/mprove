@@ -3,7 +3,7 @@ import type { ErrorStory } from '#common/types/shared/errors/error-story';
 
 import { splitMultilineMessage } from '#node-common/functions/wrap-error/split-multiline-message/split-multiline-message';
 
-export interface WrappedError {
+export type WrappedError = {
   story: ErrorStory;
   name: any;
   message: any;
@@ -14,7 +14,7 @@ export interface WrappedError {
   originalError: any;
   originalErrorStack: any;
   e: any;
-}
+};
 
 export function wrapError(e: any) {
   let originalError = e.originalError || null;

@@ -4,10 +4,10 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { KeyTagPair } from '#common/types/blockml/parts/tag/key-tag-pair';
 import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
 
-interface ParseResult {
+type ParseResult = {
   malloyTags: KeyValuePair[];
   mproveTags: KeyValuePair[];
-}
+};
 
 export function parseTags(item: { inputs: string[] }): ParseResult {
   let { inputs } = item;

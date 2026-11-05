@@ -2,6 +2,7 @@ import { Result } from '@praha/byethrow';
 import { type BaseContext, Command } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Extend } from '#common/types/extend';
 import { getConfig } from '#mcli/config/get-config';
 import type { McliConfig } from '#mcli/config/mcli-config';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
@@ -14,9 +15,7 @@ type CommandErrorLog = {
   };
 };
 
-export interface CustomContext extends BaseContext {
-  config: McliConfig;
-}
+export type CustomContext = Extend<BaseContext, { config: McliConfig }>;
 
 export abstract class CustomCommand extends Command<CustomContext> {
   override async execute(): Promise<number> {

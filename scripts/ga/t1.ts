@@ -1,4 +1,4 @@
-interface PreparedRow {
+type PreparedRow = {
   year: string;
   yearMonth: string;
   isoYearIsoWeek: string;
@@ -6,17 +6,17 @@ interface PreparedRow {
   date: string;
   dateHour: string;
   dateHourMinute: string;
-}
+};
 
-interface ResultRowData {
+type ResultRowData = {
   unit: string;
   value: string;
   utcMs: number;
-}
+};
 
-interface ResultRow {
+type ResultRow = {
   [key: string]: ResultRowData;
-}
+};
 
 async function t1() {
   try {
