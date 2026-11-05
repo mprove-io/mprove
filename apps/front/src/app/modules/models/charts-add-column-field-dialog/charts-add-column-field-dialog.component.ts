@@ -32,11 +32,11 @@ import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface ChartsAddColumnFieldDialogData {
+export type ChartsAddColumnFieldDialogData = {
   apiService: ApiService;
   chart: ChartX;
   fields: ModelFieldY[];
-}
+};
 
 @Component({
   selector: 'm-charts-add-column-field-dialog',

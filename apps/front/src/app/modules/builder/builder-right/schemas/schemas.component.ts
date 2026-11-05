@@ -36,7 +36,7 @@ import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
 import { ViewCachedUniqueValuesDialogData } from './view-cached-unique-values-dialog/view-cached-unique-values-dialog.component';
 
-interface SchemaTreeNode {
+type SchemaTreeNode = {
   id: string;
   name: string;
   searchName: string;
@@ -59,7 +59,7 @@ interface SchemaTreeNode {
   errorMessage?: string;
   cachedColumn?: CachedColumn | null;
   hasUncachedCacheUniqueValuesRecommendation?: boolean;
-}
+};
 
 @Component({
   standalone: false,

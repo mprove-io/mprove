@@ -63,11 +63,11 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface ChartSaveAsDialogData {
+export type ChartSaveAsDialogData = {
   apiService: ApiService;
   chart: Chart;
   model: Model;
-}
+};
 
 type SpaceOption = typeof EMPTY_SPACE;
 

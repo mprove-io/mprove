@@ -15,10 +15,10 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteGivenDialogData {
+export type DeleteGivenDialogData = {
   apiService: ApiService;
   given: Given;
-}
+};
 
 @Component({
   selector: 'm-delete-given-dialog',

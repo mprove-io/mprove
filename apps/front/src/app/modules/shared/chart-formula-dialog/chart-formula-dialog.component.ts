@@ -18,10 +18,10 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { DataService } from '#front/app/services/data.service';
 import { SharedModule } from '../shared.module';
 
-export interface ChartFormulaDialogData {
+export type ChartFormulaDialogData = {
   row: DataRow;
   chartPointsData: ChartPointsData;
-}
+};
 
 @Component({
   selector: 'm-chart-formula-dialog',

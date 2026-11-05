@@ -44,11 +44,11 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface ReportSaveAsDialogData {
+export type ReportSaveAsDialogData = {
   apiService: ApiService;
   reports: ReportUnit[];
   report: ReportX;
-}
+};
 
 type SpaceOption = typeof EMPTY_SPACE;
 

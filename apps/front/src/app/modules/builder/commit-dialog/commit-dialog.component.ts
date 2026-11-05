@@ -30,7 +30,7 @@ import { FileService } from '#front/app/services/file.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface CommitDialogDialogData {
+export type CommitDialogDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
@@ -38,7 +38,7 @@ export interface CommitDialogDialogData {
   branchId: string;
   builderLeft: BuilderLeft;
   fileId: string;
-}
+};
 
 @Component({
   selector: 'm-commit-dialog',

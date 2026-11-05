@@ -25,10 +25,10 @@ import type { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface AddProjectRoleDialogData {
+export type AddProjectRoleDialogData = {
   apiService: ApiService;
   projectId: string;
-}
+};
 
 @Component({
   selector: 'm-add-project-role-dialog',

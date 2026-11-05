@@ -19,10 +19,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DashboardAddTileDialogData {
+export type DashboardAddTileDialogData = {
   apiService: ApiService;
   dashboard: Dashboard;
-}
+};
 
 @Component({
   selector: 'm-dashboard-add-tile-dialog',

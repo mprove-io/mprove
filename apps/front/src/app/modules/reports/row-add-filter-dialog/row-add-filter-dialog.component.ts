@@ -44,10 +44,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { ReportService } from '#front/app/services/report.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface RowAddFilterDialogData {
+export type RowAddFilterDialogData = {
   apiService: ApiService;
   reportSelectedNode: IRowNode<DataRow>;
-}
+};
 
 @Component({
   selector: 'm-row-add-filter-dialog',

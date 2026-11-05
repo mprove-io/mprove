@@ -29,9 +29,9 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ReportService } from '#front/app/services/report.service';
 
-export interface ReportAddRowDialogData {
+export type ReportAddRowDialogData = {
   apiService: ApiService;
-}
+};
 
 @Component({
   standalone: false,

@@ -24,10 +24,10 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface AddEnvironmentDialogData {
+export type AddEnvironmentDialogData = {
   apiService: ApiService;
   projectId: string;
-}
+};
 
 @Component({
   selector: 'm-add-environment-dialog',

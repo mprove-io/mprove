@@ -32,11 +32,11 @@ import { ApiService } from '#front/app/services/api.service';
 import { ReportService } from '#front/app/services/report.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface ReportEditListenersDialogData {
+export type ReportEditListenersDialogData = {
   reportService: ReportService;
   apiService: ApiService;
   report: Report;
-}
+};
 
 @Component({
   standalone: false,

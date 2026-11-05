@@ -25,11 +25,11 @@ import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface AddRoleDialogData {
+export type AddRoleDialogData = {
   apiService: ApiService;
   member: Member;
   i: number;
-}
+};
 
 @Component({
   selector: 'm-add-role-dialog',

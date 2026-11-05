@@ -32,13 +32,13 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface NewFileDialogData {
+export type NewFileDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
   branchId: string;
   envId: string;
-}
+};
 
 @Component({
   selector: 'm-new-file-dialog',

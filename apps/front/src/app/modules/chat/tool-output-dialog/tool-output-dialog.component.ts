@@ -13,7 +13,7 @@ function unescapeNewlines(text: string): string {
   return text.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
 }
 
-export interface ToolOutputDialogData {
+export type ToolOutputDialogData = {
   title: string;
   subtitle: string;
   output: string;
@@ -21,7 +21,7 @@ export interface ToolOutputDialogData {
   rawOutput?: string;
   isError: boolean;
   wrapText?: boolean;
-}
+};
 
 @Component({
   selector: 'm-tool-output-dialog',

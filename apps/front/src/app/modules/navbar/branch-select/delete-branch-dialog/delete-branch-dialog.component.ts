@@ -22,7 +22,7 @@ import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteBranchDialogData {
+export type DeleteBranchDialogData = {
   apiService: ApiService;
   orgId: string;
   projectId: string;
@@ -32,7 +32,7 @@ export interface DeleteBranchDialogData {
   repoId: string;
   repoType: RepoType;
   alias: string;
-}
+};
 
 @Component({
   selector: 'm-delete-branch-dialog',

@@ -22,12 +22,12 @@ import type { DataRow } from '#common/types/front/report/row/data-row';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { BaseQuery } from './base.query';
 
-export interface RepChartData {
+export type RepChartData = {
   rows: DataRow[];
   columns: Column[];
   firstDataTimeColumnIndex: number;
   lastDataTimeColumnIndex: number;
-}
+};
 
 export class UiState {
   isHighlighterReady: boolean;

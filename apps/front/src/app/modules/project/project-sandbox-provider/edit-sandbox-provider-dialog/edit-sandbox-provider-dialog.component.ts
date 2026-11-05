@@ -23,10 +23,10 @@ import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditSandboxProviderDialogData {
+export type EditSandboxProviderDialogData = {
   apiService: ApiService;
   projectId: string;
-}
+};
 
 @Component({
   selector: 'm-edit-sandbox-provider-dialog',

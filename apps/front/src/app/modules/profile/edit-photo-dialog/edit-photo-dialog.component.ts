@@ -15,9 +15,9 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditPhotoDialogData {
+export type EditPhotoDialogData = {
   apiService: ApiService;
-}
+};
 
 @Component({
   selector: 'm-edit-photo-dialog',

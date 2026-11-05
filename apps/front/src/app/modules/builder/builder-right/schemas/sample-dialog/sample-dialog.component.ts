@@ -16,7 +16,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
-export interface SampleDialogData {
+export type SampleDialogData = {
   title: string;
   subtitle: string;
   columnNames: string[];
@@ -28,7 +28,7 @@ export interface SampleDialogData {
   schemaName: string;
   tableName: string;
   columnName: string;
-}
+};
 
 @Component({
   selector: 'm-sample-dialog',

@@ -15,12 +15,12 @@ import type { ToBackendGetMemberGivensRequest } from '#common/types/backend/rout
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface GetMemberGivensDialogData {
+export type GetMemberGivensDialogData = {
   apiService: ApiService;
   projectId: string;
   memberId: string;
   email: string;
-}
+};
 
 @Component({
   selector: 'm-get-member-givens-dialog',

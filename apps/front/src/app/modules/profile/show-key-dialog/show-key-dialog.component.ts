@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 
-export interface ShowKeyDialogData {
+export type ShowKeyDialogData = {
   apiKey: string;
-}
+};
 
 @Component({
   selector: 'm-show-key-dialog',

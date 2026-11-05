@@ -4,7 +4,7 @@ import type { BmlError } from '#common/types/blockml/diagnostics/bml-error';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { Query } from '#common/types/blockml/parts/query/query';
 
-export interface ExplorerTab {
+export type ExplorerTab = {
   id: string;
   label: string;
   closable?: boolean;
@@ -12,7 +12,7 @@ export interface ExplorerTab {
   chartType?: ChartType;
   chartId?: string;
   modelId?: string;
-}
+};
 
 export type ExplorerTabContent =
   | { status: 'idle' }

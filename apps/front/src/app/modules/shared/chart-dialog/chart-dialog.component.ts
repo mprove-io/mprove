@@ -61,7 +61,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../shared.module';
 
-export interface ChartDialogData {
+export type ChartDialogData = {
   apiService: ApiService;
   isSelectValid: boolean;
   mconfig: MconfigX;
@@ -73,7 +73,7 @@ export interface ChartDialogData {
   setPivotDefaults?: boolean;
   metricId?: string;
   listen?: { [a: string]: string };
-}
+};
 
 @Component({
   selector: 'm-chart-dialog',

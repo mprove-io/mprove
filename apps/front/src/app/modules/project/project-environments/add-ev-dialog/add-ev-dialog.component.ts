@@ -24,11 +24,11 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface AddEvDialogData {
+export type AddEvDialogData = {
   apiService: ApiService;
   projectId: string;
   envId: string;
-}
+};
 
 @Component({
   selector: 'm-add-ev-dialog',

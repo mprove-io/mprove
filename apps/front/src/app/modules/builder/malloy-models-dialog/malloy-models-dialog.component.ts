@@ -18,10 +18,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface MalloyModelsDialogData {
+export type MalloyModelsDialogData = {
   apiService: ApiService;
   models: ModelX[];
-}
+};
 
 @Component({
   selector: 'm-malloy-models-dialog',

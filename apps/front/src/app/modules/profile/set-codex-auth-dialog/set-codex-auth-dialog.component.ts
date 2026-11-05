@@ -19,9 +19,9 @@ import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface SetCodexAuthDialogData {
+export type SetCodexAuthDialogData = {
   apiService: ApiService;
-}
+};
 
 const POLL_SAFETY_MARGIN_MS = 3000;
 

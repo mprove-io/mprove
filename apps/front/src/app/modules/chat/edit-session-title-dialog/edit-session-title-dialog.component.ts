@@ -23,11 +23,11 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditSessionTitleDialogData {
+export type EditSessionTitleDialogData = {
   apiService: ApiService;
   sessionId: string;
   title: string;
-}
+};
 
 @Component({
   selector: 'm-edit-session-title-dialog',

@@ -12,12 +12,12 @@ import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface RemoveMemberDialogData {
+export type RemoveMemberDialogData = {
   apiService: ApiService;
   projectId: string;
   memberId: string;
   email: string;
-}
+};
 
 @Component({
   selector: 'm-remove-member-dialog',

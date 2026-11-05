@@ -20,7 +20,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteFileDialogData {
+export type DeleteFileDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
@@ -28,7 +28,7 @@ export interface DeleteFileDialogData {
   envId: string;
   fileNodeId: string;
   fileName: string;
-}
+};
 
 @Component({
   selector: 'm-delete-file-dialog',

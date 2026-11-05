@@ -16,11 +16,11 @@ import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteEnvironmentDialogData {
+export type DeleteEnvironmentDialogData = {
   apiService: ApiService;
   projectId: string;
   envId: string;
-}
+};
 
 @Component({
   selector: 'm-delete-environment-dialog',

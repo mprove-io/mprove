@@ -72,11 +72,11 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-interface HistoryEntry {
+type HistoryEntry = {
   fullDocContent: string;
   positionToA: number;
   positionToB: number;
-}
+};
 
 export const malloyCommentToggle = Annotation.define<'toggle'>();
 

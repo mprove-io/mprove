@@ -15,10 +15,10 @@ import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteProjectRoleDialogData {
+export type DeleteProjectRoleDialogData = {
   apiService: ApiService;
   role: Role;
-}
+};
 
 @Component({
   selector: 'm-delete-project-role-dialog',

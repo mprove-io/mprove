@@ -12,12 +12,12 @@ import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteConnectionDialogData {
+export type DeleteConnectionDialogData = {
   apiService: ApiService;
   projectId: string;
   envId: string;
   connectionId: string;
-}
+};
 
 @Component({
   selector: 'm-delete-connection-dialog',

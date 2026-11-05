@@ -38,10 +38,10 @@ import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
 
-export interface EditConnectionDialogData {
+export type EditConnectionDialogData = {
   apiService: ApiService;
   connection: ProjectConnection;
-}
+};
 
 @Component({
   selector: 'm-edit-connection-dialog',

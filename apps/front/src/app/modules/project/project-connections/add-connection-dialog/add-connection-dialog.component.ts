@@ -42,10 +42,10 @@ import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
 
-export interface AddConnectionDialogData {
+export type AddConnectionDialogData = {
   apiService: ApiService;
   projectId: string;
-}
+};
 
 @Component({
   selector: 'm-add-connection-dialog',

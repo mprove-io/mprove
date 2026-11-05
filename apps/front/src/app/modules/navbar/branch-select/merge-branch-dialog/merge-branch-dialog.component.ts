@@ -29,7 +29,7 @@ import { FileService } from '#front/app/services/file.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface MergeBranchDialogData {
+export type MergeBranchDialogData = {
   apiService: ApiService;
   fileService: FileService;
   projectId: string;
@@ -39,7 +39,7 @@ export interface MergeBranchDialogData {
   currentBranchExtraName: string;
   envId: string;
   branchesList: BranchItem[];
-}
+};
 
 @Component({
   selector: 'm-merge-branch-dialog',

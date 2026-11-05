@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { SharedModule } from '../../../../shared/shared.module';
 
-export interface CacheColumnFromSampleDialogData {
+export type CacheColumnFromSampleDialogData = {
   sampleSize: number;
   onSubmit: (sampleSize: number) => void;
-}
+};
 
 @Component({
   selector: 'm-cache-column-from-sample-dialog',

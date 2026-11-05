@@ -23,6 +23,7 @@ import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { Extend } from '#common/types/extend';
 import type { DataRow } from '#common/types/front/report/row/data-row';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -35,9 +36,7 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { ReportService } from '#front/app/services/report.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface FilterX2 extends FilterX {
-  listen: string;
-}
+export type FilterX2 = Extend<FilterX, { listen: string }>;
 
 @Component({
   standalone: false,

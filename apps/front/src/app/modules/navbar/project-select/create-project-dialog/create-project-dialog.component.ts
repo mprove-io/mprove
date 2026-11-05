@@ -37,10 +37,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface CreateProjectDialogData {
+export type CreateProjectDialogData = {
   apiService: ApiService;
   orgId: string;
-}
+};
 
 @Component({
   selector: 'm-create-project-dialog',

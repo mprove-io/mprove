@@ -15,11 +15,11 @@ import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteLlmModelDialogData {
+export type DeleteLlmModelDialogData = {
   apiService: ApiService;
   provider: Provider;
   model: LlmModel;
-}
+};
 
 @Component({
   selector: 'm-delete-llm-model-dialog',

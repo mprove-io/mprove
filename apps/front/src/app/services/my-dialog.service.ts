@@ -337,10 +337,10 @@ import {
 } from '../modules/shared/report-save-as-dialog/report-save-as-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 
-export interface ErrorDialogData {
+export type ErrorDialogData = {
   errorData: ErrorData;
   isThrow: boolean;
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class MyDialogService {

@@ -28,11 +28,11 @@ import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditOrgOwnerDialogData {
+export type EditOrgOwnerDialogData = {
   apiService: ApiService;
   orgId: string;
   ownerEmail: string;
-}
+};
 
 @Component({
   selector: 'm-edit-org-owner-dialog',

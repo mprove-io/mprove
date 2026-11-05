@@ -18,11 +18,11 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
-export interface DeleteSessionDialogData {
+export type DeleteSessionDialogData = {
   apiService: ApiService;
   sessionId: string;
   title: string;
-}
+};
 
 @Component({
   selector: 'm-delete-session-dialog',

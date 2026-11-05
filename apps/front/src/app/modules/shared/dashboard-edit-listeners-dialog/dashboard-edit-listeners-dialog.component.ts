@@ -31,11 +31,11 @@ import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DashboardEditListenersDialogData {
+export type DashboardEditListenersDialogData = {
   dashboardService: DashboardService;
   apiService: ApiService;
   dashboard: Dashboard;
-}
+};
 
 @Component({
   standalone: false,

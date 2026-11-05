@@ -30,14 +30,14 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface CreateFileDialogData {
+export type CreateFileDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
   branchId: string;
   envId: string;
   parentNodeId: string;
-}
+};
 
 @Component({
   selector: 'm-create-file-dialog',

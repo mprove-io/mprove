@@ -23,36 +23,36 @@ import type { PivotSortDirection } from '#front/app/modules/shared/chart-pivot-t
 import { StructQuery } from '#front/app/queries/struct.query';
 import { DataService, type QDataRow } from '#front/app/services/data.service';
 
-interface PivotTableRow {
+type PivotTableRow = {
   [key: string]: string | number | null;
-}
+};
 
-interface PivotColumnResizeDetail {
+type PivotColumnResizeDetail = {
   field: string;
   width: number;
-}
+};
 
-interface PivotHeaderPart {
+type PivotHeaderPart = {
   label: string;
   isName: boolean;
-}
+};
 
-interface PivotHeaderItem {
+type PivotHeaderItem = {
   text: string;
   parts: PivotHeaderPart[];
-}
+};
 
-interface PivotFieldHeader {
+type PivotFieldHeader = {
   label: string;
   prefix: string[];
-}
+};
 
-interface PivotValueFormatMetadata {
+type PivotValueFormatMetadata = {
   currencyPrefix: string | undefined;
   currencySuffix: string | undefined;
   formatNumber: string | undefined;
   thousandsSeparator: string;
-}
+};
 
 class PivotGeneratedHeaderPlugin extends BaseGridPlugin<{
   hasColumnDimensions: boolean;

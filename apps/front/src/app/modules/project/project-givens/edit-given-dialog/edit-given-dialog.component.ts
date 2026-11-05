@@ -24,10 +24,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface EditGivenDialogData {
+export type EditGivenDialogData = {
   apiService: ApiService;
   given: Given;
-}
+};
 
 @Component({
   selector: 'm-edit-given-dialog',

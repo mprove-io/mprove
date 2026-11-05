@@ -15,16 +15,16 @@ import type { PlaceName } from '#front/app/services/place-name';
 import { getWorkerCode } from '../functions/get-worker-code';
 import { UiQuery } from '../queries/ui.query';
 
-interface FullToken {
+type FullToken = {
   text: string;
   scope: string;
   startIndex: number;
   endIndex: number;
   line: number;
   color: string;
-}
+};
 
-interface Place {
+type Place = {
   controlDocText?: string;
   controlShikiLanguage?: string;
   controlShikiTheme?: string;
@@ -34,15 +34,15 @@ interface Place {
   fullHtml?: string;
   fullTokenLines?: any[];
   fullTokens?: FullToken[];
-}
+};
 
-interface WorkerTaskOptions {
+type WorkerTaskOptions = {
   type: string;
   placeName: string;
   input: string;
   shikiLanguage: string;
   shikiTheme: string;
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class HighLightService {

@@ -37,14 +37,14 @@ import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface CreateBranchDialogData {
+export type CreateBranchDialogData = {
   apiService: ApiService;
   orgId: string;
   projectId: string;
   branchesList: BranchItem[];
   selectedBranchItem: BranchItem;
   selectedBranchExtraId: string;
-}
+};
 
 @Component({
   selector: 'm-create-branch-dialog',

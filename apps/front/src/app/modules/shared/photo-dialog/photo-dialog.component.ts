@@ -8,10 +8,10 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { SharedModule } from '../shared.module';
 
-export interface PhotoDialogData {
+export type PhotoDialogData = {
   avatar: string;
   initials: string;
-}
+};
 
 @Component({
   selector: 'm-photo-dialog',

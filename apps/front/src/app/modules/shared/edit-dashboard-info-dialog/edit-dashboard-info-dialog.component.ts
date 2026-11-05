@@ -43,7 +43,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../shared.module';
 
-export interface EditDashboardInfoDialogData {
+export type EditDashboardInfoDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
@@ -51,7 +51,7 @@ export interface EditDashboardInfoDialogData {
   branchId: string;
   envId: string;
   dashboardUnit: DashboardUnit;
-}
+};
 
 type SpaceOption = typeof EMPTY_SPACE;
 

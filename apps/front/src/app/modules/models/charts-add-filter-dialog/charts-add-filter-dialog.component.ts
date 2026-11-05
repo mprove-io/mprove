@@ -37,13 +37,13 @@ import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface ChartsAddFilterDialogData {
+export type ChartsAddFilterDialogData = {
   apiService: ApiService;
   chart: ChartX;
   model: Model;
   mconfig: MconfigX;
   parameterAddedFn: () => void;
-}
+};
 
 @Component({
   selector: 'm-charts-add-filter-dialog',

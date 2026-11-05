@@ -27,12 +27,12 @@ import type { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface EditRoleGivenDialogData {
+export type EditRoleGivenDialogData = {
   apiService: ApiService;
   role: Role;
   gv: Gv;
   givens: Given[];
-}
+};
 
 @Component({
   selector: 'm-edit-role-given-dialog',

@@ -25,11 +25,11 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditEvDialogData {
+export type EditEvDialogData = {
   apiService: ApiService;
   env: Env;
   ev: Ev;
-}
+};
 
 @Component({
   selector: 'm-edit-ev-dialog',

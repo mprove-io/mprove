@@ -32,12 +32,12 @@ import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface ChartsReplaceColumnFieldDialogData {
+export type ChartsReplaceColumnFieldDialogData = {
   apiService: ApiService;
   chart: ChartX;
   fields: ModelField[];
   currentField: ModelField;
-}
+};
 
 @Component({
   selector: 'm-charts-replace-column-field-dialog',

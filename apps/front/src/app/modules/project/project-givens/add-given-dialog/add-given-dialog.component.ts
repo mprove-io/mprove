@@ -29,10 +29,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface AddGivenDialogData {
+export type AddGivenDialogData = {
   apiService: ApiService;
   projectId: string;
-}
+};
 
 @Component({
   selector: 'm-add-given-dialog',

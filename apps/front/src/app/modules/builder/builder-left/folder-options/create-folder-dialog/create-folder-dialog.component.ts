@@ -26,14 +26,14 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface CreateFolderDialogData {
+export type CreateFolderDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
   branchId: string;
   envId: string;
   parentNodeId: string;
-}
+};
 
 @Component({
   selector: 'm-create-folder-dialog',

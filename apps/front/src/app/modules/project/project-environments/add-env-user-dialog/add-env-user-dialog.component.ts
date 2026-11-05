@@ -29,10 +29,10 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface AddEnvUserDialogData {
+export type AddEnvUserDialogData = {
   apiService: ApiService;
   env: Env;
-}
+};
 
 @Component({
   selector: 'm-add-env-user-dialog',

@@ -34,7 +34,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface RenameFolderDialogData {
+export type RenameFolderDialogData = {
   apiService: ApiService;
   projectId: string;
   repoId: string;
@@ -42,7 +42,7 @@ export interface RenameFolderDialogData {
   envId: string;
   nodeId: string;
   folderName: string;
-}
+};
 
 @Component({
   selector: 'm-rename-folder-dialog',

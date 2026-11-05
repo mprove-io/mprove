@@ -19,7 +19,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
-export interface DeleteChartDialogData {
+export type DeleteChartDialogData = {
   apiService: ApiService;
   chart: ChartUnit;
   projectId: string;
@@ -27,7 +27,7 @@ export interface DeleteChartDialogData {
   branchId: string;
   envId: string;
   repoType: RepoType;
-}
+};
 
 @Component({
   selector: 'm-delete-chart-dialog',

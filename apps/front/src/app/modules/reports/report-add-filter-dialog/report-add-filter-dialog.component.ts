@@ -54,11 +54,11 @@ import { ReportService } from '#front/app/services/report.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface ReportAddFilterDialogData {
+export type ReportAddFilterDialogData = {
   reportService: ReportService;
   report: ReportX;
   apiService: ApiService;
-}
+};
 
 export class StoreFilterForItem {
   value: StoreFilterFor;

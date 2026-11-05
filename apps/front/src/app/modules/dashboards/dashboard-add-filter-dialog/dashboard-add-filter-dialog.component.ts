@@ -56,11 +56,11 @@ import { DashboardService } from '#front/app/services/dashboard.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface DashboardAddFilterDialogData {
+export type DashboardAddFilterDialogData = {
   dashboardService: DashboardService;
   dashboard: DashboardX;
   apiService: ApiService;
-}
+};
 
 export class StoreFilterForItem {
   value: StoreFilterFor;

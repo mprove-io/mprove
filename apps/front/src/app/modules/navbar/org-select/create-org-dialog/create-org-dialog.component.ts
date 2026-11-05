@@ -31,9 +31,9 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface CreateOrgDialogData {
+export type CreateOrgDialogData = {
   apiService: ApiService;
-}
+};
 
 @Component({
   selector: 'm-create-org-dialog',

@@ -14,11 +14,11 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UiService } from '#front/app/services/ui.service';
 
-export interface SelectedGivensDialogData {
+export type SelectedGivensDialogData = {
   projectId: string;
   userId: string;
   memberGivens: MemberGiven[];
-}
+};
 
 @Component({
   selector: 'm-selected-givens-dialog',

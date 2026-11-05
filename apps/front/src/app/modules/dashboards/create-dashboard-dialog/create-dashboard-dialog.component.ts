@@ -44,9 +44,9 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface CreateDashboardDialogData {
+export type CreateDashboardDialogData = {
   apiService: ApiService;
-}
+};
 
 type SpaceOption = typeof EMPTY_SPACE;
 

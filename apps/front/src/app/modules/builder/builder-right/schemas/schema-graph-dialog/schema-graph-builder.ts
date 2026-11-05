@@ -4,6 +4,7 @@ import { Edge, Node } from 'ngx-vflow';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
 import type { CombinedSchemaTable } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-table';
 import type { RawSchemaIndex } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-index';
+import type { Extend } from '#common/types/extend';
 import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 import type { SchemaGraphNodeColor } from '#front/app/modules/builder/builder-right/schemas/schema-graph-dialog/schema-graph-node-color';
 
@@ -12,7 +13,7 @@ let HEADER_HEIGHT = 40;
 let ROW_HEIGHT = 26;
 let NODE_PADDING = 16;
 
-export interface MapNodeData {
+export type MapNodeData = {
   connectionId: string;
   schemaName: string;
   tableName: string;
@@ -26,17 +27,17 @@ export interface MapNodeData {
   onUnhover: () => void;
   onTableSampleToggle: () => void;
   onColumnSampleToggle: (item: { columnName: string }) => void;
-}
+};
 
-export interface MapEdgeData {
+export type MapEdgeData = {
   label: string;
   markerStartId: string;
   markerEndId: string;
   className: string;
   highlighted: boolean;
-}
+};
 
-export interface MapGraphResult {
+export type MapGraphResult = {
   nodes: Node[];
   edges: Edge[];
   nodeDataSignals: Map<string, WritableSignal<MapNodeData>>;
@@ -46,13 +47,16 @@ export interface MapGraphResult {
   boundsMinY: number;
   boundsMaxX: number;
   boundsMaxY: number;
-}
+};
 
-export interface GraphTable extends CombinedSchemaTable {
-  tableFullId: string;
-  connectionId: string;
-  schemaName: string;
-}
+export type GraphTable = Extend<
+  CombinedSchemaTable,
+  {
+    tableFullId: string;
+    connectionId: string;
+    schemaName: string;
+  }
+>;
 
 export function tableKey(item: {
   connectionId: string;
@@ -181,14 +185,14 @@ export async function buildAllTablesGraph(item: {
   });
 
   // Collect all edges (relationships) between tables
-  interface EdgeInfo {
+  type EdgeInfo = {
     sourceKey: string;
     targetKey: string;
     sourceColumn: string;
     targetColumn: string;
     relationshipType: RelationshipType;
     isForeignKey: boolean;
-  }
+  };
 
   let edgeInfos: EdgeInfo[] = [];
   let connectedPairs = new Set<string>();

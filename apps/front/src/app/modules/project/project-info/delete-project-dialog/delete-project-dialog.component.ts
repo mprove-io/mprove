@@ -16,11 +16,11 @@ import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteProjectDialogData {
+export type DeleteProjectDialogData = {
   apiService: ApiService;
   projectId: string;
   projectName: string;
-}
+};
 
 @Component({
   selector: 'm-delete-project-dialog',

@@ -40,10 +40,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export interface AddLlmModelDialogData {
+export type AddLlmModelDialogData = {
   apiService: ApiService;
   provider: Provider;
-}
+};
 
 type SelectableLlmModelPart = Extend<
   LlmModelPart,

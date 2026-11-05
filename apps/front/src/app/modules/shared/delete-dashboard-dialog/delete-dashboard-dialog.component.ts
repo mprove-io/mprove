@@ -18,7 +18,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
-export interface DeleteDashboardDialogData {
+export type DeleteDashboardDialogData = {
   apiService: ApiService;
   dashboardUnit: DashboardUnit;
   projectId: string;
@@ -26,7 +26,7 @@ export interface DeleteDashboardDialogData {
   branchId: string;
   envId: string;
   repoType: RepoType;
-}
+};
 
 @Component({
   selector: 'm-delete-dashboard-dialog',

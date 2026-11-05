@@ -30,9 +30,9 @@ import { HighLightService } from '#front/app/services/highlight.service';
 import { SharedModule } from '../../shared/shared.module';
 import type { FileDiffInfo } from '../session-chat.interfaces';
 
-export interface FileDiffsDialogData {
+export type FileDiffsDialogData = {
   diff: FileDiffInfo;
-}
+};
 
 @Component({
   selector: 'm-file-diffs-dialog',

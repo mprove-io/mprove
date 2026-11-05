@@ -27,11 +27,11 @@ import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 
-export interface EditProviderDialogData {
+export type EditProviderDialogData = {
   apiService: ApiService;
   projectId: string;
   provider: Provider;
-}
+};
 
 @Component({
   selector: 'm-edit-provider-dialog',

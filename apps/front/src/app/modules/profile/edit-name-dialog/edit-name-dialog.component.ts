@@ -22,9 +22,9 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface EditNameDialogData {
+export type EditNameDialogData = {
   apiService: ApiService;
-}
+};
 
 @Component({
   selector: 'm-edit-name-dialog',

@@ -12,11 +12,11 @@ import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteProviderDialogData {
+export type DeleteProviderDialogData = {
   apiService: ApiService;
   projectId: string;
   providerId: string;
-}
+};
 
 @Component({
   selector: 'm-delete-provider-dialog',

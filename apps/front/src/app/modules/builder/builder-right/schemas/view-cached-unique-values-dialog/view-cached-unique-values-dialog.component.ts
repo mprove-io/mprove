@@ -17,7 +17,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
-export interface ViewCachedUniqueValuesDialogData {
+export type ViewCachedUniqueValuesDialogData = {
   title: string;
   subtitle: string;
   columnName: string;
@@ -30,7 +30,7 @@ export interface ViewCachedUniqueValuesDialogData {
   connectionId: string;
   schemaName: string;
   tableName: string;
-}
+};
 
 @Component({
   selector: 'm-view-cached-unique-values-dialog',

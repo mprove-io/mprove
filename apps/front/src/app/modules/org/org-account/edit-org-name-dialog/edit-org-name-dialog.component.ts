@@ -24,11 +24,11 @@ import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface EditOrgNameDialogData {
+export type EditOrgNameDialogData = {
   apiService: ApiService;
   orgId: string;
   orgName: string;
-}
+};
 
 @Component({
   selector: 'm-edit-org-name-dialog',

@@ -29,27 +29,27 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 // import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 
-export interface SourceDataRow {
+export type SourceDataRow = {
   [k: string]: string;
-}
+};
 
-export interface QDataRow {
+export type QDataRow = {
   [k: string]: QCell;
-}
+};
 
-export interface QCell {
+export type QCell = {
   name: string;
   value: string;
   valueFmt: string;
-}
+};
 
-export interface YSeriesElement {
+export type YSeriesElement = {
   yKeyId: string; // multi by multifield
   yFieldId: string;
   points: SeriesPoint[];
-}
+};
 
-export interface SeriesPoint {
+export type SeriesPoint = {
   xValue: string | number;
   xValueFmt: string;
   yValue: number;
@@ -58,14 +58,14 @@ export interface SeriesPoint {
   sizeValueFmt: string;
   sizeValueMod: number;
   sizeFieldName: string;
-}
+};
 
-export interface SeriesDataElement {
+export type SeriesDataElement = {
   seriesId: string;
   seriesName: string;
   seriesPoints: SeriesPoint[];
   seriesSizeName: string;
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class DataService {

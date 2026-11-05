@@ -28,29 +28,29 @@ import {
   tableKey
 } from './schema-graph-builder';
 
-export interface SchemaGraphDialogData {
+export type SchemaGraphDialogData = {
   combinedSchemaItems: CombinedSchemaItem[];
   connectionId: string;
   schemaName: string;
   tableName: string;
   projectId: string;
   envId: string;
-}
+};
 
-interface SchemaGraphSchemaNode {
+type SchemaGraphSchemaNode = {
   connectionId: string;
   schemaName: string;
   expanded: boolean;
   tables: SchemaGraphTableNode[];
-}
+};
 
-interface SchemaGraphTableNode {
+type SchemaGraphTableNode = {
   tableFullId: string;
   connectionId: string;
   schemaName: string;
   tableName: string;
   checked: boolean;
-}
+};
 
 @Component({
   selector: 'm-schema-graph-dialog',

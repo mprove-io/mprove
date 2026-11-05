@@ -12,9 +12,9 @@ import { PATH_USER_DELETED } from '#common/constants/top';
 import { ApiService } from '#front/app/services/api.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
-export interface DeleteUserDialogData {
+export type DeleteUserDialogData = {
   apiService: ApiService;
-}
+};
 
 @Component({
   selector: 'm-delete-user-dialog',
