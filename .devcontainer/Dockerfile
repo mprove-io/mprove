@@ -37,7 +37,3 @@ RUN curl -fsSL https://opencode.ai/v2/install | bash
 # opencode web tries to launch a browser with xdg-open, but devcontainers are headless.
 RUN printf '#!/bin/sh exit 0' > /usr/local/bin/xdg-open \
     && chmod +x /usr/local/bin/xdg-open
-
-RUN curl -fsSL https://claude.ai/install.sh | bash
-
-ENV PATH="/home/claude/.local/bin:${PATH}"

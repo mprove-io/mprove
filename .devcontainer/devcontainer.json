@@ -49,7 +49,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "anthropic.claude-code",
         "tamasfe.even-better-toml",
         "yzhang.markdown-all-in-one",
         "yoavbls.pretty-ts-errors",
