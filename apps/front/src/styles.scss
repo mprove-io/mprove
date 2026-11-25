@@ -9,6 +9,7 @@ body {
 }
 
 body {
+  @apply text-base;
   color: rgba(0, 0, 0, 0.85);
   font-feature-settings: 'tnum';
 
@@ -16,6 +17,29 @@ body {
     * {
       cursor: grabbing !important;
     }
+  }
+}
+
+@layer components {
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .form-multiselect {
+    @apply px-3 py-1 text-base;
+  }
+
+  .form-select {
+    @apply pr-9;
+  }
+}
+
+@media (pointer: coarse) {
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .form-multiselect,
+  .ng-select .ng-input > input {
+    font-size: 1rem;
   }
 }
 
@@ -106,6 +130,10 @@ body {
   border-right: none;
 }
 
+.cm-editor {
+  @apply text-base;
+}
+
 ng-scrollbar {
   --scrollbar-thumb-color: rgb(0 0 0 / 15%);
   --scrollbar-thumb-hover-color: rgb(0 0 0 / 25%);
@@ -162,7 +190,11 @@ scrollbar-thumb-y {
 }
 
 .tippy-variation-tooltip .tippy-box .tippy-content {
-  padding: 10px 15px;
+  @apply px-4 py-2;
+}
+
+.tippy-box {
+  @apply text-base;
 }
 
 @font-face {
@@ -272,10 +304,6 @@ scrollbar-thumb-y {
 //   visibility: hidden;
 // }
 
-// .css-zoom {
-// 	zoom: 67%;
-// }
-
 cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
@@ -288,6 +316,8 @@ cdk-virtual-scroll-viewport {
 ngneat-dialog {
   .ngneat-dialog-backdrop {
     overflow: hidden !important;
+    padding: clamp(12px, 2vw, 24px);
+
     .ngneat-dialog-content {
       overflow: auto !important;
     }
@@ -348,8 +378,8 @@ ngneat-dialog {
 }
 
 .ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -357,7 +387,7 @@ ngneat-dialog {
 }
 
 .ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper .ng-clear {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
 }
 
@@ -374,116 +404,36 @@ ngneat-dialog {
 //
 //
 
-.ng-select.group-metric-by-select .ng-select-container {
-  height: 44px;
+.ng-select .ng-select-container {
+  min-height: 32px;
+}
 
-  .ng-value-container {
-    margin-top: 2px;
-  }
+.ng-select.ng-select-single .ng-select-container {
+  height: 32px;
 
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
+  .ng-value-container .ng-input {
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
-.ng-select.model-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
+.ng-select.ng-select-single:is(
+    .group-metric-by-select,
+    .model-select,
+    .new-metric-select,
+    .filter-metric-by-select,
+    .charts-add-parameter-select,
+    .charts-add-column-select,
+    .charts-replace-column-select,
+    .format-number-select,
+    .main-chart-type-select
+  )
+  .ng-select-container {
+  @apply h-11;
 }
 
-.ng-select.new-metric-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.filter-metric-by-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.charts-add-parameter-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.charts-add-column-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.charts-replace-column-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.format-number-select .ng-select-container {
-  height: 42px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.main-chart-type-select .ng-select-container {
-  height: 44px;
-
-  .ng-value-container {
-    margin-top: 2px;
-  }
-
-  .ng-value-container .ng-input > input {
-    margin-top: 3px;
-  }
-}
-
-.ng-select.select-h-10 .ng-select-container {
-  height: 40px;
+.ng-select.ng-select-single.select-h-10 .ng-select-container {
+  @apply h-10;
 }
 
 //

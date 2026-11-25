@@ -588,11 +588,11 @@ export class ChartPivotTableComponent implements OnChanges {
       .data-grid-row .cell {
         border-right: 1px solid var(--tbw-color-border, #d1d5db);
         border-bottom: 1px solid var(--tbw-color-border, #d1d5db);
-        padding-left: 20px;
+        padding-left: 12px;
       }
 
       .header-row .cell {
-        font-size: 16px;
+        font-size: 0.8125rem;
         padding-top: 8px;
         padding-bottom: 8px;
       }
@@ -724,7 +724,7 @@ export class ChartPivotTableComponent implements OnChanges {
         align-items: flex-start;
         font-family: 'Montserrat', sans-serif;
         justify-content: center;
-        font-size: 16px;
+        font-size: 0.8125rem;
         line-height: 1.35;
         min-width: max-content;
         text-align: left;
@@ -736,7 +736,7 @@ export class ChartPivotTableComponent implements OnChanges {
         align-items: flex-start;
         font-family: 'Montserrat', sans-serif;
         justify-content: center;
-        font-size: 16px;
+        font-size: 0.8125rem;
         line-height: 1.35;
         text-align: left;
       }
@@ -757,7 +757,7 @@ export class ChartPivotTableComponent implements OnChanges {
 
       .m-pivot-column-header-prefix {
         font-family: 'Montserrat', sans-serif;
-        font-size: 14px;
+        font-size: 0.75rem;
         font-weight: 400;
       }
 

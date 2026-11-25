@@ -50,6 +50,8 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
 
 const subDayTimeSpecs = ['timestamps', 'minutes', 'hours'] satisfies TimeSpec[];
 
+const reportGridRowHeight = 32;
+
 @Component({
   standalone: false,
   selector: 'm-report',
@@ -74,10 +76,12 @@ export class ReportComponent {
     columnBorder: '1px solid #dde2eb',
     headerBackgroundColor: '#f8f8f8',
     headerFontFamily: 'arial, sans-serif',
-    headerFontSize: '17px',
+    headerFontSize: 12,
     fontFamily: 'Montserrat',
-    fontSize: '17px',
-    dataFontSize: '17px',
+    fontSize: 13,
+    dataFontSize: 13,
+    cellHorizontalPadding: 12,
+    rowHeight: reportGridRowHeight,
     selectedRowBackgroundColor: 'rgb(255, 224, 129)',
     rowHoverColor: 'rgb(0, 0, 0, 0)',
     oddRowBackgroundColor: 'rgb(0, 0, 0, 0)',
@@ -87,7 +91,7 @@ export class ReportComponent {
   });
 
   overlayNoRowsTemplate = `
-    <span style="font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 20px; color: #4D4F5C">
+    <span class="font-ms text-lg font-medium text-s1">
       To add a row, click the plus button in the upper left corner
     </span>
   `;
@@ -465,7 +469,7 @@ export class ReportComponent {
   }
 
   getRowHeight(params: RowHeightParams<DataRow>): number | undefined | null {
-    let rowHeight = 42;
+    let rowHeight = reportGridRowHeight;
 
     let isShowParameters = params.data.showMetricsParameters === true;
 

@@ -48,15 +48,35 @@ var r700 = '#c10007'; // red-700
 
 const { join } = require('path');
 
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   prefix: '',
   content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}')],
   theme: {
+    // Compact the rem-based UI spacing without changing the browser's root size.
+    spacing: Object.fromEntries(
+      Object.entries(defaultTheme.spacing).map(([key, value]) => [
+        key,
+        value.endsWith('rem')
+          ? `${Number.parseFloat(value) * 0.8125}rem`
+          : value
+      ])
+    ),
     namedGroups: ['bar'],
     // namedGroups: ['foo', 'bar'],
     // groupLevel: 10,
     // groupScope: 'scope',
     extend: {
+      fontSize: {
+        xs: ['0.6875rem', '0.9375rem'],
+        sm: ['0.75rem', '1.0625rem'],
+        base: ['0.8125rem', '1.25rem'],
+        lg: ['0.9375rem', '1.375rem'],
+        xl: ['1rem', '1.5rem'],
+        '2xl': ['1.25rem', '1.75rem'],
+        '3xl': ['1.5rem', '2rem']
+      },
       // colors: {
       //   green: colors.emerald,
       //   yellow: colors.amber,
