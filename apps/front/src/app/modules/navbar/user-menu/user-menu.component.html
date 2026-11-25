@@ -1,82 +1,42 @@
-<div
-  class="h-10 w-10 select-none"
-  #t1="tippy"
-  [tp]="templateUserOptions"
-  [tpHideOnEscape]="true"
-  tpVariation="menu"
-  className="my-menu"
-  [tpOffset]="[0, 5]"
-  [tpIsEnabled]="needSave === false"
->
+<nav aria-label="Account">
   <button
-    class="bg-m200 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
-    [disabled]="needSave === true"
+    type="button"
+    class="rail-item"
+    [attr.aria-current]="lastUrl === pathProfile ? 'page' : null"
+    [disabled]="needSave === true || lastUrl === pathProfile"
+    (click)="navigateProfile()"
+    >Profile</button
   >
-    <m-avatar
-      [avatar]="navQuery.avatarSmall$ | async"
-      [initials]="userQuery.initials$ | async"
-    ></m-avatar>
-  </button>
 
-  <ng-template #templateUserOptions>
-    <div class="border-s4 bg-m0 w-56 rounded-md border-2 shadow-xl">
-      <div
-        class="text-s400 mt-2 block select-none px-4 py-2 text-base font-semibold"
-        >User</div
-      >
+  <button
+    *ngIf="isMproveAdmin"
+    type="button"
+    class="rail-item"
+    [attr.aria-current]="lastUrl === pathServerUsers ? 'page' : null"
+    [disabled]="needSave === true || lastUrl === pathServerUsers"
+    (click)="navigateServerUsers()"
+    >Server Users</button
+  >
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer select-none px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathProfile
-        }"
-        [disabled]="lastUrl === pathProfile"
-        (click)="t1.hide(); navigateProfile()"
-        >Profile</button
-      >
+  <button
+    type="button"
+    class="rail-item mt-4"
+    [disabled]="needSave === true"
+    (click)="logout()"
+    >Log Out</button
+  >
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full select-none px-4 py-2 text-left text-base focus:outline-none"
-        (click)="t1.hide(); logout()"
-        >LogOut</button
-      >
-
-      <ng-container *ngIf="isMproveAdmin">
-        <div
-          class="text-s400 block select-none px-4 py-2 text-base font-semibold"
-          >Admin</div
-        >
-
-        <button
-          class="text-s1 hover:bg-m50 block w-full cursor-pointer select-none px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathServerUsers
-          }"
-          [disabled]="lastUrl === pathServerUsers"
-          (click)="t1.hide(); navigateServerUsers()"
-          >Server Users</button
-        >
-      </ng-container>
-
-      <div class="text-s400 block select-none px-4 py-2 text-base font-semibold"
-        >Resources</div
-      >
-
-      <a
-        class="text-s1 hover:text-s1 hover:bg-m50 block select-none px-4 py-2 text-base"
-        target="_blank"
-        href="https://docs.mprove.io"
-        (click)="t1.hide()"
-        >Docs</a
-      >
-
-      <div
-        class="text-s400 mb-2 block select-none px-4 py-2 text-base font-semibold"
-        >Version: {{ mproveVersion }}</div
-      >
-    </div>
-  </ng-template>
-</div>
+  <div class="mt-4 flex items-baseline justify-between">
+    <div class="rail-label">Version: {{ mproveVersion }}</div>
+    <a
+      class="rail-label shrink-0 hover:underline"
+      target="_blank"
+      rel="noopener"
+      href="https://docs.mprove.io"
+      >Docs</a
+    >
+  </div>
+</nav>
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>

@@ -1,0 +1,246 @@
+.mprove-shell {
+  grid-template-rows: minmax(0, 1fr);
+
+  .rail {
+    --rail-padding: 14px;
+    --rail-toggle-size: 32px;
+    --rail-closed-width: calc(
+      var(--rail-toggle-size) + 2 * var(--rail-padding)
+    );
+    --rail-open-width: 15rem;
+    --rail-canvas: #fafafa;
+    --rail-line: rgba(24, 24, 27, 0.09);
+    --rail-hover: rgba(24, 24, 27, 0.04);
+    --rail-text: #18181b;
+    --rail-muted: #52525b;
+    --rail-accent: #2f5bd3;
+    --rail-active: #0084d1; // Mprove m600.
+
+    min-height: 0;
+    border-inline-end: 1px solid var(--rail-line);
+    background: var(--rail-canvas);
+  }
+
+  .rail-panel {
+    width: var(--rail-closed-width);
+    background: var(--rail-canvas);
+  }
+
+  .rail-panel.is-expanded {
+    width: var(--rail-open-width);
+  }
+
+  &.is-narrow .rail {
+    width: calc(var(--rail-closed-width) + 1px);
+  }
+
+  &.is-narrow .rail-panel.is-expanded {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    max-width: calc(100% - var(--rail-closed-width));
+  }
+
+  .rail-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+    padding-inline: var(--rail-padding);
+  }
+
+  .rail-toggle {
+    display: grid;
+    flex: none;
+    width: var(--rail-toggle-size);
+    height: var(--rail-toggle-size);
+    place-items: center;
+    border-radius: 6px;
+    color: var(--rail-muted);
+  }
+
+  .rail-toggle svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .rail-scroll {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    padding: 4px var(--rail-padding) 8px;
+  }
+
+  .rail-footer {
+    flex: none;
+    max-height: 50%;
+    padding: 6px var(--rail-padding) 16px;
+  }
+
+  .rail-scroll,
+  .rail-footer {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .rail-label {
+    padding-inline: 8px;
+    color: var(--rail-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .rail-footer .rail-label {
+    font-weight: 400;
+  }
+
+  .rail-picker {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rail-picker .rail-label {
+    font-size: inherit;
+    font-weight: 400;
+  }
+
+  .rail-picker .ng-select.rail-picker-select .ng-select-container {
+    min-height: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--rail-active);
+  }
+
+  .rail-picker .ng-select .ng-value-container {
+    justify-content: flex-end;
+    padding-inline: 4px 8px;
+    text-align: end;
+  }
+
+  .rail-picker .ng-select .ng-arrow-wrapper {
+    display: none;
+  }
+
+  .rail-picker .ng-select.rail-picker-select .ng-placeholder {
+    color: inherit;
+  }
+
+  .rail-picker
+    .ng-select:not(.ng-select-disabled):is(:hover, .ng-select-focused)
+    .ng-value-container {
+    text-decoration: underline;
+  }
+
+  .rail-picker .ng-select.ng-select-disabled .ng-select-container {
+    color: var(--rail-muted);
+  }
+
+  .rail-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 30px;
+    margin-bottom: 2px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--rail-muted);
+    font-weight: 400;
+    text-align: start;
+  }
+
+  .rail-toggle,
+  .rail-item,
+  .rail-expander {
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .rail-toggle:hover,
+  .rail-item:hover:not(:disabled, [aria-current='page']) {
+    background: var(--rail-hover);
+    color: var(--rail-text);
+  }
+
+  .rail-expander:hover:not(:disabled) {
+    background: var(--rail-hover);
+  }
+
+  .rail-toggle:focus-visible,
+  .rail-item:focus-visible,
+  .rail-expander:focus-visible {
+    outline: 2px solid var(--rail-accent);
+    outline-offset: -2px;
+  }
+
+  .rail-item[aria-current='page'] {
+    color: var(--rail-active);
+    font-weight: 600;
+  }
+
+  .rail-item:disabled:not([aria-current='page']) {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .rail-expander {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 30px;
+    border-radius: 6px;
+    text-align: start;
+  }
+
+  .rail-expander:disabled {
+    cursor: default;
+  }
+
+  .rail-expander::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-block-start: 1.5px solid currentColor;
+    border-inline-end: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 150ms ease;
+  }
+
+  .rail-expander[aria-expanded='true']::before {
+    transform: rotate(135deg);
+  }
+
+  .rail-children {
+    margin-inline-start: 10px;
+    padding-inline-start: 7px;
+    border-inline-start: 1px solid var(--rail-line);
+  }
+
+  .rail-status {
+    margin-inline-start: auto;
+    color: var(--rail-muted);
+    font-size: 0.6875rem;
+  }
+}
+
+// These panels are appended to the body so the rail scroll area won't clip them.
+.ng-dropdown-panel.rail-picker-select {
+  min-width: min(12rem, 50vw) !important;
+}

@@ -1,6 +1,16 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import {
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  type OnInit,
+  signal,
+  ViewEncapsulation
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, take, tap } from 'rxjs/operators';
+import { filter, map, take, tap } from 'rxjs/operators';
 import {
   EMPTY_REPORT_ID,
   PATH_BUILDER,
@@ -30,9 +40,30 @@ import { environment } from '#front/environments/environment';
 @Component({
   standalone: false,
   selector: 'm-navbar',
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class NavbarComponent implements OnInit {
+  readonly isNarrow = toSignal(
+    inject(BreakpointObserver)
+      .observe('(max-width: 860px)')
+      .pipe(map(state => state.matches)),
+    { requireSync: true }
+  );
+
+  private readonly isDesktopMenuExpanded = signal(true);
+
+  private readonly isNarrowMenuExpanded = signal(false);
+
+  readonly isMenuExpanded = computed(() =>
+    this.isNarrow() ? this.isNarrowMenuExpanded() : this.isDesktopMenuExpanded()
+  );
+
+  isProjectExpanded = false;
+
+  isOrgExpanded = false;
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -109,6 +140,16 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.checkUrls(this.router.url);
+  }
+
+  setMenuExpanded(item: { isExpanded: boolean }): void {
+    let { isExpanded } = item;
+
+    if (this.isNarrow()) {
+      this.isNarrowMenuExpanded.set(isExpanded);
+    } else {
+      this.isDesktopMenuExpanded.set(isExpanded);
+    }
   }
 
   checkUrls(url: string) {

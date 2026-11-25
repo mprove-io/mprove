@@ -1,185 +1,143 @@
-<div
-  class="flex h-10 cursor-pointer flex-row items-center"
-  #t1="tippy"
-  [tp]="templateProjectOptions"
-  [tpHideOnEscape]="true"
-  tpVariation="menu"
-  className="my-menu"
-  [tpOffset]="[0, 5]"
-  [tpIsEnabled]="nav?.projectId !== undefined && needSave === false"
->
-  <div class="text-s1 ml-2 select-none">Project</div>
+<div class="rail-children">
+  <button
+    type="button"
+    class="rail-item"
+    [attr.aria-current]="lastUrl === pathInfo ? 'page' : null"
+    [disabled]="needSave || lastUrl === pathInfo"
+    (click)="navigateInfo()"
+    >Project Info</button
+  >
+
+  <div
+    tp="Admin or Editor role required"
+    placement="right"
+    [tpIsEnabled]="isAdmin === false && isEditor === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathProviders ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathProviders ||
+        (isAdmin === false && isEditor === false)
+      "
+      (click)="navigateProviders()"
+      >LLM Providers</button
+    >
+  </div>
 
   <button
-    class="ml-2 h-10 rounded-full focus:outline-none"
-    [disabled]="nav?.projectId === undefined || needSave === true"
+    type="button"
+    class="rail-item"
+    [attr.aria-current]="lastUrl === pathSandboxProvider ? 'page' : null"
+    [disabled]="needSave || lastUrl === pathSandboxProvider"
+    (click)="navigateSandboxProvider()"
+    >Sandbox Provider</button
   >
-    <div class="text-s500 flex cursor-pointer justify-center">
-      <m-settings-icon></m-settings-icon>
-    </div>
-  </button>
 
-  <ng-template #templateProjectOptions>
-    <div
-      class="border-s4 bg-m0 w-56 cursor-default rounded-md border-2 shadow-xl"
+  <div
+    tp="Admin or Editor role required"
+    placement="right"
+    [tpIsEnabled]="isAdmin === false && isEditor === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathConnections ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathConnections ||
+        (isAdmin === false && isEditor === false)
+      "
+      (click)="navigateConnections()"
+      >Connections</button
     >
-      <!-- <div class="text-s400 mt-2 block px-4 py-2 text-base font-semibold"
-        >{{ nav?.projectName | capitalize }} Project</div
-      > -->
+  </div>
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathInfo
-        }"
-        [disabled]="lastUrl === pathInfo"
-        (click)="t1.hide(); navigateInfo()"
-        >Project Info</button
-      >
+  <div
+    tp="Admin or Editor role required"
+    placement="right"
+    [tpIsEnabled]="isAdmin === false && isEditor === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathEnvironments ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathEnvironments ||
+        (isAdmin === false && isEditor === false)
+      "
+      (click)="navigateEnvironments()"
+      >Environments</button
+    >
+  </div>
 
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathProviders,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathProviders ||
-            (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateProviders()"
-          >LLM Providers</button
-        >
-      </div>
+  <div
+    tp="Project is restricted for demo purposes. Only admin can access."
+    placement="right"
+    [tpIsEnabled]="nav?.orgName === demoOrgName && isAdmin === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathTeam ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathTeam ||
+        (nav?.orgName === demoOrgName && isAdmin === false)
+      "
+      (click)="navigateTeam()"
+      >Team</button
+    >
+  </div>
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathSandboxProvider
-        }"
-        [disabled]="lastUrl === pathSandboxProvider"
-        (click)="t1.hide(); navigateSandboxProvider()"
-        >Sandbox Provider</button
-      >
+  <div
+    tp="Admin or Editor role required"
+    placement="right"
+    [tpIsEnabled]="isAdmin === false && isEditor === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathRoles ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathRoles ||
+        (isAdmin === false && isEditor === false)
+      "
+      (click)="navigateRoles()"
+      >Access Roles</button
+    >
+  </div>
 
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathConnections,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathConnections ||
-            (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateConnections()"
-          >Connections</button
-        >
-      </div>
+  <div
+    tp="Admin or Editor role required"
+    placement="right"
+    [tpIsEnabled]="isAdmin === false && isEditor === false"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathGivens ? 'page' : null"
+      [disabled]="
+        needSave ||
+        lastUrl === pathGivens ||
+        (isAdmin === false && isEditor === false)
+      "
+      (click)="navigateGivens()"
+      >Project Givens</button
+    >
+  </div>
 
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathEnvironments,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathEnvironments ||
-            (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateEnvironments()"
-          >Environments</button
-        >
-      </div>
-
-      <div
-        tp="Project is restricted for demo purposes. Only admin can access."
-        placement="left"
-        [tpIsEnabled]="nav.orgName === demoOrgName && isAdmin === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathTeam,
-            'text-s400': nav.orgName === demoOrgName && isAdmin === false,
-            'border-s3 cursor-pointer': !(
-              nav.orgName === demoOrgName && isAdmin === false
-            )
-          }"
-          [disabled]="
-            lastUrl === pathTeam ||
-            (nav.orgName === demoOrgName && isAdmin === false)
-          "
-          (click)="t1.hide(); navigateTeam()"
-          >Team</button
-        >
-      </div>
-
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathRoles,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathRoles || (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateRoles()"
-          >Access Roles</button
-        >
-      </div>
-
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathGivens,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathGivens || (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateGivens()"
-          >Project Givens</button
-        >
-      </div>
-
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        (click)="t1.hide(); showSelectedGivens()"
-        >Selected Givens</button
-      >
-    </div>
-  </ng-template>
+  <button
+    type="button"
+    class="rail-item"
+    [disabled]="needSave"
+    (click)="showSelectedGivens()"
+    >Selected Givens</button
+  >
 </div>
 
 <div *ngIf="nav$ | async"></div>

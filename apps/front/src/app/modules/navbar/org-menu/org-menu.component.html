@@ -1,61 +1,29 @@
-<div
-  class="flex h-10 cursor-pointer flex-row items-center"
-  #t1="tippy"
-  [tp]="templateOrgOptions"
-  [tpHideOnEscape]="true"
-  tpVariation="menu"
-  className="my-menu"
-  [tpOffset]="[0, 5]"
-  [tpIsEnabled]="nav?.orgId !== undefined && needSave === false"
->
-  <div class="text-s1 ml-2 select-none">Org</div>
-
+<div class="rail-children">
   <button
-    class="ml-2 h-10 rounded-full focus:outline-none"
-    [disabled]="nav?.orgId === undefined || needSave === true"
+    type="button"
+    class="rail-item"
+    [attr.aria-current]="lastUrl === pathAccount ? 'page' : null"
+    [disabled]="needSave || lastUrl === pathAccount"
+    (click)="navigateAccount()"
+    >Account</button
   >
-    <div class="text-s500 flex cursor-pointer justify-center">
-      <m-settings-icon></m-settings-icon>
-    </div>
-  </button>
 
-  <ng-template #templateOrgOptions>
-    <div
-      class="border-s4 bg-m0 w-56 cursor-default rounded-md border-2 shadow-xl"
+  <div
+    tp="Only organization owner can access"
+    placement="right"
+    [tpIsEnabled]="user?.userId !== nav?.orgOwnerId"
+  >
+    <button
+      type="button"
+      class="rail-item"
+      [attr.aria-current]="lastUrl === pathUsers ? 'page' : null"
+      [disabled]="
+        needSave || lastUrl === pathUsers || user?.userId !== nav?.orgOwnerId
+      "
+      (click)="navigateUsers()"
+      >Users</button
     >
-      <!-- <div class="text-s400 mt-2 block px-4 py-2 text-base font-semibold"
-        >{{ nav?.orgName | capitalize }} Org</div
-      > -->
-
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathAccount
-        }"
-        [disabled]="lastUrl === pathAccount"
-        (click)="t1.hide(); navigateAccount()"
-        >Account</button
-      >
-
-      <div
-        tp="Only organization owner can access"
-        placement="left"
-        [tpIsEnabled]="user.userId !== nav.orgOwnerId"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathUsers,
-            'text-s400': user.userId !== nav.orgOwnerId,
-            'border-s3 cursor-pointer': user.userId === nav.orgOwnerId
-          }"
-          [disabled]="lastUrl === pathUsers || user.userId !== nav.orgOwnerId"
-          (click)="t1.hide(); navigateUsers()"
-          >Users</button
-        >
-      </div>
-    </div>
-  </ng-template>
+  </div>
 </div>
 
 <div *ngIf="nav$ | async"></div>

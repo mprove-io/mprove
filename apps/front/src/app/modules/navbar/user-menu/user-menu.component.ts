@@ -4,7 +4,6 @@ import { filter, tap } from 'rxjs/operators';
 import { PATH_PROFILE, PATH_SERVER_USERS } from '#common/constants/top';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { UserQuery } from '#front/app/queries/user.query';
 import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
@@ -42,8 +41,7 @@ export class UserMenuComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private uiQuery: UiQuery,
-    public navQuery: NavQuery,
-    public userQuery: UserQuery
+    private navQuery: NavQuery
   ) {}
 
   ngOnInit() {

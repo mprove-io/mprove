@@ -5,12 +5,17 @@ export function makeBranchExtraName(item: {
   repoType: RepoType;
   branchId: string;
   alias: string;
-}) {
-  return isUndefined(item.repoType) || isUndefined(item.branchId)
-    ? undefined
-    : item.repoType === 'session'
-      ? `session - ${item.branchId}`
-      : item.repoType === 'production'
-        ? `production - ${item.branchId}`
-        : `dev-${item.alias} - ${item.branchId}`;
+}): string {
+  let { repoType, branchId, alias } = item;
+
+  let extraName: string =
+    isUndefined(repoType) || isUndefined(branchId)
+      ? undefined
+      : repoType === 'session'
+        ? `session - ${branchId}`
+        : repoType === 'production'
+          ? `${branchId} - production`
+          : `${branchId} - dev-${alias}`;
+
+  return extraName;
 }
