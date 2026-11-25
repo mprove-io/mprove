@@ -31,7 +31,80 @@
       <div id="mprove-menu" class="min-h-0 flex-1" [hidden]="!isMenuExpanded()">
         <div class="flex h-full flex-col">
           <div class="rail-scroll">
+            <div>
+              <section aria-label="Organization">
+                <div class="rail-picker">
+                  <button
+                    type="button"
+                    class="rail-label rail-expander"
+                    aria-controls="mprove-org-menu"
+                    [attr.aria-expanded]="!!nav?.orgId && isOrgExpanded"
+                    [disabled]="!nav?.orgId"
+                    (click)="isOrgExpanded = !isOrgExpanded"
+                    >Organization</button
+                  >
+                  <m-org-select></m-org-select>
+                </div>
+                <div id="mprove-org-menu" [hidden]="!isOrgExpanded">
+                  <m-org-menu *ngIf="!!nav?.orgId"></m-org-menu>
+                </div>
+              </section>
+
+              <section aria-label="Project">
+                <div class="rail-picker">
+                  <button
+                    type="button"
+                    class="rail-label rail-expander"
+                    aria-controls="mprove-project-menu"
+                    [attr.aria-expanded]="!!nav?.projectId && isProjectExpanded"
+                    [disabled]="!nav?.projectId"
+                    (click)="isProjectExpanded = !isProjectExpanded"
+                    >Project</button
+                  >
+                  <m-project-select></m-project-select>
+                </div>
+                <div id="mprove-project-menu" [hidden]="!isProjectExpanded">
+                  <m-project-menu *ngIf="!!nav?.projectId"></m-project-menu>
+                </div>
+              </section>
+
+              <section
+                *ngIf="!!nav?.projectId"
+                aria-label="Workspace selectors"
+              >
+                <div class="rail-picker">
+                  <div class="rail-label select-none">Environment</div>
+                  <m-env-select></m-env-select>
+                </div>
+                <div class="rail-picker">
+                  <div class="rail-label select-none">Branch</div>
+                  <m-branch-select></m-branch-select>
+                </div>
+              </section>
+            </div>
+
             <nav *ngIf="!!nav?.projectId" aria-label="Pages">
+              <button
+                type="button"
+                class="rail-item"
+                [attr.aria-current]="isBuilderRouteActive ? 'page' : null"
+                (click)="navigateBuilder()"
+                [disabled]="needSave"
+              >
+                <span>Builder</span>
+                <span *ngIf="nav.needValidate === true" class="rail-status"
+                  >Validation needed</span
+                >
+                <span
+                  *ngIf="
+                    nav.needValidate === false &&
+                    (struct?.errors.length > 0 || repo?.conflicts.length > 0)
+                  "
+                  class="rail-status"
+                  >Issues</span
+                >
+              </button>
+
               <div
                 *ngIf="explorerEnabled"
                 tp="Explorer role required"
@@ -85,76 +158,6 @@
                 <span>Dashboards</span>
               </button>
             </nav>
-
-            <section *ngIf="!!nav?.projectId" aria-label="Builder workspace">
-              <button
-                type="button"
-                class="rail-item"
-                [attr.aria-current]="isBuilderRouteActive ? 'page' : null"
-                (click)="navigateBuilder()"
-                [disabled]="needSave"
-              >
-                <span>Builder</span>
-                <span *ngIf="nav.needValidate === true" class="rail-status"
-                  >Validation needed</span
-                >
-                <span
-                  *ngIf="
-                    nav.needValidate === false &&
-                    (struct?.errors.length > 0 || repo?.conflicts.length > 0)
-                  "
-                  class="rail-status"
-                  >Issues</span
-                >
-              </button>
-
-              <div class="mt-2 flex flex-col gap-2">
-                <div class="rail-picker">
-                  <div class="rail-label select-none">Branch</div>
-                  <m-branch-select></m-branch-select>
-                </div>
-                <div class="rail-picker">
-                  <div class="rail-label select-none">Environment</div>
-                  <m-env-select></m-env-select>
-                </div>
-              </div>
-            </section>
-
-            <section aria-label="Project">
-              <div class="rail-picker">
-                <button
-                  type="button"
-                  class="rail-label rail-expander"
-                  aria-controls="mprove-project-menu"
-                  [attr.aria-expanded]="!!nav?.projectId && isProjectExpanded"
-                  [disabled]="!nav?.projectId"
-                  (click)="isProjectExpanded = !isProjectExpanded"
-                  >Project</button
-                >
-                <m-project-select></m-project-select>
-              </div>
-              <div id="mprove-project-menu" [hidden]="!isProjectExpanded">
-                <m-project-menu *ngIf="!!nav?.projectId"></m-project-menu>
-              </div>
-            </section>
-
-            <section aria-label="Organization">
-              <div class="rail-picker">
-                <button
-                  type="button"
-                  class="rail-label rail-expander"
-                  aria-controls="mprove-org-menu"
-                  [attr.aria-expanded]="!!nav?.orgId && isOrgExpanded"
-                  [disabled]="!nav?.orgId"
-                  (click)="isOrgExpanded = !isOrgExpanded"
-                  >Organization</button
-                >
-                <m-org-select></m-org-select>
-              </div>
-              <div id="mprove-org-menu" [hidden]="!isOrgExpanded">
-                <m-org-menu *ngIf="!!nav?.orgId"></m-org-menu>
-              </div>
-            </section>
           </div>
           <m-user-menu class="rail-footer"></m-user-menu>
         </div>

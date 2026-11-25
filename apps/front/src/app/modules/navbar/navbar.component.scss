@@ -123,6 +123,7 @@
     background: transparent;
     box-shadow: none;
     color: var(--rail-active);
+    cursor: default !important; // Override the global ng-select pointer cursor.
   }
 
   .rail-picker .ng-select .ng-value-container {
@@ -135,14 +136,25 @@
     display: none;
   }
 
+  .rail-picker .ng-select .ng-input {
+    pointer-events: none;
+  }
+
   .rail-picker .ng-select.rail-picker-select .ng-placeholder {
+    padding-left: 0;
     color: inherit;
   }
 
-  .rail-picker
-    .ng-select:not(.ng-select-disabled):is(:hover, .ng-select-focused)
-    .ng-value-container {
-    text-decoration: underline;
+  .rail-picker .ng-select:not(.ng-select-disabled) {
+    :is(.ng-value > div, .ng-placeholder) {
+      cursor: pointer;
+    }
+
+    :is(.ng-value > div, .ng-placeholder):hover,
+    &:has(.ng-input > input:focus-visible)
+      :is(.ng-value > div, .ng-placeholder) {
+      text-decoration: underline;
+    }
   }
 
   .rail-picker .ng-select.ng-select-disabled .ng-select-container {
@@ -230,7 +242,6 @@
   .rail-children {
     margin-inline-start: 10px;
     padding-inline-start: 7px;
-    border-inline-start: 1px solid var(--rail-line);
   }
 
   .rail-status {
