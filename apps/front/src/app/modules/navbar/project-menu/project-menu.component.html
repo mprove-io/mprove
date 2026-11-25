@@ -1,148 +1,253 @@
-<div class="rail-children">
-  <button
-    type="button"
-    class="rail-item"
-    [attr.aria-current]="lastUrl === pathInfo ? 'page' : null"
-    [disabled]="needSave || lastUrl === pathInfo"
-    (click)="navigateInfo()"
-    >Project Info</button
+<button
+  type="button"
+  class="rail-popup-trigger rail-context-trigger"
+  data-cy="projectSelect"
+  [disabled]="!nav?.orgId || needSave"
+  [cdkMenuTriggerFor]="projectMenu"
+  [cdkMenuPosition]="popupPositions"
+>
+  <span class="rail-label">Project</span>
+  <span
+    class="rail-context-value truncate capitalize"
+    [attr.title]="nav?.projectName"
+    >{{ nav?.projectName || 'Select' }}</span
   >
+</button>
 
-  <div
-    tp="Admin or Editor role required"
-    placement="right"
-    [tpIsEnabled]="isAdmin === false && isEditor === false"
-  >
+<ng-template #projectPicker>
+  <div class="rail-popup" cdkMenu aria-label="Switch project">
+    <div class="max-h-40 overflow-y-auto" role="group" aria-label="Projects">
+      <div *ngIf="isProjectsListLoading" class="px-2 py-1 text-xs" role="status"
+        >Loading projects…</div
+      >
+      @for (project of projectsList; track project.projectId) {
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="
+            project.projectId === nav?.projectId ? 'true' : null
+          "
+          [cdkMenuItemDisabled]="
+            needSave || project.projectId === nav?.projectId
+          "
+          (cdkMenuItemTriggered)="projectChange({ project: project })"
+        >
+          <span class="truncate capitalize" [attr.title]="project.name">{{
+            project.name
+          }}</span>
+        </button>
+      }
+    </div>
+
+    <ng-template #templateNewProject>
+      <div *ngIf="nav.orgName === demoOrgName"
+        >Organization "Demo" is restricted</div
+      >
+
+      <div *ngIf="nav.orgName !== demoOrgName && user.userId !== nav.orgOwnerId"
+        >Only organization owner can access</div
+      >
+    </ng-template>
+
+    <div
+      [tp]="templateNewProject"
+      placement="left"
+      [tpIsEnabled]="
+        user.userId !== nav.orgOwnerId || nav.orgName === demoOrgName
+      "
+    >
+      <button
+        type="button"
+        data-cy="projectSelectCreateProjectButton"
+        class="rail-item"
+        cdkMenuItem
+        [cdkMenuItemDisabled]="
+          needSave ||
+          user.userId !== nav.orgOwnerId ||
+          nav.orgName === demoOrgName
+        "
+        (cdkMenuItemTriggered)="createNewProject()"
+        >New Project</button
+      >
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #projectMenu>
+  <div class="rail-popup" cdkMenu aria-label="Project menu">
     <button
       type="button"
       class="rail-item"
-      [attr.aria-current]="lastUrl === pathProviders ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathProviders ||
-        (isAdmin === false && isEditor === false)
-      "
-      (click)="navigateProviders()"
-      >LLM Providers</button
+      cdkMenuItem
+      [cdkMenuTriggerFor]="projectPicker"
+      [cdkMenuPosition]="submenuPositions"
+      (cdkMenuOpened)="openProjectMenu()"
     >
+      Projects
+      <m-chevron-right-icon
+        class="text-s500 ms-auto"
+        aria-hidden="true"
+      ></m-chevron-right-icon>
+    </button>
+
+    @if (nav?.projectId) {
+      <div class="my-1 border-t border-black/10" role="separator"></div>
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [attr.aria-current]="lastUrl === pathInfo ? 'page' : null"
+        [cdkMenuItemDisabled]="needSave || lastUrl === pathInfo"
+        (cdkMenuItemTriggered)="navigateInfo()"
+        >Project Info</button
+      >
+
+      <div
+        tp="Admin or Editor role required"
+        placement="right"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathProviders ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathProviders ||
+            (isAdmin === false && isEditor === false)
+          "
+          (cdkMenuItemTriggered)="navigateProviders()"
+          >LLM Providers</button
+        >
+      </div>
+
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [attr.aria-current]="lastUrl === pathSandboxProvider ? 'page' : null"
+        [cdkMenuItemDisabled]="needSave || lastUrl === pathSandboxProvider"
+        (cdkMenuItemTriggered)="navigateSandboxProvider()"
+        >Sandbox Provider</button
+      >
+
+      <div
+        tp="Admin or Editor role required"
+        placement="right"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathConnections ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathConnections ||
+            (isAdmin === false && isEditor === false)
+          "
+          (cdkMenuItemTriggered)="navigateConnections()"
+          >Connections</button
+        >
+      </div>
+
+      <div
+        tp="Admin or Editor role required"
+        placement="right"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathEnvironments ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathEnvironments ||
+            (isAdmin === false && isEditor === false)
+          "
+          (cdkMenuItemTriggered)="navigateEnvironments()"
+          >Environments</button
+        >
+      </div>
+
+      <div
+        tp="Project is restricted for demo purposes. Only admin can access."
+        placement="right"
+        [tpIsEnabled]="nav?.orgName === demoOrgName && isAdmin === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathTeam ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathTeam ||
+            (nav?.orgName === demoOrgName && isAdmin === false)
+          "
+          (cdkMenuItemTriggered)="navigateTeam()"
+          >Team</button
+        >
+      </div>
+
+      <div
+        tp="Admin or Editor role required"
+        placement="right"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathRoles ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathRoles ||
+            (isAdmin === false && isEditor === false)
+          "
+          (cdkMenuItemTriggered)="navigateRoles()"
+          >Access Roles</button
+        >
+      </div>
+
+      <div
+        tp="Admin or Editor role required"
+        placement="right"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathGivens ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathGivens ||
+            (isAdmin === false && isEditor === false)
+          "
+          (cdkMenuItemTriggered)="navigateGivens()"
+          >Project Givens</button
+        >
+      </div>
+
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [cdkMenuItemDisabled]="needSave"
+        (cdkMenuItemTriggered)="showSelectedGivens()"
+        >Selected Givens</button
+      >
+    }
   </div>
-
-  <button
-    type="button"
-    class="rail-item"
-    [attr.aria-current]="lastUrl === pathSandboxProvider ? 'page' : null"
-    [disabled]="needSave || lastUrl === pathSandboxProvider"
-    (click)="navigateSandboxProvider()"
-    >Sandbox Provider</button
-  >
-
-  <div
-    tp="Admin or Editor role required"
-    placement="right"
-    [tpIsEnabled]="isAdmin === false && isEditor === false"
-  >
-    <button
-      type="button"
-      class="rail-item"
-      [attr.aria-current]="lastUrl === pathConnections ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathConnections ||
-        (isAdmin === false && isEditor === false)
-      "
-      (click)="navigateConnections()"
-      >Connections</button
-    >
-  </div>
-
-  <div
-    tp="Admin or Editor role required"
-    placement="right"
-    [tpIsEnabled]="isAdmin === false && isEditor === false"
-  >
-    <button
-      type="button"
-      class="rail-item"
-      [attr.aria-current]="lastUrl === pathEnvironments ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathEnvironments ||
-        (isAdmin === false && isEditor === false)
-      "
-      (click)="navigateEnvironments()"
-      >Environments</button
-    >
-  </div>
-
-  <div
-    tp="Project is restricted for demo purposes. Only admin can access."
-    placement="right"
-    [tpIsEnabled]="nav?.orgName === demoOrgName && isAdmin === false"
-  >
-    <button
-      type="button"
-      class="rail-item"
-      [attr.aria-current]="lastUrl === pathTeam ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathTeam ||
-        (nav?.orgName === demoOrgName && isAdmin === false)
-      "
-      (click)="navigateTeam()"
-      >Team</button
-    >
-  </div>
-
-  <div
-    tp="Admin or Editor role required"
-    placement="right"
-    [tpIsEnabled]="isAdmin === false && isEditor === false"
-  >
-    <button
-      type="button"
-      class="rail-item"
-      [attr.aria-current]="lastUrl === pathRoles ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathRoles ||
-        (isAdmin === false && isEditor === false)
-      "
-      (click)="navigateRoles()"
-      >Access Roles</button
-    >
-  </div>
-
-  <div
-    tp="Admin or Editor role required"
-    placement="right"
-    [tpIsEnabled]="isAdmin === false && isEditor === false"
-  >
-    <button
-      type="button"
-      class="rail-item"
-      [attr.aria-current]="lastUrl === pathGivens ? 'page' : null"
-      [disabled]="
-        needSave ||
-        lastUrl === pathGivens ||
-        (isAdmin === false && isEditor === false)
-      "
-      (click)="navigateGivens()"
-      >Project Givens</button
-    >
-  </div>
-
-  <button
-    type="button"
-    class="rail-item"
-    [disabled]="needSave"
-    (click)="showSelectedGivens()"
-    >Selected Givens</button
-  >
-</div>
+</ng-template>
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
-<div *ngIf="alias$ | async"></div>
+<div *ngIf="user$ | async"></div>
 <div *ngIf="isAdmin$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>

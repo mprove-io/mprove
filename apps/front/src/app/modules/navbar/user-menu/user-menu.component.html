@@ -1,41 +1,67 @@
 <nav aria-label="Account">
   <button
     type="button"
-    class="rail-item"
-    [attr.aria-current]="lastUrl === pathProfile ? 'page' : null"
-    [disabled]="needSave === true || lastUrl === pathProfile"
-    (click)="navigateProfile()"
-    >Profile</button
+    class="group ms-2 flex size-10 cursor-pointer rounded-full focus-visible:outline-none"
+    aria-label="Account menu"
+    [cdkMenuTriggerFor]="accountMenu"
+    [cdkMenuPosition]="popupPositions"
   >
+    <m-avatar
+      class="bg-m200 flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-medium group-hover:opacity-80 group-focus-visible:opacity-80"
+      aria-hidden="true"
+      [avatar]="avatarSmall$ | async"
+      [initials]="initials$ | async"
+    ></m-avatar>
+  </button>
 
-  <button
-    *ngIf="isMproveAdmin"
-    type="button"
-    class="rail-item"
-    [attr.aria-current]="lastUrl === pathServerUsers ? 'page' : null"
-    [disabled]="needSave === true || lastUrl === pathServerUsers"
-    (click)="navigateServerUsers()"
-    >Server Users</button
-  >
+  <ng-template #accountMenu>
+    <div class="rail-popup" cdkMenu aria-label="Account actions">
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [attr.aria-current]="lastUrl === pathProfile ? 'page' : null"
+        [cdkMenuItemDisabled]="needSave === true || lastUrl === pathProfile"
+        (cdkMenuItemTriggered)="navigateProfile()"
+        >Profile</button
+      >
 
-  <button
-    type="button"
-    class="rail-item mt-4"
-    [disabled]="needSave === true"
-    (click)="logout()"
-    >Log Out</button
-  >
+      <button
+        *ngIf="isMproveAdmin"
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [attr.aria-current]="lastUrl === pathServerUsers ? 'page' : null"
+        [cdkMenuItemDisabled]="needSave === true || lastUrl === pathServerUsers"
+        (cdkMenuItemTriggered)="navigateServerUsers()"
+        >All Users</button
+      >
 
-  <div class="mt-4 flex items-baseline justify-between">
-    <div class="rail-label select-none">Version: {{ mproveVersion }}</div>
-    <a
-      class="rail-label shrink-0 hover:underline"
-      target="_blank"
-      rel="noopener"
-      href="https://docs.mprove.io"
-      >Docs</a
-    >
-  </div>
+      <a
+        class="rail-item"
+        cdkMenuItem
+        target="_blank"
+        rel="noopener"
+        href="https://docs.mprove.io"
+        >Docs</a
+      >
+
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [cdkMenuItemDisabled]="needSave === true"
+        (cdkMenuItemTriggered)="logout()"
+        >Log Out</button
+      >
+
+      <div
+        *ngIf="mproveVersion"
+        class="text-s500 select-none px-2 pb-1 pt-2 text-xs font-normal"
+        >{{ mproveVersion }}</div
+      >
+    </div>
+  </ng-template>
 </nav>
 
 <div *ngIf="routerEvents$ | async"></div>

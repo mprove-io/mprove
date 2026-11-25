@@ -1,95 +1,33 @@
+.mprove-shell,
+.rail-popup {
+  --rail-line: rgba(24, 24, 27, 0.09);
+  --rail-hover: rgba(24, 24, 27, 0.04);
+  --rail-text: #18181b;
+  --rail-muted: #52525b;
+  --rail-active: #0084d1; // Mprove m600.
+}
+
 .mprove-shell {
+  --rail-value: #71717a;
+
   grid-template-rows: minmax(0, 1fr);
 
   .rail {
-    --rail-padding: 14px;
-    --rail-toggle-size: 32px;
-    --rail-closed-width: calc(
-      var(--rail-toggle-size) + 2 * var(--rail-padding)
-    );
-    --rail-open-width: 15rem;
-    --rail-canvas: #fafafa;
-    --rail-line: rgba(24, 24, 27, 0.09);
-    --rail-hover: rgba(24, 24, 27, 0.04);
-    --rail-text: #18181b;
-    --rail-muted: #52525b;
-    --rail-accent: #2f5bd3;
-    --rail-active: #0084d1; // Mprove m600.
-
-    min-height: 0;
-    border-inline-end: 1px solid var(--rail-line);
-    background: var(--rail-canvas);
-  }
-
-  .rail-panel {
-    width: var(--rail-closed-width);
-    background: var(--rail-canvas);
-  }
-
-  .rail-panel.is-expanded {
-    width: var(--rail-open-width);
-  }
-
-  &.is-narrow .rail {
-    width: calc(var(--rail-closed-width) + 1px);
-  }
-
-  &.is-narrow .rail-panel.is-expanded {
-    position: absolute;
-    inset: 0 auto 0 0;
-    z-index: 40;
-    max-width: calc(100% - var(--rail-closed-width));
-  }
-
-  .rail-header {
     display: flex;
-    flex: none;
-    align-items: center;
-    gap: 8px;
-    min-height: 56px;
-    padding-inline: var(--rail-padding);
-  }
-
-  .rail-toggle {
-    display: grid;
-    flex: none;
-    width: var(--rail-toggle-size);
-    height: var(--rail-toggle-size);
-    place-items: center;
-    border-radius: 6px;
-    color: var(--rail-muted);
-  }
-
-  .rail-toggle svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-  }
-
-  .rail-scroll {
-    display: flex;
-    flex: 1;
     flex-direction: column;
     gap: 12px;
+    width: 9rem;
     min-height: 0;
-    padding: 4px var(--rail-padding) 8px;
-  }
-
-  .rail-footer {
-    flex: none;
-    max-height: 50%;
-    padding: 6px var(--rail-padding) 16px;
-  }
-
-  .rail-scroll,
-  .rail-footer {
+    padding: 12px 8px;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior-y: contain;
-    scrollbar-gutter: stable;
+    border-inline-end: 1px solid var(--rail-line);
+    background: #fafafa;
+  }
+
+  .rail > * {
+    flex: none;
   }
 
   .rail-label {
@@ -99,37 +37,57 @@
     font-weight: 600;
   }
 
-  .rail-footer .rail-label {
-    font-weight: 400;
-  }
-
   .rail-picker {
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    align-items: center;
-    gap: 4px;
-  }
+    grid-template-columns: minmax(0, 1fr);
+    border-radius: 6px;
+    transition: background-color 120ms ease;
 
-  .rail-picker .rail-label {
-    font-size: inherit;
-    font-weight: 400;
+    &:has(.ng-select:not(.ng-select-disabled)):is(
+        :hover,
+        :has(.ng-select-opened)
+      ) {
+      background: var(--rail-hover);
+    }
+
+    &:has(.ng-select:not(.ng-select-disabled) .ng-input > input:focus-visible) {
+      background: var(--rail-hover);
+    }
   }
 
   .rail-picker .ng-select.rail-picker-select .ng-select-container {
-    min-height: 30px;
-    height: 30px;
+    min-height: 26px;
+    height: 26px;
     border: 0;
     border-radius: 6px;
     background: transparent;
     box-shadow: none;
-    color: var(--rail-active);
+    color: var(--rail-value);
+  }
+
+  .rail-picker .ng-select.rail-labeled-select .ng-select-container {
+    height: 46px;
+  }
+
+  .rail-picker .rail-labeled-select .rail-label {
+    padding-inline: 0;
+  }
+
+  .rail-picker .ng-select.ng-select-disabled .ng-select-container {
     cursor: default !important; // Override the global ng-select pointer cursor.
   }
 
   .rail-picker .ng-select .ng-value-container {
-    justify-content: flex-end;
-    padding-inline: 4px 8px;
-    text-align: end;
+    padding-inline: 8px;
+    text-align: start;
+  }
+
+  .rail-picker .ng-select .ng-value > div {
+    margin-inline-start: 0;
+  }
+
+  .rail-picker .rail-branch-select .ng-value {
+    width: 100%;
   }
 
   .rail-picker .ng-select .ng-arrow-wrapper {
@@ -145,22 +103,33 @@
     color: inherit;
   }
 
-  .rail-picker .ng-select:not(.ng-select-disabled) {
-    :is(.ng-value > div, .ng-placeholder) {
-      cursor: pointer;
-    }
-
-    :is(.ng-value > div, .ng-placeholder):hover,
-    &:has(.ng-input > input:focus-visible)
-      :is(.ng-value > div, .ng-placeholder) {
-      text-decoration: underline;
-    }
+  .rail-popup-trigger {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    border-radius: 6px;
+    text-align: start;
   }
 
-  .rail-picker .ng-select.ng-select-disabled .ng-select-container {
+  .rail-context-trigger {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .rail-context-value {
+    padding-inline: 8px;
+    color: var(--rail-value);
+    line-height: 26px;
+  }
+
+  .rail-status {
     color: var(--rail-muted);
+    font-size: 0.6875rem;
   }
+}
 
+:is(.mprove-shell, .rail-popup) {
   .rail-item {
     display: flex;
     align-items: center;
@@ -175,80 +144,71 @@
     text-align: start;
   }
 
-  .rail-toggle,
+  .rail-item:has(.rail-status) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
   .rail-item,
-  .rail-expander {
+  .rail-popup-trigger {
     cursor: pointer;
     transition:
       background-color 120ms ease,
       color 120ms ease;
   }
 
-  .rail-toggle:hover,
-  .rail-item:hover:not(:disabled, [aria-current='page']) {
+  .rail-popup-trigger:hover:not(:disabled),
+  .rail-popup-trigger[aria-expanded='true'],
+  .rail-item[aria-expanded='true'],
+  .rail-item:hover:not(:disabled, [aria-disabled='true'], [aria-current]) {
     background: var(--rail-hover);
     color: var(--rail-text);
   }
 
-  .rail-expander:hover:not(:disabled) {
+  .rail-item:focus-visible,
+  .rail-popup-trigger:focus-visible {
+    outline: none;
     background: var(--rail-hover);
   }
 
-  .rail-toggle:focus-visible,
-  .rail-item:focus-visible,
-  .rail-expander:focus-visible {
-    outline: 2px solid var(--rail-accent);
-    outline-offset: -2px;
-  }
-
-  .rail-item[aria-current='page'] {
+  .rail-item:is([aria-current='page'], [aria-current='true']) {
     color: var(--rail-active);
     font-weight: 600;
   }
 
-  .rail-item:disabled:not([aria-current='page']) {
+  .rail-popup-trigger:disabled,
+  .rail-item:is(:disabled, [aria-disabled='true']):not([aria-current]) {
     cursor: default;
     opacity: 0.5;
   }
 
-  .rail-expander {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 30px;
-    border-radius: 6px;
-    text-align: start;
-  }
-
-  .rail-expander:disabled {
+  .rail-item[aria-current='true'] {
     cursor: default;
   }
+}
 
-  .rail-expander::before {
-    content: '';
-    flex: none;
-    width: 6px;
-    height: 6px;
-    border-block-start: 1.5px solid currentColor;
-    border-inline-end: 1.5px solid currentColor;
-    transform: rotate(45deg);
-    transition: transform 150ms ease;
-  }
+// CDK renders these menus outside the shell.
+.rail-popup {
+  width: min(12rem, calc(100vw - 9.5rem));
+  max-height: calc(100dvh - 1rem);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--rail-line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(24 24 27 / 15%);
+}
 
-  .rail-expander[aria-expanded='true']::before {
-    transform: rotate(135deg);
-  }
-
-  .rail-children {
-    margin-inline-start: 10px;
-    padding-inline-start: 7px;
-  }
-
-  .rail-status {
-    margin-inline-start: auto;
-    color: var(--rail-muted);
-    font-size: 0.6875rem;
-  }
+// Catch outside clicks without letting the page underneath react to the pointer.
+body:has(.rail-popup, > .ng-dropdown-panel.rail-picker-select)
+  .mprove-shell::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  cursor: default;
+  touch-action: none;
 }
 
 // These panels are appended to the body so the rail scroll area won't clip them.

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import type { ConnectedPosition } from '@angular/cdk/overlay';
+import { Component, Input, type OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { PATH_PROFILE, PATH_SERVER_USERS } from '#common/constants/top';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
@@ -12,6 +14,13 @@ import { AuthService } from '#front/app/services/auth.service';
   templateUrl: './user-menu.component.html'
 })
 export class UserMenuComponent implements OnInit {
+  @Input({ required: true })
+  popupPositions: ConnectedPosition[];
+
+  readonly avatarSmall$ = this.navQuery.avatarSmall$;
+
+  readonly initials$ = this.userQuery.initials$;
+
   pathProfile = PATH_PROFILE;
   pathServerUsers = PATH_SERVER_USERS;
 
@@ -41,7 +50,8 @@ export class UserMenuComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private uiQuery: UiQuery,
-    private navQuery: NavQuery
+    private navQuery: NavQuery,
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit() {

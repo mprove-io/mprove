@@ -1,30 +1,114 @@
-<div class="rail-children">
-  <button
-    type="button"
-    class="rail-item"
-    [attr.aria-current]="lastUrl === pathAccount ? 'page' : null"
-    [disabled]="needSave || lastUrl === pathAccount"
-    (click)="navigateAccount()"
-    >Account</button
+<button
+  type="button"
+  class="rail-popup-trigger rail-context-trigger"
+  data-cy="orgSelect"
+  [disabled]="needSave"
+  [cdkMenuTriggerFor]="orgMenu"
+  [cdkMenuPosition]="popupPositions"
+>
+  <span class="rail-label">Organization</span>
+  <span
+    class="rail-context-value truncate capitalize"
+    [attr.title]="nav?.orgName"
+    >{{ nav?.orgName || 'Select' }}</span
   >
+</button>
 
-  <div
-    tp="Only organization owner can access"
-    placement="right"
-    [tpIsEnabled]="user?.userId !== nav?.orgOwnerId"
-  >
+<ng-template #orgPicker>
+  <div class="rail-popup" cdkMenu aria-label="Switch organization">
+    <div
+      class="max-h-40 overflow-y-auto"
+      role="group"
+      aria-label="Organizations"
+    >
+      <div *ngIf="isOrgsListLoading" class="px-2 py-1 text-xs" role="status"
+        >Loading organizations…</div
+      >
+      @for (org of orgsList; track org.orgId) {
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="org.orgId === nav?.orgId ? 'true' : null"
+          [cdkMenuItemDisabled]="needSave || org.orgId === nav?.orgId"
+          (cdkMenuItemTriggered)="orgChange({ orgId: org.orgId })"
+        >
+          <span class="truncate capitalize" [attr.title]="org.name">{{
+            org.name
+          }}</span>
+        </button>
+      }
+    </div>
+
+    <div
+      tp="Demo user is restricted"
+      placement="left"
+      [tpIsEnabled]="user?.alias === restrictedUserAlias"
+    >
+      <button
+        type="button"
+        data-cy="orgSelectCreateOrgButton"
+        class="rail-item"
+        cdkMenuItem
+        [cdkMenuItemDisabled]="needSave || user?.alias === restrictedUserAlias"
+        (cdkMenuItemTriggered)="createNewOrg()"
+        >New Org</button
+      >
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #orgMenu>
+  <div class="rail-popup" cdkMenu aria-label="Organization menu">
     <button
       type="button"
       class="rail-item"
-      [attr.aria-current]="lastUrl === pathUsers ? 'page' : null"
-      [disabled]="
-        needSave || lastUrl === pathUsers || user?.userId !== nav?.orgOwnerId
-      "
-      (click)="navigateUsers()"
-      >Users</button
+      cdkMenuItem
+      [cdkMenuTriggerFor]="orgPicker"
+      [cdkMenuPosition]="submenuPositions"
+      (cdkMenuOpened)="openOrgMenu()"
     >
+      Organizations
+      <m-chevron-right-icon
+        class="text-s500 ms-auto"
+        aria-hidden="true"
+      ></m-chevron-right-icon>
+    </button>
+
+    @if (nav?.orgId) {
+      <div class="my-1 border-t border-black/10" role="separator"></div>
+      <button
+        type="button"
+        class="rail-item"
+        cdkMenuItem
+        [attr.aria-current]="lastUrl === pathAccount ? 'page' : null"
+        [cdkMenuItemDisabled]="needSave || lastUrl === pathAccount"
+        (cdkMenuItemTriggered)="navigateAccount()"
+        >Account</button
+      >
+
+      <div
+        tp="Only organization owner can access"
+        placement="right"
+        [tpIsEnabled]="user?.userId !== nav?.orgOwnerId"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          cdkMenuItem
+          [attr.aria-current]="lastUrl === pathUsers ? 'page' : null"
+          [cdkMenuItemDisabled]="
+            needSave ||
+            lastUrl === pathUsers ||
+            user?.userId !== nav?.orgOwnerId
+          "
+          (cdkMenuItemTriggered)="navigateUsers()"
+          >Users</button
+        >
+      </div>
+    }
   </div>
-</div>
+</ng-template>
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>

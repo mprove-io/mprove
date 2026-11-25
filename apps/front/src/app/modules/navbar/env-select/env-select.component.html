@@ -2,7 +2,7 @@
   #envSelect
   [fixNgSelectBottom]="envSelect"
   data-cy="envSelect"
-  class="rail-picker-select w-full select-none text-base"
+  class="rail-picker-select rail-labeled-select w-full select-none text-base"
   (open)="openEnvSelect()"
   [loading]="envsListLoading"
   [items]="envsList"
@@ -15,18 +15,35 @@
   (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
   (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
   appendTo="body"
+  outsideClickEvent="mousedown"
   placeholder="Select"
+  [fixedPlaceholder]="false"
   bindLabel="envId"
   bindValue="envId"
 >
   <ng-template ng-label-tmp let-item="item">
-    <div class="ml-1 truncate"> {{ item.envId }}</div>
+    <ng-container
+      *ngTemplateOutlet="envLabel; context: { name: item.envId }"
+    ></ng-container>
+  </ng-template>
+
+  <ng-template ng-placeholder-tmp>
+    <ng-container
+      *ngTemplateOutlet="envLabel; context: { name: 'Select' }"
+    ></ng-container>
   </ng-template>
 
   <ng-template ng-option-tmp let-item="item">
-    <div class="ml-1 truncate">{{ item.envId }}</div>
+    <div class="ml-1 truncate capitalize">{{ item.envId }}</div>
   </ng-template>
 </ng-select>
+
+<ng-template #envLabel let-name="name">
+  <div>
+    <div class="rail-label">Environment</div>
+    <div class="truncate capitalize leading-[26px]">{{ name }}</div>
+  </div>
+</ng-template>
 
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="nav$ | async"></div>

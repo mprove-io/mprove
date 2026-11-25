@@ -1,16 +1,12 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
+import type { ConnectedPosition } from '@angular/cdk/overlay';
 import {
   ChangeDetectorRef,
   Component,
-  computed,
-  inject,
   type OnInit,
-  signal,
   ViewEncapsulation
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import {
   EMPTY_REPORT_ID,
   PATH_BUILDER,
@@ -45,24 +41,22 @@ import { environment } from '#front/environments/environment';
   encapsulation: ViewEncapsulation.None
 })
 export class NavbarComponent implements OnInit {
-  readonly isNarrow = toSignal(
-    inject(BreakpointObserver)
-      .observe('(max-width: 860px)')
-      .pipe(map(state => state.matches)),
-    { requireSync: true }
-  );
-
-  private readonly isDesktopMenuExpanded = signal(true);
-
-  private readonly isNarrowMenuExpanded = signal(false);
-
-  readonly isMenuExpanded = computed(() =>
-    this.isNarrow() ? this.isNarrowMenuExpanded() : this.isDesktopMenuExpanded()
-  );
-
-  isProjectExpanded = false;
-
-  isOrgExpanded = false;
+  readonly popupPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetX: 12
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'bottom',
+      offsetX: 12
+    }
+  ];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -140,16 +134,6 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.checkUrls(this.router.url);
-  }
-
-  setMenuExpanded(item: { isExpanded: boolean }): void {
-    let { isExpanded } = item;
-
-    if (this.isNarrow()) {
-      this.isNarrowMenuExpanded.set(isExpanded);
-    } else {
-      this.isDesktopMenuExpanded.set(isExpanded);
-    }
   }
 
   checkUrls(url: string) {

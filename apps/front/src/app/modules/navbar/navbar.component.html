@@ -1,180 +1,108 @@
-<div
-  class="mprove-shell relative grid h-full w-full grid-cols-[auto_minmax(0,1fr)]"
-  [class.is-narrow]="isNarrow()"
->
-  <aside class="rail" aria-label="Mprove menu">
-    <div
-      class="rail-panel flex h-full flex-col"
-      [class.is-expanded]="isMenuExpanded()"
-    >
-      <div class="rail-header">
+<div class="mprove-shell grid h-full w-full grid-cols-[auto_minmax(0,1fr)]">
+  <aside class="rail" aria-label="Mprove menu" cdkScrollable>
+    <img
+      class="mb-6 ms-2 mt-1 w-[6.75rem] select-none"
+      src="assets/logo/mprove_logo_web-01-b.svg"
+      alt="Mprove"
+    />
+
+    <section *ngIf="!!nav?.projectId" class="rail-picker" aria-label="Branch">
+      <m-branch-select></m-branch-select>
+    </section>
+
+    <nav *ngIf="!!nav?.projectId" aria-label="Pages">
+      <button
+        type="button"
+        class="rail-item"
+        [attr.aria-current]="isBuilderRouteActive ? 'page' : null"
+        (click)="navigateBuilder()"
+        [disabled]="needSave"
+      >
+        <span>Builder</span>
+        <span *ngIf="nav.needValidate === true" class="rail-status"
+          >Validation needed</span
+        >
+        <span
+          *ngIf="
+            nav.needValidate === false &&
+            (struct?.errors.length > 0 || repo?.conflicts.length > 0)
+          "
+          class="rail-status"
+          >Issues</span
+        >
+      </button>
+
+      <div
+        *ngIf="explorerEnabled"
+        tp="Explorer role required"
+        placement="right"
+        [tpIsEnabled]="member?.isExplorer === false"
+      >
         <button
           type="button"
-          class="rail-toggle"
-          aria-label="Toggle menu"
-          aria-controls="mprove-menu"
-          [attr.aria-expanded]="isMenuExpanded()"
-          (click)="setMenuExpanded({ isExpanded: !isMenuExpanded() })"
+          class="rail-item"
+          [attr.aria-current]="isExplorerRouteActive ? 'page' : null"
+          (click)="navigateExplorer()"
+          [disabled]="needSave || member?.isExplorer !== true"
         >
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M2.5 4h11M2.5 8h11M2.5 12h11" />
-          </svg>
+          <span>Explorer</span>
         </button>
-        <img
-          *ngIf="isMenuExpanded()"
-          class="ml-auto w-32 select-none"
-          src="assets/logo/mprove_logo_web-01-b-gray.svg"
-          alt="Mprove"
-        />
       </div>
 
-      <div id="mprove-menu" class="min-h-0 flex-1" [hidden]="!isMenuExpanded()">
-        <div class="flex h-full flex-col">
-          <div class="rail-scroll">
-            <div>
-              <section aria-label="Organization">
-                <div class="rail-picker">
-                  <button
-                    type="button"
-                    class="rail-label rail-expander"
-                    aria-controls="mprove-org-menu"
-                    [attr.aria-expanded]="!!nav?.orgId && isOrgExpanded"
-                    [disabled]="!nav?.orgId"
-                    (click)="isOrgExpanded = !isOrgExpanded"
-                    >Organization</button
-                  >
-                  <m-org-select></m-org-select>
-                </div>
-                <div id="mprove-org-menu" [hidden]="!isOrgExpanded">
-                  <m-org-menu *ngIf="!!nav?.orgId"></m-org-menu>
-                </div>
-              </section>
+      <button
+        type="button"
+        class="rail-item"
+        [attr.aria-current]="isReportsRouteActive ? 'page' : null"
+        (click)="navigateReports()"
+        [disabled]="needSave"
+      >
+        <span>Reports</span>
+      </button>
 
-              <section aria-label="Project">
-                <div class="rail-picker">
-                  <button
-                    type="button"
-                    class="rail-label rail-expander"
-                    aria-controls="mprove-project-menu"
-                    [attr.aria-expanded]="!!nav?.projectId && isProjectExpanded"
-                    [disabled]="!nav?.projectId"
-                    (click)="isProjectExpanded = !isProjectExpanded"
-                    >Project</button
-                  >
-                  <m-project-select></m-project-select>
-                </div>
-                <div id="mprove-project-menu" [hidden]="!isProjectExpanded">
-                  <m-project-menu *ngIf="!!nav?.projectId"></m-project-menu>
-                </div>
-              </section>
-
-              <section
-                *ngIf="!!nav?.projectId"
-                aria-label="Workspace selectors"
-              >
-                <div class="rail-picker">
-                  <div class="rail-label select-none">Environment</div>
-                  <m-env-select></m-env-select>
-                </div>
-                <div class="rail-picker">
-                  <div class="rail-label select-none">Branch</div>
-                  <m-branch-select></m-branch-select>
-                </div>
-              </section>
-            </div>
-
-            <nav *ngIf="!!nav?.projectId" aria-label="Pages">
-              <button
-                type="button"
-                class="rail-item"
-                [attr.aria-current]="isBuilderRouteActive ? 'page' : null"
-                (click)="navigateBuilder()"
-                [disabled]="needSave"
-              >
-                <span>Builder</span>
-                <span *ngIf="nav.needValidate === true" class="rail-status"
-                  >Validation needed</span
-                >
-                <span
-                  *ngIf="
-                    nav.needValidate === false &&
-                    (struct?.errors.length > 0 || repo?.conflicts.length > 0)
-                  "
-                  class="rail-status"
-                  >Issues</span
-                >
-              </button>
-
-              <div
-                *ngIf="explorerEnabled"
-                tp="Explorer role required"
-                placement="right"
-                [tpIsEnabled]="member?.isExplorer === false"
-              >
-                <button
-                  type="button"
-                  class="rail-item"
-                  [attr.aria-current]="isExplorerRouteActive ? 'page' : null"
-                  (click)="navigateExplorer()"
-                  [disabled]="needSave || member?.isExplorer !== true"
-                >
-                  <span>Explorer</span>
-                </button>
-              </div>
-
-              <button
-                type="button"
-                class="rail-item"
-                [attr.aria-current]="isReportsRouteActive ? 'page' : null"
-                (click)="navigateReports()"
-                [disabled]="needSave"
-              >
-                <span>Reports</span>
-              </button>
-
-              <div
-                tp="Explorer role required"
-                placement="right"
-                [tpIsEnabled]="member?.isExplorer === false"
-              >
-                <button
-                  type="button"
-                  class="rail-item"
-                  [attr.aria-current]="isModelsRouteActive ? 'page' : null"
-                  (click)="navigateCharts()"
-                  [disabled]="needSave || member?.isExplorer !== true"
-                >
-                  <span>Charts</span>
-                </button>
-              </div>
-
-              <button
-                type="button"
-                class="rail-item"
-                [attr.aria-current]="isDashboardsRouteActive ? 'page' : null"
-                (click)="navigateDashboards()"
-                [disabled]="needSave"
-              >
-                <span>Dashboards</span>
-              </button>
-            </nav>
-          </div>
-          <m-user-menu class="rail-footer"></m-user-menu>
-        </div>
+      <div
+        tp="Explorer role required"
+        placement="right"
+        [tpIsEnabled]="member?.isExplorer === false"
+      >
+        <button
+          type="button"
+          class="rail-item"
+          [attr.aria-current]="isModelsRouteActive ? 'page' : null"
+          (click)="navigateCharts()"
+          [disabled]="needSave || member?.isExplorer !== true"
+        >
+          <span>Charts</span>
+        </button>
       </div>
+
+      <button
+        type="button"
+        class="rail-item"
+        [attr.aria-current]="isDashboardsRouteActive ? 'page' : null"
+        (click)="navigateDashboards()"
+        [disabled]="needSave"
+      >
+        <span>Dashboards</span>
+      </button>
+    </nav>
+
+    <div class="mt-auto flex flex-col gap-3">
+      <m-org-menu [popupPositions]="popupPositions"></m-org-menu>
+      <m-project-menu [popupPositions]="popupPositions"></m-project-menu>
+
+      <section
+        *ngIf="!!nav?.projectId"
+        class="rail-picker"
+        aria-label="Environment"
+      >
+        <m-env-select></m-env-select>
+      </section>
+
+      <m-user-menu [popupPositions]="popupPositions"></m-user-menu>
     </div>
   </aside>
 
-  <div
-    *ngIf="isNarrow() && isMenuExpanded()"
-    class="absolute inset-0 z-30 bg-black/20"
-    aria-hidden="true"
-  ></div>
-
-  <div
-    class="isolate min-h-0 min-w-0 overflow-auto"
-    [inert]="isNarrow() && isMenuExpanded()"
-  >
+  <div class="isolate min-h-0 min-w-0 overflow-auto">
     <router-outlet></router-outlet>
   </div>
 </div>

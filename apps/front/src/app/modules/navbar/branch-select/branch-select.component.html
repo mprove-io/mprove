@@ -2,7 +2,7 @@
   #branchSelect
   [fixNgSelectBottom]="branchSelect"
   data-cy="branchSelect"
-  class="rail-picker-select w-full select-none text-base"
+  class="rail-picker-select rail-labeled-select rail-branch-select w-full select-none text-base"
   (open)="openBranchSelect()"
   [loading]="branchesListLoading"
   [items]="branchesList"
@@ -15,16 +15,29 @@
   (keyup.esc)="$event.stopImmediatePropagation(); branchSelect.blur()"
   (keyup.enter)="$event.stopImmediatePropagation(); branchSelect.blur()"
   appendTo="body"
+  outsideClickEvent="mousedown"
   placeholder="Select"
+  [fixedPlaceholder]="false"
   bindLabel="extraName"
   bindValue="extraId"
 >
   <ng-template ng-label-tmp let-item="item">
-    <div class="ml-1 truncate">{{ item.extraName }}</div>
+    <ng-container
+      *ngTemplateOutlet="branchSelection; context: { branch: item }"
+    ></ng-container>
+  </ng-template>
+
+  <ng-template ng-placeholder-tmp>
+    <ng-container *ngTemplateOutlet="branchSelection"></ng-container>
   </ng-template>
 
   <ng-template ng-option-tmp let-item="item">
-    <div class="ml-1 truncate">{{ item.extraName }}</div>
+    <ng-container
+      *ngTemplateOutlet="
+        branchLabel;
+        context: { branch: item, name: item.extraName }
+      "
+    ></ng-container>
   </ng-template>
 
   <ng-template ng-footer-tmp>
@@ -155,6 +168,37 @@
     </div> -->
   </ng-template>
 </ng-select>
+
+<ng-template #branchSelection let-branch="branch">
+  <div>
+    <div class="rail-label">Branch</div>
+    <div class="leading-[26px]">
+      @if (branch) {
+        <ng-container
+          *ngTemplateOutlet="
+            branchLabel;
+            context: { branch: branch, name: branch.branchId }
+          "
+        ></ng-container>
+      } @else {
+        Select
+      }
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #branchLabel let-branch="branch" let-name="name">
+  <div class="flex items-center justify-between gap-2">
+    <span class="truncate" [attr.title]="name">{{ name }}</span>
+    <span
+      class="size-2 shrink-0 rounded-full"
+      [ngClass]="branchTypeClassMap.get(branch.repoType)"
+      role="img"
+      [attr.aria-label]="branch.repoType"
+      [attr.title]="branch.repoType"
+    ></span>
+  </div>
+</ng-template>
 
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="nav$ | async"></div>

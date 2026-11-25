@@ -62,6 +62,12 @@ export class BranchSelectComponent {
 
   repoStatusNeedCommit: RepoStatus = 'NeedCommit';
 
+  readonly branchTypeClassMap = new Map<RepoType, string>([
+    ['production', 'bg-m600'],
+    ['dev', 'bg-g500'],
+    ['session', 'bg-yellow-400']
+  ]);
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {

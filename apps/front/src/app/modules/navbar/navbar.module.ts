@@ -1,3 +1,5 @@
+import { CdkMenuModule } from '@angular/cdk/menu';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,9 +11,7 @@ import { BranchSelectComponent } from './branch-select/branch-select.component';
 import { EnvSelectComponent } from './env-select/env-select.component';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
-import { OrgSelectComponent } from './org-select/org-select.component';
 import { ProjectMenuComponent } from './project-menu/project-menu.component';
-import { ProjectSelectComponent } from './project-select/project-select.component';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 
 @NgModule({
@@ -19,9 +19,7 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     NavbarComponent,
     UserMenuComponent,
     BranchSelectComponent,
-    OrgSelectComponent,
     OrgMenuComponent,
-    ProjectSelectComponent,
     ProjectMenuComponent,
     EnvSelectComponent
   ],
@@ -32,6 +30,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     RouterModule,
     SharedModule,
     NgSelectModule,
+    CdkMenuModule,
+    ScrollingModule,
     TippyDirective
   ]
 })
