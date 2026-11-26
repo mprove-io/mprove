@@ -1,95 +1,93 @@
-<div class="bg-m1 flex h-full cursor-default flex-col">
-  <div class="flex flex-row">
-    <div class="flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
-      <div class="divide-s300 divide-y">
-        <div></div>
-        <div></div>
-      </div>
+<div class="bg-m0 flex h-full cursor-default flex-col rounded shadow">
+  <div
+    class="mb-3 flex min-w-[2px] flex-shrink-0 flex-col pb-4"
+    *ngIf="!!dashboard"
+  >
+    <div class="mt-6 w-full">
+      <div class="flex flex-col">
+        <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
+          <div
+            (click)="toggleFiltersPanel()"
+            class="text-s1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
+            [ngClass]="{
+              'cursor-pointer': dashboard.fields.length > 0,
+              'cursor-default': dashboard.fields.length === 0
+            }"
+          >
+            <div class="flex flex-row items-center space-x-2">
+              <m-chevron-right-icon
+                *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
+              ></m-chevron-right-icon>
+              <m-chevron-down-icon
+                *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
+              ></m-chevron-down-icon>
 
-      <div class="mt-6 w-full">
-        <div class="flex flex-col">
-          <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
+              <div class="h-6 w-6" *ngIf="dashboard.fields.length === 0"></div>
+
+              <div> Parameters </div>
+            </div>
+          </div>
+
+          <div class="ml-3 flex max-h-[270px] w-full flex-col overflow-auto">
             <div
-              (click)="toggleFiltersPanel()"
-              class="text-s1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
-              [ngClass]="{
-                'cursor-pointer': dashboard.fields.length > 0,
-                'cursor-default': dashboard.fields.length === 0
-              }"
+              class="mr-5 mt-1 flex min-h-[64px] flex-row items-start"
+              *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
             >
-              <div class="flex flex-row items-center space-x-2">
-                <m-chevron-right-icon
-                  *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
-                ></m-chevron-right-icon>
-                <m-chevron-down-icon
-                  *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
-                ></m-chevron-down-icon>
-
-                <div
-                  class="h-6 w-6"
-                  *ngIf="dashboard.fields.length === 0"
-                ></div>
-
-                <div> Parameters </div>
-              </div>
+              <m-bricks
+                class="mb-5 flex max-h-[150px] max-w-max cursor-pointer flex-row items-start justify-start overflow-auto"
+                [extendedFilters]="dashboard.extendedFilters"
+                [isKeepBackgroundColor]="false"
+                (click)="toggleFiltersPanel()"
+              ></m-bricks>
             </div>
 
-            <div class="ml-3 flex max-h-[270px] w-full flex-col overflow-auto">
-              <div
-                class="mr-5 mt-1 flex min-h-[64px] flex-row items-start"
-                *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
+            <div
+              class="flex w-full flex-row"
+              *ngIf="
+                filtersIsExpanded === true || dashboard?.fields.length === 0
+              "
+            >
+              <button
+                type="button"
+                data-cy="dashboardAddFilterButton"
+                class="border-s400 text-s500 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                (click)="addFilter()"
+                >Add Filter</button
               >
-                <m-bricks
-                  class="mb-5 flex max-h-[150px] max-w-max cursor-pointer flex-row items-start justify-start overflow-auto"
-                  [extendedFilters]="dashboard.extendedFilters"
-                  [isKeepBackgroundColor]="false"
-                  (click)="toggleFiltersPanel()"
-                ></m-bricks>
-              </div>
+
+              <div class="min-h-[68px]"></div>
 
               <div
-                class="flex w-full flex-row"
+                class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
                 *ngIf="
-                  filtersIsExpanded === true || dashboard?.fields.length === 0
+                  filtersIsExpanded === true && dashboard.fields.length > 0
                 "
               >
-                <button
-                  type="button"
-                  data-cy="dashboardAddFilterButton"
-                  class="border-s400 text-s500 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-                  (click)="addFilter()"
-                  >Add Filter</button
-                >
-
-                <div class="min-h-[68px]"></div>
-
-                <div
-                  class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
-                  *ngIf="
-                    filtersIsExpanded === true && dashboard.fields.length > 0
-                  "
-                >
-                  <m-dashboard-filters
-                    [dashboard]="dashboard"
-                  ></m-dashboard-filters>
-                </div>
+                <m-dashboard-filters
+                  [dashboard]="dashboard"
+                ></m-dashboard-filters>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-y-3">
+      <ng-container *ngTemplateOutlet="parameterActions()"></ng-container>
+    </div>
   </div>
 
-  <div class="mb-[3px] flex h-2 w-full flex-row shadow-md"></div>
+  <div
+    *ngIf="!!dashboard"
+    aria-hidden="true"
+    class="border-s200 relative z-10 w-full flex-shrink-0 border-t shadow-md"
+  ></div>
 
   <div class="flex h-2 flex-1 flex-row overflow-y-auto">
     <div class="flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div
-        class="overflow-overlay flex h-full min-w-[2px] flex-grow flex-col"
-        [ngClass]="{
-          'pl-5': showDashboardsLeftPanel === true
-        }"
+        class="overflow-overlay flex h-full min-w-[2px] flex-grow flex-col pl-5"
       >
         <div #scrollable class="mt-1 flex w-full flex-grow flex-col">
           <ng-scrollbar

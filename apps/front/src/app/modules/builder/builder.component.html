@@ -1,7 +1,7 @@
-<div class="bg-m1 flex h-full cursor-default flex-col">
+<div class="flex h-full cursor-default flex-col bg-[var(--rail-background)]">
   <div class="flex h-2 flex-1 flex-row">
-    <div class="mx-6 mb-6 mt-6 flex min-w-[2px] flex-grow flex-col">
-      <div class="flex h-11 flex-row items-center justify-between">
+    <div class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col">
+      <div class="ml-6 flex h-11 flex-row items-center justify-between">
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
           <div class="flex select-none flex-row items-center">
             <div
@@ -509,7 +509,7 @@
         </div>
       </div>
 
-      <div class="mt-6 flex h-2 flex-1 flex-row">
+      <div class="bg-m0 mt-6 flex h-2 flex-1 flex-row gap-3 rounded shadow">
         <div class="flex w-1/4 flex-shrink-0">
           <m-builder-left
             [builderLeft]="builderLeft"
@@ -520,8 +520,8 @@
           ></m-builder-left>
         </div>
 
-        <div class="ml-6 flex flex-1 flex-col">
-          <div class="bg-m0 flex h-full flex-grow rounded shadow">
+        <div class="border-s200 flex flex-1 flex-col border-l pl-3">
+          <div class="flex h-full flex-grow">
             <div class="h-full w-full">
               <router-outlet></router-outlet>
             </div>
@@ -529,7 +529,7 @@
         </div>
 
         <div
-          class="ml-6 flex"
+          class="border-s200 flex border-l pl-3"
           [ngClass]="{
             'w-1/4 flex-shrink-0': !secondFileNodeId,
             'flex-1': !!secondFileNodeId

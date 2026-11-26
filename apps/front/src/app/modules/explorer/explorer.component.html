@@ -1,6 +1,8 @@
-<div class="bg-m1 flex h-full cursor-default flex-col overflow-hidden">
-  <div class="mx-6 mb-6 mt-6 flex min-h-0 flex-1 flex-col">
-    <div class="flex h-11 flex-shrink-0 flex-row items-center">
+<div
+  class="flex h-full cursor-default flex-col overflow-hidden bg-[var(--rail-background)]"
+>
+  <div class="mb-6 mr-6 mt-6 flex min-h-0 flex-1 flex-col">
+    <div class="ml-6 flex h-11 flex-shrink-0 flex-row items-center">
       <div
         class="flex flex-row items-center"
         [ngClass]="{ 'w-1/4 justify-between': isSessionRoute }"
@@ -41,26 +43,24 @@
       </div>
     </div>
 
-    <div class="mt-6 flex h-2 min-h-0 flex-1 flex-row">
+    <div
+      class="bg-m0 mt-6 flex h-2 min-h-0 flex-1 flex-row gap-3 rounded shadow"
+    >
       <ng-container *ngIf="!isSessionRoute">
-        <div
-          class="bg-m0 flex h-full w-full flex-grow overflow-hidden rounded shadow"
-        >
+        <div class="flex h-full w-full flex-grow overflow-hidden">
           <router-outlet></router-outlet>
         </div>
       </ng-container>
 
       <ng-container *ngIf="isSessionRoute && showContent">
-        <div
-          class="bg-m0 flex h-full w-1/4 flex-shrink-0 flex-col rounded shadow"
-        >
+        <div class="flex h-full w-1/4 flex-shrink-0 flex-col">
           <div class="flex flex-1 overflow-hidden">
             <router-outlet></router-outlet>
           </div>
         </div>
 
         <div
-          class="bg-m0 ml-6 flex min-h-0 min-w-0 flex-1 flex-col rounded shadow"
+          class="border-s200 flex min-h-0 min-w-0 flex-1 flex-col border-l pl-3"
         >
           <m-explorer-tabs
             class="flex-shrink-0"
@@ -135,9 +135,9 @@
       </ng-container>
 
       <ng-container *ngIf="isSessionRoute && !showContent">
-        <div class="bg-m0 h-full w-1/4 flex-shrink-0 rounded shadow"></div>
+        <div class="h-full w-1/4 flex-shrink-0"></div>
 
-        <div class="bg-m0 ml-6 min-h-0 min-w-0 flex-1 rounded shadow"></div>
+        <div class="border-s200 min-h-0 min-w-0 flex-1 border-l pl-3"></div>
       </ng-container>
     </div>
   </div>

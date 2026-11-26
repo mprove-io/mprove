@@ -1,14 +1,11 @@
 <div
   *ngIf="!sessionId"
-  class="bg-m0 flex h-full w-full flex-col items-center justify-center rounded shadow"
+  class="flex h-full w-full flex-col items-center justify-center"
 >
   <div class="text-xl">Select Session</div>
 </div>
 
-<div
-  *ngIf="!!sessionId"
-  class="bg-m0 flex h-full w-full flex-col rounded shadow"
->
+<div *ngIf="!!sessionId" class="flex h-full w-full flex-col">
   <div class="flex h-2 w-full flex-grow flex-col overflow-y-auto">
     <ng-scrollbar
       [orientation]="'vertical'"

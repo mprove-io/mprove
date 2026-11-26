@@ -3,8 +3,14 @@
 }
 
 :host ::ng-deep ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: var(--report-grid-scrollbar-size);
+  height: var(--report-grid-scrollbar-size);
+}
+
+:host ::ng-deep .ag-body-horizontal-scroll,
+:host ::ng-deep .ag-body-horizontal-scroll-viewport {
+  // Match the height AG Grid sets after initializing its scrollbar.
+  height: var(--report-grid-scrollbar-size);
 }
 
 :host ::ng-deep ::-webkit-scrollbar-thumb {

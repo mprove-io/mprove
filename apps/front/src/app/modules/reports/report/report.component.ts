@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  ViewChild
+} from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -354,6 +361,8 @@ export class ReportComponent {
 
       this.data = newData;
 
+      this.scheduleGridFit();
+
       this.uiQuery.getValue().reportSelectedNodes.forEach(node => {
         let rowNode = this.agGridApi.getRowNode(node.id);
         if (isDefined(rowNode)) {
@@ -371,7 +380,20 @@ export class ReportComponent {
   lastSelectionChangedTs = 0;
   lastRowClickedTs = 0;
 
-  @ViewChild(AgGridAngular) agGrid: AgGridAngular<DataRow>;
+  @ViewChild(AgGridAngular, { read: ElementRef, static: true })
+  private reportGrid: ElementRef<HTMLElement>;
+
+  readonly gridScrollbarSize = 6;
+
+  gridWidth?: number;
+
+  gridHeight?: number;
+
+  isGridFitReady = false;
+
+  private gridFitFrame?: number;
+
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -428,6 +450,33 @@ export class ReportComponent {
   onGridReady(params: GridReadyEvent<DataRow>) {
     this.agGridApi = params.api;
 
+    let grid: HTMLElement = this.reportGrid.nativeElement;
+
+    let observer: ResizeObserver = new ResizeObserver(() =>
+      this.scheduleGridFit()
+    );
+
+    let centerViewport: HTMLElement = grid.querySelector(
+      '.ag-center-cols-viewport'
+    );
+
+    let bodyViewport: HTMLElement = grid.querySelector('.ag-body-viewport');
+
+    observer.observe(grid.parentElement);
+
+    if (isDefined(centerViewport) && isDefined(bodyViewport)) {
+      observer.observe(centerViewport);
+      observer.observe(bodyViewport);
+    }
+
+    this.destroyRef.onDestroy(() => {
+      observer.disconnect();
+
+      if (isDefined(this.gridFitFrame)) {
+        cancelAnimationFrame(this.gridFitFrame);
+      }
+    });
+
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
 
@@ -435,13 +484,91 @@ export class ReportComponent {
       this.checkUpdateData();
     }
 
+    this.scheduleGridFit();
+
     this.cd.detectChanges();
+  }
+
+  scheduleGridFit(): void {
+    if (
+      isDefined(this.gridFitFrame) ||
+      !isDefined(this.agGridApi) ||
+      !isDefined(this.data)
+    ) {
+      return;
+    }
+
+    this.gridFitFrame = requestAnimationFrame(() => {
+      this.gridFitFrame = undefined;
+
+      if (this.agGridApi.isDestroyed()) {
+        return;
+      }
+
+      let grid: HTMLElement = this.reportGrid.nativeElement;
+
+      let centerViewport: HTMLElement = grid.querySelector(
+        '.ag-center-cols-viewport'
+      );
+
+      let bodyViewport: HTMLElement = grid.querySelector('.ag-body-viewport');
+
+      if (
+        !isDefined(centerViewport) ||
+        !isDefined(bodyViewport) ||
+        grid.offsetWidth === 0 ||
+        grid.offsetHeight === 0
+      ) {
+        return;
+      }
+
+      let contentWidth: number = this.agGridApi
+        .getDisplayedCenterColumns()
+        .reduce((width, column) => width + column.getActualWidth(), 0);
+
+      let rowCount: number = this.agGridApi.getDisplayedRowCount();
+
+      let lastRow: IRowNode<DataRow> =
+        rowCount > 0
+          ? this.agGridApi.getDisplayedRowAtIndex(rowCount - 1)
+          : undefined;
+
+      let contentHeight: number =
+        isDefined(lastRow?.rowTop) && isDefined(lastRow?.rowHeight)
+          ? lastRow.rowTop + lastRow.rowHeight
+          : (rowCount === 0 ? 2 : rowCount) * reportGridRowHeight;
+
+      // Keep room for pinned columns, the header, borders and any scrollbars.
+      let gridWidth: number =
+        contentWidth + grid.offsetWidth - centerViewport.clientWidth;
+
+      let gridHeight: number =
+        contentHeight + grid.offsetHeight - bodyViewport.clientHeight;
+
+      if (gridWidth !== this.gridWidth || gridHeight !== this.gridHeight) {
+        this.gridWidth = gridWidth;
+        this.gridHeight = gridHeight;
+
+        this.cd.markForCheck();
+
+        if (!this.isGridFitReady) {
+          // The first fit can change scrollbar sizes before the next frame.
+          this.scheduleGridFit();
+        }
+      } else if (!this.isGridFitReady) {
+        this.isGridFitReady = true;
+
+        this.cd.markForCheck();
+      }
+    });
   }
 
   onColumnResized(params: ColumnResizedEvent<DataRow>) {
     if (isDefined(params.column)) {
       this.updateColumnSizes(params.column);
     }
+
+    this.scheduleGridFit();
   }
 
   rowDragEndHandle(event: RowDragEndEvent<DataRow>): void {

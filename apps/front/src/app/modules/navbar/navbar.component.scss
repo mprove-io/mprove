@@ -8,6 +8,7 @@
 }
 
 .mprove-shell {
+  --rail-background: #f2f5fa; // Mprove m1.
   --rail-value: #71717a;
   --rail-context-padding-top: 3px;
 
@@ -24,11 +25,15 @@
     overflow-y: auto;
     overscroll-behavior-y: contain;
     border-inline-end: 1px solid var(--rail-line);
-    background: #fafafa;
+    background: var(--rail-background);
   }
 
   .rail > * {
     flex: none;
+  }
+
+  .rail--no-divider {
+    border-inline-end-color: transparent;
   }
 
   .rail-label {

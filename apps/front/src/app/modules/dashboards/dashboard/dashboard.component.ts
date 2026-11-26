@@ -2,13 +2,17 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  inject,
   OnDestroy,
   OnInit,
   QueryList,
+  type Signal,
+  type TemplateRef,
   ViewChild,
   ViewChildren
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ROUTER_OUTLET_DATA } from '@angular/router';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
@@ -76,6 +80,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   scrollSpeed = 8;
 
   filtersIsExpanded = false;
+
+  readonly parameterActions: Signal<TemplateRef<unknown>> =
+    inject<Signal<TemplateRef<unknown>>>(ROUTER_OUTLET_DATA);
 
   isShow = false;
 

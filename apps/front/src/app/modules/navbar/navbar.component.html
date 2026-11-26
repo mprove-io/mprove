@@ -1,5 +1,16 @@
 <div class="mprove-shell grid h-full w-full grid-cols-[auto_minmax(0,1fr)]">
-  <aside class="rail" aria-label="Mprove menu" cdkScrollable>
+  <aside
+    class="rail"
+    [class.rail--no-divider]="
+      isBuilderRouteActive ||
+      isExplorerRouteActive ||
+      isReportsRouteActive ||
+      isModelsRouteActive ||
+      isDashboardsRouteActive
+    "
+    aria-label="Mprove menu"
+    cdkScrollable
+  >
     <img
       class="ms-2 mt-[calc(theme(spacing.6)_-_12px)] h-11 w-[6.75rem] select-none object-contain [--mprove-spacing-scale:initial]"
       src="assets/logo/mprove_logo_web-01-b.svg"
@@ -53,16 +64,6 @@
         </button>
       </div>
 
-      <button
-        type="button"
-        class="rail-item"
-        [attr.aria-current]="isReportsRouteActive ? 'page' : null"
-        (click)="navigateReports()"
-        [disabled]="needSave"
-      >
-        <span>Reports</span>
-      </button>
-
       <div
         tp="Explorer role required"
         placement="right"
@@ -78,6 +79,16 @@
           <span>Charts</span>
         </button>
       </div>
+
+      <button
+        type="button"
+        class="rail-item"
+        [attr.aria-current]="isReportsRouteActive ? 'page' : null"
+        (click)="navigateReports()"
+        [disabled]="needSave"
+      >
+        <span>Reports</span>
+      </button>
 
       <button
         type="button"
