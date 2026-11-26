@@ -1,12 +1,16 @@
 <div class="mprove-shell grid h-full w-full grid-cols-[auto_minmax(0,1fr)]">
   <aside class="rail" aria-label="Mprove menu" cdkScrollable>
     <img
-      class="mb-6 ms-2 mt-1 w-[6.75rem] select-none"
+      class="ms-2 mt-[calc(theme(spacing.6)_-_12px)] h-11 w-[6.75rem] select-none object-contain [--mprove-spacing-scale:initial]"
       src="assets/logo/mprove_logo_web-01-b.svg"
       alt="Mprove"
     />
 
-    <section *ngIf="!!nav?.projectId" class="rail-picker" aria-label="Branch">
+    <section
+      *ngIf="!!nav?.projectId"
+      class="rail-picker mt-[calc(12px_-_var(--rail-context-padding-top)/2)]"
+      aria-label="Branch"
+    >
       <m-branch-select></m-branch-select>
     </section>
 

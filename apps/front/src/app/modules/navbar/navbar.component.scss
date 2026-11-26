@@ -9,6 +9,7 @@
 
 .mprove-shell {
   --rail-value: #71717a;
+  --rail-context-padding-top: 3px;
 
   grid-template-rows: minmax(0, 1fr);
 
@@ -66,7 +67,8 @@
   }
 
   .rail-picker .ng-select.rail-labeled-select .ng-select-container {
-    height: 46px;
+    height: calc(46px + var(--rail-context-padding-top));
+    padding-top: var(--rail-context-padding-top);
   }
 
   .rail-picker .rail-labeled-select .rail-label {
@@ -115,6 +117,7 @@
     align-items: stretch;
     flex-direction: column;
     width: 100%;
+    padding-top: var(--rail-context-padding-top);
   }
 
   .rail-context-value {

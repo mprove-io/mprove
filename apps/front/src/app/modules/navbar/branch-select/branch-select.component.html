@@ -32,10 +32,16 @@
   </ng-template>
 
   <ng-template ng-option-tmp let-item="item">
+    @let separator = ' - ';
+    @let separatorIndex = item.extraName.indexOf(separator);
     <ng-container
       *ngTemplateOutlet="
         branchLabel;
-        context: { branch: item, name: item.extraName }
+        context: {
+          branch: item,
+          name: item.extraName.slice(0, separatorIndex),
+          detail: item.extraName.slice(separatorIndex + separator.length)
+        }
       "
     ></ng-container>
   </ng-template>
@@ -187,16 +193,26 @@
   </div>
 </ng-template>
 
-<ng-template #branchLabel let-branch="branch" let-name="name">
-  <div class="flex items-center justify-between gap-2">
+<ng-template
+  #branchLabel
+  let-branch="branch"
+  let-name="name"
+  let-detail="detail"
+>
+  <div class="flex items-center gap-2">
     <span class="truncate" [attr.title]="name">{{ name }}</span>
-    <span
-      class="size-2 shrink-0 rounded-full"
-      [ngClass]="branchTypeClassMap.get(branch.repoType)"
-      role="img"
-      [attr.aria-label]="branch.repoType"
-      [attr.title]="branch.repoType"
-    ></span>
+    @if (branchTypeClassMap.get(branch.repoType); as branchTypeClass) {
+      <span
+        class="size-2 shrink-0 rounded-full"
+        [ngClass]="branchTypeClass"
+        role="img"
+        [attr.aria-label]="branch.repoType"
+        [attr.title]="branch.repoType"
+      ></span>
+    }
+    @if (detail) {
+      <span class="truncate" [attr.title]="detail">{{ detail }}</span>
+    }
   </div>
 </ng-template>
 
