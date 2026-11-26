@@ -101,7 +101,7 @@
             <m-editor-icon *ngIf="session.type === 'Editor'"></m-editor-icon>
           </div>
           <span
-            class="min-w-0 flex-1 truncate text-[17px]"
+            class="text-ui-17 min-w-0 flex-1 truncate"
             [ngClass]="{
               'text-m600': session.sessionId === currentSession?.sessionId,
               'font-semibold':
@@ -119,7 +119,7 @@
 
           <span
             *ngIf="session.status !== 'Active'"
-            class="ml-4 w-[84px] flex-shrink-0 text-right text-[16px]"
+            class="ml-4 w-[84px] flex-shrink-0 text-right text-base"
             [ngClass]="{
               'text-s400': session.status === 'Archived',
               'text-s1': session.status !== 'Archived'

@@ -420,7 +420,7 @@
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
                 placeholder="Search Fields"
                 [ngClass]="{
                   'bg-p200': !!searchSchemaWord
@@ -489,7 +489,7 @@
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
                 [placeholder]="'Search Charts'"
                 [ngClass]="{
                   'bg-p200': !!searchChartsWord
@@ -752,7 +752,7 @@
 
                 <div
                   *ngIf="filteredChartNodes?.length === 0"
-                  class="text-s1 flex select-none justify-center px-6 py-8 text-[17px]"
+                  class="text-s1 text-ui-17 flex select-none justify-center px-6 py-8"
                 >
                   {{
                     !!searchChartsWord
@@ -1221,7 +1221,7 @@
                           #chartTypeSelect
                           [fixNgSelectBottom]="chartTypeSelect"
                           data-cy="mainChartTypeSelect"
-                          class="main-chart-type-select w-[220px] select-none text-base focus:outline-none"
+                          class="main-chart-type-select w-[calc(220px*2/3)] select-none text-base focus:outline-none"
                           [items]="chartTypesList"
                           [clearable]="false"
                           [searchable]="false"
@@ -1332,7 +1332,7 @@
                   >
                     <div
                       *ngIf="canAccessChartModel === false"
-                      class="text-s500 flex h-full select-none items-center justify-center text-center text-[17px]"
+                      class="text-s500 text-ui-17 flex h-full select-none items-center justify-center text-center"
                       >Read-only chart</div
                     >
 
@@ -1513,7 +1513,7 @@
                       autocomplete="off"
                       spellcheck="false"
                       data-cy="modelLimitInput"
-                      class="form-input border-s3 focus:border-m600 h-[36px] w-32 rounded disabled:cursor-default disabled:bg-gray-100 disabled:opacity-100"
+                      class="form-input border-s3 focus:border-m600 h-9 w-32 rounded disabled:cursor-default disabled:bg-gray-100 disabled:opacity-100"
                       [ngClass]="{
                         'border-r600':
                           limitForm.controls['limit'].invalid &&

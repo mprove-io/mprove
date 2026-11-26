@@ -23,9 +23,9 @@ export function createThemeExtraSession(themeExtension: Extension) {
         'border-right': 'none !important'
       },
       '.cm-content': {
-        paddingTop: '12px',
-        paddingBottom: '12px',
-        fontSize: '16px'
+        paddingTop: '0.75em',
+        paddingBottom: '0.75em',
+        fontSize: 'inherit'
       },
       '.cm-line': {
         lineHeight: '1.6'

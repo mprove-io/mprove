@@ -5,7 +5,7 @@
     <input
       spellcheck="false"
       autocomplete="off"
-      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
       placeholder="Search"
       [ngClass]="{
         'bg-p200': !!searchWord
@@ -159,10 +159,10 @@
                 *ngIf="node.data.nodeType !== 'column'"
                 class="ml-2 flex min-w-0 flex-1 items-center"
                 [ngClass]="{
-                  'text-[17px]':
+                  'text-ui-17':
                     node.data.nodeType === 'connection' ||
                     node.data.nodeType === 'error',
-                  'text-[16px]':
+                  'text-base':
                     node.data.nodeType !== 'connection' &&
                     node.data.nodeType !== 'error',
                   'text-s1': node.data.nodeType !== 'error',
@@ -277,7 +277,7 @@
 
               <div
                 *ngIf="node.data.nodeType === 'column'"
-                class="ml-2 flex min-w-0 flex-1 items-center truncate text-[16px]"
+                class="ml-2 flex min-w-0 flex-1 items-center truncate text-base"
               >
                 <button
                   *ngIf="node.data.references?.length > 0"

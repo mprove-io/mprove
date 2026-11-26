@@ -54,12 +54,20 @@ module.exports = {
   prefix: '',
   content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}')],
   theme: {
-    // Compact the rem-based UI spacing without changing the browser's root size.
+    // At 150% zoom, two-thirds of the original size matches the 100% baseline.
     spacing: Object.fromEntries(
       Object.entries(defaultTheme.spacing).map(([key, value]) => [
         key,
         value.endsWith('rem')
-          ? `${Number.parseFloat(value) * 0.8125}rem`
+          ? `calc(${value} * var(--mprove-spacing-scale, 2 / 3))`
+          : value
+      ])
+    ),
+    lineHeight: Object.fromEntries(
+      Object.entries(defaultTheme.lineHeight).map(([key, value]) => [
+        key,
+        value.endsWith('rem')
+          ? `calc(${value} * var(--mprove-line-height-scale, 2 / 3))`
           : value
       ])
     ),
@@ -69,13 +77,21 @@ module.exports = {
     // groupScope: 'scope',
     extend: {
       fontSize: {
-        xs: ['0.6875rem', '0.9375rem'],
-        sm: ['0.75rem', '1.0625rem'],
-        base: ['0.8125rem', '1.25rem'],
-        lg: ['0.9375rem', '1.375rem'],
-        xl: ['1rem', '1.5rem'],
-        '2xl': ['1.25rem', '1.75rem'],
-        '3xl': ['1.5rem', '2rem']
+        ...Object.fromEntries(
+          Object.entries(defaultTheme.fontSize).map(
+            ([key, [size, { lineHeight }]]) => [
+              key,
+              [
+                `var(--mprove-font-${key}, calc(${size} * 2 / 3))`,
+                lineHeight.endsWith('rem')
+                  ? `var(--mprove-leading-${key}, calc(${lineHeight} * 2 / 3))`
+                  : lineHeight
+              ]
+            ]
+          )
+        ),
+        'ui-15': 'calc(0.9375rem * 2 / 3)',
+        'ui-17': 'calc(1.0625rem * 2 / 3)'
       },
       // colors: {
       //   green: colors.emerald,

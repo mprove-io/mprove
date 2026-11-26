@@ -1,13 +1,15 @@
-<ngx-spinner
-  [name]="spinnerNameApp"
-  bdColor="#00000000"
-  size="medium"
-  color="#0084d1"
-  type="line-scale"
-  [fullScreen]="true"
-  [disableAnimation]="true"
->
-  <div data-cy="loadingSpinner"></div>
-</ngx-spinner>
+@if (spinnerService.isVisible()) {
+  <div
+    class="fixed inset-0 z-[99999] grid place-items-center"
+    data-cy="loadingSpinner"
+    role="status"
+    aria-label="Loading page"
+  >
+    <div
+      class="size-8 animate-spin rounded-full border-[calc(4px*2/3)] border-sky-600/20 border-t-sky-600 motion-reduce:animate-none"
+      aria-hidden="true"
+    ></div>
+  </div>
+}
 
 <router-outlet></router-outlet>

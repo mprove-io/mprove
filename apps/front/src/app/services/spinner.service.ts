@@ -37,10 +37,7 @@ import {
   PATH_USER_DELETED,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
-import {
-  MIN_TIME_TO_SPIN,
-  SPINNER_NAME_APP
-} from '#common/constants/top-front';
+import { MIN_TIME_TO_SPIN } from '#common/constants/top-front';
 
 @Injectable({ providedIn: 'root' })
 export class SpinnerService implements OnDestroy {
@@ -172,8 +169,6 @@ export class SpinnerService implements OnDestroy {
           this.startedTs = Date.now();
 
           this.visible.set(true);
-
-          void this.ngxSpinnerService.show(SPINNER_NAME_APP);
         }, 0);
       }
 
@@ -194,8 +189,6 @@ export class SpinnerService implements OnDestroy {
     this.visibilityTimer = setTimeout(() => {
       if (this.operationCount === 0 && this.navigationIds.size === 0) {
         this.visible.set(false);
-
-        void this.ngxSpinnerService.hide(SPINNER_NAME_APP);
       }
     }, remainingMs);
   }
@@ -256,8 +249,6 @@ export class SpinnerService implements OnDestroy {
 
     if (this.visible()) {
       this.visible.set(false);
-
-      void this.ngxSpinnerService.hide(SPINNER_NAME_APP);
     }
   }
 }

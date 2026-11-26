@@ -34,6 +34,8 @@ import {
 } from '#front/app/services/data.service';
 import { FormatNumberService } from '#front/app/services/format-number.service';
 
+const chartDensity = 2 / 3;
+
 @Component({
   standalone: false,
   selector: 'm-chart-view',
@@ -109,14 +111,14 @@ export class ChartViewComponent implements OnChanges {
       animation: this.isAnimation,
       useUTC: true,
       grid: {
-        left: 100,
+        left: 100 * chartDensity,
         right:
           this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0).length >
           0
-            ? 100
-            : 50,
-        top: 95,
-        bottom: 35
+            ? 100 * chartDensity
+            : 50 * chartDensity,
+        top: 95 * chartDensity,
+        bottom: 35 * chartDensity
       },
       textStyle: {
         fontFamily: 'sans-serif'
@@ -125,10 +127,10 @@ export class ChartViewComponent implements OnChanges {
         this.chart.type === 'pie'
           ? { show: false }
           : {
-              top: 20,
+              top: 20 * chartDensity,
               padding: [0, 0, 0, 0],
               textStyle: {
-                fontSize: 15,
+                fontSize: 15 * chartDensity,
                 fontFamily: "'Montserrat', sans-serif"
               }
             },
@@ -242,7 +244,7 @@ export class ChartViewComponent implements OnChanges {
           ? {
               type: 'time',
               axisLabel: {
-                fontSize: 13,
+                fontSize: 13 * chartDensity,
                 formatter: (value: any) => {
                   let storeTimeSpec: TimeSpec =
                     xField.detail === 'timestamps'
@@ -276,7 +278,7 @@ export class ChartViewComponent implements OnChanges {
             ? {
                 type: 'time',
                 axisLabel: {
-                  fontSize: 13,
+                  fontSize: 13 * chartDensity,
                   formatter: tsFormatter
                 }
               }
@@ -285,13 +287,13 @@ export class ChartViewComponent implements OnChanges {
                   type: 'value',
                   scale: this.chart.xAxis.scale,
                   axisLabel: {
-                    fontSize: 13
+                    fontSize: 13 * chartDensity
                   }
                 }
               : {
                   type: 'category',
                   axisLabel: {
-                    fontSize: 13
+                    fontSize: 13 * chartDensity
                   }
                 };
 
@@ -305,7 +307,7 @@ export class ChartViewComponent implements OnChanges {
           let newY: YAXisOption = Object.assign({}, y, <YAXisOption>{
             type: 'value',
             axisLabel: {
-              fontSize: 14
+              fontSize: 14 * chartDensity
             }
           });
 
@@ -319,7 +321,7 @@ export class ChartViewComponent implements OnChanges {
         let tooltip = {
           borderWidth: 2,
           textStyle: {
-            fontSize: 16
+            fontSize: 16 * chartDensity
           },
           formatter:
             this.chart.type === 'pie'
@@ -427,6 +429,9 @@ export class ChartViewComponent implements OnChanges {
               let pieSeriesOption: PieSeriesOption = {
                 type: 'pie',
                 name: seriesDataElement?.seriesName,
+                label: {
+                  fontSize: 12 * chartDensity
+                },
                 data: seriesDataElement?.seriesPoints.map(x => ({
                   name: x.xValueFmt,
                   value: x.yValue,

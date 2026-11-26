@@ -192,26 +192,24 @@
 <ng-template #errorMessages>
   <div
     *ngIf="isUsageLimitReached && sessionType === 'Explorer'"
-    class="mb-2 text-center text-[17px] text-red-500"
+    class="text-ui-17 mb-2 text-center text-red-500"
     >Context limit reached. Start a new session or select a model with a larger
     context window.</div
   >
 
-  <div
-    *ngIf="isRestrictedUser"
-    class="mb-2 text-center text-[17px] text-red-500"
+  <div *ngIf="isRestrictedUser" class="text-ui-17 mb-2 text-center text-red-500"
     >Demo user cannot start AI sessions</div
   >
 
   <div
     *ngIf="!isRestrictedUser && !isEditor && sessionType === 'Editor'"
-    class="mb-2 text-center text-[17px] text-red-500"
+    class="text-ui-17 mb-2 text-center text-red-500"
     >Editor session requires Files Editor role</div
   >
 
   <div
     *ngIf="!isRestrictedUser && !isExplorer && sessionType === 'Explorer'"
-    class="mb-2 text-center text-[17px] text-red-500"
+    class="text-ui-17 mb-2 text-center text-red-500"
     >Explorer session requires Explorer role</div
   >
 
@@ -222,7 +220,7 @@
       !projectHasE2bApiKey &&
       sessionType === 'Editor'
     "
-    class="mb-2 text-center text-[17px] text-red-500"
+    class="text-ui-17 mb-2 text-center text-red-500"
     >Editor session requires E2B API Key (see Project Settings)</div
   >
 </ng-template>

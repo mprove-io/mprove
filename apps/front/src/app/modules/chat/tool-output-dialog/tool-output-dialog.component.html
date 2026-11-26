@@ -28,13 +28,13 @@
       <ng-container *ngIf="hasInput">
         <div class="text-s500 mb-2 text-base font-medium uppercase">Input</div>
         <pre
-          class="text-s600 mb-6 whitespace-pre-wrap break-words font-mono text-[16px]"
+          class="text-s600 mb-6 whitespace-pre-wrap break-words font-mono text-base"
           >{{ inputDisplay }}</pre
         >
         <div class="text-s500 mb-2 text-base font-medium uppercase">Output</div>
       </ng-container>
       <pre
-        class="text-s600 font-mono text-[16px]"
+        class="text-s600 font-mono text-base"
         [ngClass]="
           dataItem.wrapText === false
             ? 'whitespace-pre'

@@ -106,7 +106,7 @@
               </ng-template>
 
               <div
-                class="flex w-1/4 select-none flex-row pb-[9px] pt-[7px]"
+                class="flex w-1/4 select-none flex-row py-2"
                 [tp]="templateModelsModel"
                 [tpIsEnabled]="item.hasAccess === false"
               >
@@ -123,7 +123,7 @@
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
                 <div
-                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
+                  class="flex flex-1 items-start truncate py-2 focus:outline-none"
                 >
                   <span class="truncate">
                     {{ item.modelId }}
@@ -131,16 +131,14 @@
                 </div>
 
                 <div
-                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
+                  class="flex flex-1 items-start truncate py-2 focus:outline-none"
                 >
                   <span class="truncate">
                     {{ item.spaceFullTitle }}
                   </span>
                 </div>
 
-                <div
-                  class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
-                >
+                <div class="flex flex-1 flex-wrap truncate py-2 text-base">
                   <span
                     *ngFor="let accessRole of item.accessRolesCombined"
                     class="mr-2 truncate rounded px-2"
@@ -153,7 +151,7 @@
                   </span>
                 </div>
 
-                <div class="flex flex-1 items-start truncate pb-[9px] pt-[7px]">
+                <div class="flex flex-1 items-start truncate py-2">
                   <span class="truncate">
                     {{ item.connectionId }}
                   </span>

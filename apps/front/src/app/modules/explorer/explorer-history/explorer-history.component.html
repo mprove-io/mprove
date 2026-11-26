@@ -55,7 +55,7 @@
       >
         <div class="mt-2 h-full w-full pb-6">
           <div *ngFor="let group of sessionGroups; trackBy: trackByGroupTitle">
-            <div class="text-s1 mx-7 pb-1 pt-4 text-[17px] font-semibold">{{
+            <div class="text-s1 text-ui-17 mx-7 pb-1 pt-4 font-semibold">{{
               group.title
             }}</div>
 
@@ -66,7 +66,7 @@
             >
               <div class="flex min-w-0 flex-1 flex-row items-center">
                 <span
-                  class="min-w-0 truncate text-[17px]"
+                  class="text-ui-17 min-w-0 truncate"
                   [ngClass]="{
                     'text-m600 font-semibold':
                       session.sessionId === currentSession?.sessionId,
@@ -79,13 +79,13 @@
                   *ngIf="showSessionEnvRepoBranch({ session: session })"
                 >
                   <span
-                    class="text-s400 ml-3 max-w-[72px] flex-shrink-0 truncate text-[15px]"
+                    class="text-s400 text-ui-15 ml-3 max-w-[72px] flex-shrink-0 truncate"
                   >
                     {{ session.envId }}
                   </span>
 
                   <span
-                    class="text-s400 ml-3 max-w-[200px] flex-shrink-0 truncate text-[15px]"
+                    class="text-s400 text-ui-15 ml-3 max-w-[200px] flex-shrink-0 truncate"
                   >
                     {{ makeSessionRepoBranchName({ session: session }) }}
                   </span>

@@ -19,7 +19,7 @@
           <div>
             <div
               *ngIf="question.questions.length > 1"
-              class="text-s500 mb-0.5 text-[15px] font-normal"
+              class="text-s500 text-ui-15 mb-0.5 font-normal"
             >
               Question {{ qIdx + 1 }} of {{ question.questions.length }}
             </div>
@@ -146,7 +146,7 @@
   >
     <button
       type="button"
-      class="text-s500 hover:text-s1 rounded px-4 py-2 text-[17px] focus:outline-none"
+      class="text-s500 hover:text-s1 text-ui-17 rounded px-4 py-2 focus:outline-none"
       (click)="dismiss()"
     >
       Cancel
@@ -157,7 +157,7 @@
     >
       <button
         type="button"
-        class="rounded px-4 py-2 text-[17px] text-white focus:outline-none"
+        class="text-ui-17 rounded px-4 py-2 text-white focus:outline-none"
         [ngClass]="{
           'bg-s400 cursor-default': isSendDisabled,
           'bg-m600 hover:opacity-90': !isSendDisabled

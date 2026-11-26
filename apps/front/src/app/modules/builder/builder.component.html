@@ -19,7 +19,7 @@
               <!-- <m-document-icon></m-document-icon> -->
 
               <button
-                class="flex w-[54px] items-center justify-center text-lg focus:outline-none"
+                class="flex w-[calc(54px*2/3)] items-center justify-center text-lg focus:outline-none"
                 [ngClass]="{
                   'text-m500 font-semibold': builderLeft === 'Tree',
                   'text-s500': builderLeft !== 'Tree'
@@ -40,7 +40,7 @@
                 [disabled]="needSave === true"
               >
                 <div
-                  class="flex w-[85px] flex-shrink-0 justify-center text-lg"
+                  class="w-[calc(85px*2/3)] flex-shrink-0 truncate text-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       builderLeft === 'ChangesToCommit' ||
@@ -372,7 +372,7 @@
             </button>
 
             <button
-              class="flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
+              class="flex w-[calc(90px*2/3)] select-none items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
                   builderRight === 'Sessions' &&
@@ -402,7 +402,7 @@
               [tpIsEnabled]="isEditor === false && isAdmin === false"
             >
               <button
-                class="ml-7 flex w-[150px] select-none items-center justify-center text-lg focus:outline-none"
+                class="ml-7 flex w-[calc(150px*2/3)] select-none items-center justify-center text-lg focus:outline-none"
                 [ngClass]="{
                   'text-m500 font-semibold':
                     builderRight === 'Schema' &&
@@ -432,7 +432,7 @@
             </div>
 
             <button
-              class="ml-7 mr-5 flex w-[155px] select-none flex-row items-center justify-center text-lg focus:outline-none"
+              class="ml-7 mr-5 flex w-[calc(155px*2/3)] select-none flex-row items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
                   builderRight === 'Validation' &&
@@ -454,7 +454,7 @@
                   )
               }"
               (click)="setBuilderRight('Validation')"
-              ><span class="w-[100px]">Validation</span>
+              ><span class="w-[calc(100px*2/3)]">Validation</span>
               <div
                 class="text-m0 ml-4 flex h-7 min-w-7 flex-shrink-0 select-none items-center justify-center rounded px-2 py-[1px]"
                 [ngClass]="{

@@ -20,12 +20,79 @@ body {
   }
 }
 
+// Keep the navigation rail and its portaled menus at their existing density.
+:where(.rail, .rail-popup, .ng-dropdown-panel.rail-picker-select) {
+  --mprove-spacing-scale: 0.8125;
+  --mprove-line-height-scale: 1;
+  --mprove-font-xs: 0.6875rem;
+  --mprove-leading-xs: 0.9375rem;
+  --mprove-font-sm: 0.75rem;
+  --mprove-leading-sm: 1.0625rem;
+  --mprove-font-base: 0.8125rem;
+  --mprove-leading-base: 1.25rem;
+  --mprove-font-lg: 0.9375rem;
+  --mprove-leading-lg: 1.375rem;
+  --mprove-font-xl: 1rem;
+  --mprove-leading-xl: 1.5rem;
+  --mprove-font-2xl: 1.25rem;
+  --mprove-leading-2xl: 1.75rem;
+  --mprove-font-3xl: 1.5rem;
+  --mprove-leading-3xl: 2rem;
+
+  @apply text-base;
+}
+
+:where(
+    button:not(
+        .rail *,
+        .rail-popup *,
+        .ng-dropdown-panel.rail-picker-select *,
+        ui-switch *
+      )
+  ) {
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+
+  // Flex buttons with icons have a separate text wrapper that can shrink.
+  :where(div, span):not(:has(svg, img)) {
+    min-width: 0;
+  }
+
+  &:not(:has(> *)),
+  :where(div, span):not(:has(> *)) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // A bare text node in a flex container cannot draw an ellipsis.
+  &.flex:not(:has(> *)) {
+    display: block;
+  }
+
+  &.inline-flex:not(:has(> *)) {
+    display: inline-block;
+  }
+
+  &:is(.flex, .inline-flex):not(:has(> *)) {
+    align-content: center;
+
+    &:where(.justify-start) {
+      text-align: start;
+    }
+
+    &:where(.justify-end) {
+      text-align: end;
+    }
+  }
+}
+
 @layer components {
   .form-input,
   .form-select,
   .form-textarea,
   .form-multiselect {
-    @apply px-3 py-1 text-base;
+    @apply px-3 py-1.5 text-base;
   }
 
   .form-select {
@@ -152,6 +219,11 @@ scrollbar-thumb-y {
 
 // @import '~ngx-ui-switch/ui-switch.component.scss';
 
+// The switch library sizes its track, thumb, and animation offsets in pixels.
+ui-switch .switch:where(:not(.rail *, .rail-popup *)) {
+  zoom: calc(2 / 3);
+}
+
 .switch:focus {
   outline: none;
 }
@@ -165,6 +237,25 @@ scrollbar-thumb-y {
 .llm-model-destination-animated .switch,
 .llm-model-destination-animated .switch small {
   transition: 0.3s ease-out all !important;
+}
+
+:is(
+    m-chart-line-icon,
+    m-chart-pie-icon,
+    m-chart-pivot-table-icon,
+    m-chart-scatter-icon,
+    m-chart-single-icon,
+    m-folder-minus-icon,
+    m-folder-tree-icon,
+    m-link-icon
+  )
+  > svg:where(:not(.rail *, .rail-popup *)) {
+  @apply size-6;
+}
+
+:is(m-left-panel-icon, m-bottom-panel-icon)
+  > svg:where(:not(.rail *, .rail-popup *)) {
+  @apply h-5 w-6;
 }
 
 @import '@ng-select/ng-select/themes/default.theme.css';
@@ -190,7 +281,7 @@ scrollbar-thumb-y {
 }
 
 .tippy-variation-tooltip .tippy-box .tippy-content {
-  @apply px-4 py-2;
+  padding: calc(10px * 2 / 3) calc(15px * 2 / 3);
 }
 
 .tippy-box {
@@ -316,7 +407,7 @@ cdk-virtual-scroll-viewport {
 ngneat-dialog {
   .ngneat-dialog-backdrop {
     overflow: hidden !important;
-    padding: clamp(12px, 2vw, 24px);
+    padding: clamp(8px, 2vw, 16px);
 
     .ngneat-dialog-content {
       overflow: auto !important;
@@ -378,8 +469,8 @@ ngneat-dialog {
 }
 
 .ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,7 +478,7 @@ ngneat-dialog {
 }
 
 .ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper .ng-clear {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -408,12 +499,53 @@ ngneat-dialog {
   min-height: 32px;
 }
 
+.ng-select:where(:not(.rail-picker-select)) .ng-select-container {
+  min-height: 24px;
+}
+
 .ng-select.ng-select-single .ng-select-container {
   height: 32px;
 
   .ng-value-container .ng-input {
     top: 50%;
     transform: translateY(-50%);
+  }
+}
+
+.ng-select.ng-select-single:where(:not(.rail-picker-select))
+  .ng-select-container {
+  height: 24px;
+}
+
+.ng-select.report-timezone-select .ng-select-container {
+  .ng-value-container {
+    min-width: 0;
+    padding-left: calc(10px * 2 / 3);
+  }
+
+  .ng-arrow-wrapper {
+    width: calc(25px * 2 / 3);
+    padding-right: calc(5px * 2 / 3);
+  }
+
+  .ng-value-container .ng-input {
+    padding-left: calc(10px * 2 / 3);
+    padding-right: calc(25px * 2 / 3);
+  }
+}
+
+.ng-dropdown-panel.report-timezone-select {
+  min-width: min(calc(260px * 2 / 3), 85vw);
+}
+
+.ng-dropdown-panel:where(:not(.rail-picker-select)) {
+  .ng-dropdown-panel-items .ng-option,
+  .ng-dropdown-panel-items .ng-optgroup {
+    padding: calc(8px * 2 / 3) calc(10px * 2 / 3);
+  }
+
+  .ng-dropdown-panel-items .ng-option.ng-option-child {
+    padding-left: calc(22px * 2 / 3);
   }
 }
 
@@ -511,14 +643,14 @@ ngneat-dialog {
 .ng-dropdown-panel.session-models-select .ng-dropdown-panel-items .ng-optgroup {
   color: #6a7282;
   font-weight: 600;
-  padding-left: 16px;
+  @apply pl-4;
   text-align: left;
 }
 
 .ng-dropdown-panel.session-models-select
   .ng-dropdown-panel-items
   .ng-option.ng-option-child {
-  padding-left: 38px;
+  padding-left: calc(38px * 2 / 3);
 }
 
 .session-models-select-error .ng-select-container {
@@ -548,9 +680,10 @@ ng-select .ng-select-container .ng-value-container .ng-placeholder {
   padding-left: 4px;
 }
 
-// shift app loader spinner lower
+// Scale only the animated graphic, not the overlay or its message.
 .ngx-spinner-overlay > div:not(.loading-text) {
   top: 57% !important;
+  zoom: calc(2 / 3);
 }
 
 // text shimmer animation (OpenCode-style)

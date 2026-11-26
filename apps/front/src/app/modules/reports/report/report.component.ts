@@ -50,7 +50,7 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
 
 const subDayTimeSpecs = ['timestamps', 'minutes', 'hours'] satisfies TimeSpec[];
 
-const reportGridRowHeight = 32;
+const reportGridRowHeight = 28;
 
 @Component({
   standalone: false,
@@ -76,11 +76,11 @@ export class ReportComponent {
     columnBorder: '1px solid #dde2eb',
     headerBackgroundColor: '#f8f8f8',
     headerFontFamily: 'arial, sans-serif',
-    headerFontSize: 12,
+    headerFontSize: 11.33,
     fontFamily: 'Montserrat',
-    fontSize: 13,
-    dataFontSize: 13,
-    cellHorizontalPadding: 12,
+    fontSize: 11.33,
+    dataFontSize: 11.33,
+    cellHorizontalPadding: 11,
     rowHeight: reportGridRowHeight,
     selectedRowBackgroundColor: 'rgb(255, 224, 129)',
     rowHoverColor: 'rgb(0, 0, 0, 0)',

@@ -425,7 +425,7 @@
                       spellcheck="false"
                       autocomplete="off"
                       data-cy="dashboardsSearchInput"
-                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
                       placeholder="Search Dashboards"
                       [ngClass]="{
                         'bg-p200': !!word
@@ -790,7 +790,7 @@
 
                       <div
                         *ngIf="filteredDashboardNodes?.length === 0"
-                        class="text-s1 flex select-none justify-center px-6 py-8 text-[17px]"
+                        class="text-s1 text-ui-17 flex select-none justify-center px-6 py-8"
                       >
                         {{
                           !!word

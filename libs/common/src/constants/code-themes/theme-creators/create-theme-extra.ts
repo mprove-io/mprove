@@ -29,9 +29,9 @@ export function createThemeExtra(themeExtension: Extension) {
         'border-right': 'none !important'
       },
       '.cm-content': {
-        paddingTop: '12px',
-        paddingBottom: '12px',
-        fontSize: '16px'
+        paddingTop: '0.75em',
+        paddingBottom: '0.75em',
+        fontSize: 'inherit'
         // padding: '12px',
         // caretColor: '#000000'
       },
