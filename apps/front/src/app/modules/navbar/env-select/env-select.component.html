@@ -1,11 +1,15 @@
 <ng-select
   #envSelect
+  railPickerPopup
+  #pickerPopup="railPickerPopup"
   [fixNgSelectBottom]="envSelect"
   data-cy="envSelect"
-  class="rail-picker-select rail-labeled-select w-full select-none text-base"
-  (open)="openEnvSelect()"
+  class="rail-picker-select rail-labeled-select rail-env-select w-full select-none text-base"
+  (open)="pickerPopup.positionPopup(); openEnvSelect()"
   [loading]="envsListLoading"
-  [items]="envsList"
+  [items]="
+    envsList.length === 1 && envsList[0].envId === selectedEnvId ? [] : envsList
+  "
   [clearable]="false"
   [searchable]="false"
   [inputAttrs]="{ 'aria-label': 'Environment' }"
@@ -14,9 +18,10 @@
   (change)="envChange()"
   (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
   (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
-  appendTo="body"
+  appendTo=".mprove-shell"
   outsideClickEvent="mousedown"
   placeholder="Select"
+  notFoundText="No other environments available"
   [fixedPlaceholder]="false"
   bindLabel="envId"
   bindValue="envId"
@@ -33,10 +38,29 @@
     ></ng-container>
   </ng-template>
 
+  <ng-template ng-loadingspinner-tmp></ng-template>
+
+  <ng-template ng-notfound-tmp>
+    <div class="rail-picker-note">{{ envSelect.notFoundText() }}</div>
+  </ng-template>
+
   <ng-template ng-option-tmp let-item="item">
-    <div class="ml-1 truncate capitalize">{{ item.envId }}</div>
+    <div class="truncate capitalize">{{ item.envId }}</div>
   </ng-template>
 </ng-select>
+
+@if (envsListLoading) {
+  <span
+    class="rail-picker-spinner"
+    role="status"
+    aria-label="Loading environments"
+  >
+    <span
+      class="size-4 animate-spin rounded-full border-2 border-sky-600/20 border-t-sky-600 motion-reduce:animate-none"
+      aria-hidden="true"
+    ></span>
+  </span>
+}
 
 <ng-template #envLabel let-name="name">
   <div class="rail-picker-selection">

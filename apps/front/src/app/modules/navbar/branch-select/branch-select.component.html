@@ -1,9 +1,11 @@
 <ng-select
   #branchSelect
+  railPickerPopup
+  #pickerPopup="railPickerPopup"
   [fixNgSelectBottom]="branchSelect"
   data-cy="branchSelect"
   class="rail-picker-select rail-labeled-select rail-branch-select w-full select-none text-base"
-  (open)="openBranchSelect()"
+  (open)="pickerPopup.positionPopup(); openBranchSelect()"
   [loading]="branchesListLoading"
   [items]="branchesList"
   [clearable]="false"
@@ -14,7 +16,7 @@
   (change)="branchChange()"
   (keyup.esc)="$event.stopImmediatePropagation(); branchSelect.blur()"
   (keyup.enter)="$event.stopImmediatePropagation(); branchSelect.blur()"
-  appendTo="body"
+  appendTo=".mprove-shell"
   outsideClickEvent="mousedown"
   placeholder="Select"
   [fixedPlaceholder]="false"
@@ -30,6 +32,8 @@
   <ng-template ng-placeholder-tmp>
     <ng-container *ngTemplateOutlet="branchSelection"></ng-container>
   </ng-template>
+
+  <ng-template ng-loadingspinner-tmp></ng-template>
 
   <ng-template ng-option-tmp let-item="item">
     @let separator = ' - ';
@@ -47,13 +51,13 @@
   </ng-template>
 
   <ng-template ng-footer-tmp>
-    <div class="text-s400 cursor-default p-3" *ngIf="isEditor === false">
+    <div class="rail-picker-note" *ngIf="isEditor === false">
       FileEditor role is required to switch to Dev repo branches (Development
       mode)
     </div>
 
     <div
-      class="text-s400 cursor-default p-3"
+      class="rail-picker-note"
       *ngIf="isEditor === true && !!repo.repoId && repo.conflicts.length > 0"
     >
       Resolve conflicts to be able to switch, merge, delete or create Dev repo
@@ -61,7 +65,7 @@
     </div>
 
     <div
-      class="text-s400 cursor-default p-3"
+      class="rail-picker-note"
       *ngIf="
         isEditor === true &&
         !!repo.repoId &&
@@ -85,11 +89,7 @@
     >
       <button
         data-cy="branchSelectCreateBranchButton"
-        class="w-full rounded py-3 text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default': selectedBranchItem.repoType === 'session',
-          'text-m600 hover:bg-m50': selectedBranchItem.repoType !== 'session'
-        }"
+        class="rail-item"
         (click)="createNewBranch(branchSelect, $event)"
         [disabled]="selectedBranchItem.repoType === 'session'"
         >New Branch</button
@@ -112,11 +112,7 @@
     >
       <button
         data-cy="branchSelectMergeBranchButton"
-        class="w-full rounded py-3 text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default': selectedBranchItem.repoType !== 'dev',
-          'text-m600 hover:bg-m50': selectedBranchItem.repoType === 'dev'
-        }"
+        class="rail-item"
         (click)="mergeBranch(branchSelect, $event)"
         [disabled]="selectedBranchItem.repoType !== 'dev'"
         >Merge Branch</button
@@ -142,15 +138,7 @@
     >
       <button
         data-cy="branchSelectDeleteBranchButton"
-        class="w-full rounded py-3 text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default':
-            selectedBranchItem.branchId === defaultBranch ||
-            selectedBranchItem.repoType === 'session',
-          'text-m600 hover:bg-m50':
-            selectedBranchItem.branchId !== defaultBranch &&
-            selectedBranchItem.repoType !== 'session'
-        }"
+        class="rail-item"
         (click)="deleteBranch(branchSelect, $event)"
         [disabled]="
           selectedBranchItem.branchId === defaultBranch ||
@@ -174,6 +162,15 @@
     </div> -->
   </ng-template>
 </ng-select>
+
+@if (branchesListLoading) {
+  <span class="rail-picker-spinner" role="status" aria-label="Loading branches">
+    <span
+      class="size-4 animate-spin rounded-full border-2 border-sky-600/20 border-t-sky-600 motion-reduce:animate-none"
+      aria-hidden="true"
+    ></span>
+  </span>
+}
 
 <ng-template #branchSelection let-branch="branch">
   <div class="rail-picker-selection">
@@ -199,7 +196,7 @@
   let-name="name"
   let-detail="detail"
 >
-  <div class="flex items-center gap-2">
+  <div class="flex min-w-0 items-center gap-2">
     <span class="truncate" [attr.title]="name">{{ name }}</span>
     @if (branchTypeClassMap.get(branch.repoType); as branchTypeClass) {
       <span

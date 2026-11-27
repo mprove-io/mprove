@@ -12,6 +12,7 @@ import { EnvSelectComponent } from './env-select/env-select.component';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
 import { ProjectMenuComponent } from './project-menu/project-menu.component';
+import { RailPickerPopupDirective } from './rail-picker-popup.directive';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 
 @NgModule({
@@ -30,6 +31,7 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     RouterModule,
     SharedModule,
     NgSelectModule,
+    RailPickerPopupDirective,
     CdkMenuModule,
     ScrollingModule,
     TippyDirective

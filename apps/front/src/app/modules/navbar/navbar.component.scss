@@ -1,5 +1,6 @@
 .mprove-shell,
-.rail-popup {
+.rail-popup,
+.ng-dropdown-panel.rail-picker-select {
   --rail-line: rgba(24, 24, 27, 0.09);
   --rail-hover: rgba(24, 24, 27, 0.04);
   --rail-text: #18181b;
@@ -7,12 +8,16 @@
   --rail-active: #0084d1; // Mprove m600.
   --rail-item-min-height: 30px;
   --rail-item-padding-inline: 8px;
+  --rail-popup-shadow: 0 3px 10px rgb(24 24 27 / 10%);
 }
 
 .mprove-shell {
   --rail-background: #f2f5fa; // Mprove m1.
   --rail-value: #71717a;
   --rail-context-padding-top: 3px;
+  --rail-picker-height: calc(46px + var(--rail-context-padding-top));
+  --rail-picker-spinner-size: 1rem;
+  --rail-picker-spinner-gap: 6px;
   --top-nav-selector-width: 7rem;
   --top-nav-selector-padding-block: 3px;
   --nav-padding-block-start: 4px;
@@ -25,6 +30,7 @@
 
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
+  position: relative;
 
   .top-nav {
     display: flex;
@@ -38,7 +44,7 @@
   }
 
   .top-nav-logo {
-    padding-inline: var(--rail-item-padding-inline);
+    padding-inline: var(--rail-item-padding-inline) 12px;
     transition: background-color 120ms ease;
 
     &:is(:hover, :focus-visible) {
@@ -47,6 +53,7 @@
 
     > img {
       block-size: var(--top-nav-row-height);
+      min-inline-size: 0;
     }
   }
 
@@ -91,8 +98,33 @@
   }
 
   &.side-menu {
-    grid-template-columns: 9rem minmax(0, 1fr);
+    --side-nav-width: 9rem;
+
+    grid-template-columns: var(--side-nav-width) minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
+
+    // Keep ng-select's vertical fit check, but dock the panel beside the rail.
+    > .ng-dropdown-panel.rail-picker-select {
+      --rail-picker-panel-start: calc(
+        100% - var(--rail-picker-popup-end) + 12px
+      );
+      --rail-picker-available-width: max(
+        0px,
+        calc(100% - var(--rail-picker-panel-start) - 8px)
+      );
+
+      inset-inline: var(--rail-picker-panel-start) auto !important;
+      min-width: min(12rem, var(--rail-picker-available-width)) !important;
+      max-width: var(--rail-picker-available-width);
+
+      &.ng-select-bottom {
+        transform: translateY(calc(-1 * var(--rail-picker-height)));
+      }
+
+      &.ng-select-top {
+        transform: translateY(var(--rail-picker-height));
+      }
+    }
 
     .top-nav {
       flex-direction: column;
@@ -104,10 +136,6 @@
         )
         var(--nav-logo-inset) 12px;
       border-inline-end: 1px solid var(--rail-line);
-    }
-
-    .top-nav-logo {
-      align-self: flex-start;
     }
 
     .side-menu-no-divider {
@@ -140,6 +168,27 @@
 
     .rail-branch-slot {
       margin-block-start: calc(12px - var(--rail-context-padding-top) / 2);
+    }
+
+    m-branch-select.rail-picker,
+    .rail-picker > m-env-select {
+      --rail-picker-title-height: 20px;
+
+      padding-inline-end: 0;
+
+      .rail-labeled-select .rail-label {
+        padding-inline-end: calc(
+          var(--rail-picker-spinner-size) + var(--rail-picker-spinner-gap)
+        );
+        line-height: var(--rail-picker-title-height);
+      }
+
+      .rail-picker-spinner {
+        inset-block-start: var(--rail-context-padding-top);
+        inset-inline-end: var(--rail-item-padding-inline);
+        block-size: var(--rail-picker-title-height);
+        transform: none;
+      }
     }
 
     .top-nav-pages {
@@ -186,7 +235,8 @@
         padding: 8px;
         border: 1px solid var(--rail-line);
         border-radius: 8px;
-        @apply bg-m0 shadow;
+        @apply bg-m0;
+        box-shadow: var(--rail-popup-shadow);
 
         flex-direction: column;
         align-items: stretch;
@@ -256,7 +306,7 @@
 
   .rail-label {
     padding-inline: 8px;
-    color: var(--rail-value);
+    color: var(--rail-muted);
     font-size: 0.75rem;
     font-weight: 600;
   }
@@ -268,17 +318,26 @@
   .rail-picker {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  m-branch-select.rail-picker,
+  .rail-picker > m-env-select {
+    // Reserve space beside the trigger even when the spinner is hidden.
+    position: relative;
+    padding-inline-end: calc(
+      var(--rail-picker-spinner-size) + var(--rail-picker-spinner-gap)
+    );
+  }
+
+  .rail-picker .rail-picker-select {
     border-radius: 6px;
     transition: background-color 120ms ease;
 
-    &:has(.ng-select:not(.ng-select-disabled)):is(
+    &:not(.ng-select-disabled):is(
         :hover,
-        :has(.ng-select-opened)
+        .ng-select-opened,
+        :has(.ng-input > input:focus-visible)
       ) {
-      background: var(--rail-hover);
-    }
-
-    &:has(.ng-select:not(.ng-select-disabled) .ng-input > input:focus-visible) {
       background: var(--rail-hover);
     }
   }
@@ -294,7 +353,7 @@
   }
 
   .rail-picker .ng-select.rail-labeled-select .ng-select-container {
-    height: calc(46px + var(--rail-context-padding-top));
+    height: var(--rail-picker-height);
     padding-top: var(--rail-context-padding-top);
   }
 
@@ -307,8 +366,20 @@
   }
 
   .rail-picker .ng-select .ng-value-container {
-    padding-inline: 8px;
+    min-width: 0;
+    padding-inline: var(--rail-item-padding-inline);
     text-align: start;
+  }
+
+  .rail-picker-spinner {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 50%;
+    display: grid;
+    inline-size: var(--rail-picker-spinner-size);
+    place-items: center;
+    pointer-events: none;
+    transform: translateY(-50%);
   }
 
   .rail-picker .ng-select .ng-value > div {
@@ -456,7 +527,6 @@
       padding-inline: 0;
     }
 
-    .rail-picker .ng-select .ng-value-container,
     .rail-context-trigger {
       padding-inline: var(--rail-item-padding-inline);
     }
@@ -472,27 +542,25 @@
     color: var(--rail-muted);
     font-size: 0.6875rem;
   }
-
-  .rail-branch-select .rail-label {
-    color: var(--rail-muted);
-  }
 }
 
-:is(.mprove-shell, .rail-popup) {
-  .rail-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    min-height: var(--rail-item-min-height);
-    margin-bottom: 2px;
-    padding: 2px var(--rail-item-padding-inline);
-    border-radius: 6px;
-    color: var(--rail-muted);
-    font-weight: 400;
-    text-align: start;
-  }
+:is(.mprove-shell, .rail-popup, :where(.ng-dropdown-panel.rail-picker-select))
+  .rail-item,
+.ng-dropdown-panel.rail-picker-select .ng-dropdown-panel-items .ng-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: var(--rail-item-min-height);
+  margin-bottom: 2px;
+  padding: 2px var(--rail-item-padding-inline);
+  border-radius: 6px;
+  color: var(--rail-muted);
+  font-weight: 400;
+  text-align: start;
+}
 
+:is(.mprove-shell, .rail-popup, :where(.ng-dropdown-panel.rail-picker-select)) {
   .rail-item:has(.rail-status) {
     flex-direction: column;
     align-items: flex-start;
@@ -537,8 +605,9 @@
   }
 }
 
-// CDK renders these menus outside the shell.
-.rail-popup {
+// CDK menus are portaled to the body; ng-select panels to the shell root.
+.rail-popup,
+.ng-dropdown-panel.rail-picker-select {
   width: min(12rem, calc(100vw - 1rem));
   max-height: calc(100dvh - 1rem);
   overflow-y: auto;
@@ -546,7 +615,54 @@
   border: 1px solid var(--rail-line);
   border-radius: 8px;
   background: #fff;
-  box-shadow: 0 4px 16px rgb(24 24 27 / 15%);
+  box-shadow: var(--rail-popup-shadow);
+}
+
+.ng-dropdown-panel.rail-picker-select {
+  min-width: min(12rem, calc(100vw - 1rem)) !important;
+  margin-block: 0;
+
+  .ng-dropdown-panel-items {
+    max-height: 10rem;
+
+    .ng-option {
+      background: transparent;
+    }
+
+    .ng-option.ng-option-marked {
+      background: var(--rail-hover);
+      color: var(--rail-text);
+    }
+
+    .ng-option.ng-option-selected,
+    .ng-option.ng-option-selected.ng-option-marked {
+      background: transparent;
+      color: var(--rail-active);
+      font-weight: 600;
+    }
+
+    .ng-option.ng-option-disabled:not(.ng-option-selected) {
+      color: var(--rail-muted);
+      opacity: 0.5;
+    }
+  }
+
+  .ng-dropdown-footer {
+    padding: 0;
+    border: 0;
+
+    &:has(> *) {
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid var(--rail-line);
+    }
+  }
+
+  .rail-picker-note {
+    padding: 4px var(--rail-item-padding-inline);
+    color: var(--rail-muted);
+    cursor: default;
+  }
 }
 
 // Keep the submenu's shadow from spilling sideways onto its parent.
@@ -558,18 +674,22 @@ body:has(.mprove-shell:not(.side-menu)) .rail-submenu--projects {
   max-width: 9rem;
 }
 
+.mprove-shell:not(.side-menu) > .ng-dropdown-panel.rail-picker-select {
+  inset-block: var(--rail-picker-popup-top) auto !important;
+  margin-block-start: 8px;
+
+  &.rail-env-select {
+    inset-inline: auto var(--rail-picker-popup-end) !important;
+  }
+}
+
 // Catch outside clicks without letting the page underneath react to the pointer.
-body:has(.rail-popup, > .ng-dropdown-panel.rail-picker-select)
-  .mprove-shell::after {
+body:has(.rail-popup) .mprove-shell::after,
+.mprove-shell:has(> .ng-dropdown-panel.rail-picker-select)::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 30;
   cursor: default;
   touch-action: none;
-}
-
-// These panels are appended to the body.
-.ng-dropdown-panel.rail-picker-select {
-  min-width: min(12rem, 50vw) !important;
 }
