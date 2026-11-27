@@ -41,7 +41,26 @@ import { environment } from '#front/environments/environment';
   encapsulation: ViewEncapsulation.None
 })
 export class NavbarComponent implements OnInit {
-  readonly popupPositions: ConnectedPosition[] = [
+  isSideMenu = true;
+
+  readonly topPopupPositions: ConnectedPosition[] = [
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'start',
+      overlayY: 'top',
+      offsetY: 8
+    },
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8
+    }
+  ];
+
+  readonly sidePopupPositions: ConnectedPosition[] = [
     {
       originX: 'end',
       originY: 'top',
