@@ -1,8 +1,12 @@
 import type { ConnectedPosition } from '@angular/cdk/overlay';
 import {
+  afterNextRender,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
+  type ElementRef,
   type OnInit,
+  ViewChild,
   ViewEncapsulation
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
@@ -33,6 +37,15 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { environment } from '#front/environments/environment';
 
+const topNavOverflowStageValues = [
+  'none',
+  'selectors',
+  'pages',
+  'branch'
+] as const;
+
+type TopNavOverflowStage = (typeof topNavOverflowStageValues)[number];
+
 @Component({
   standalone: false,
   selector: 'm-navbar',
@@ -42,6 +55,13 @@ import { environment } from '#front/environments/environment';
 })
 export class NavbarComponent implements OnInit {
   isSideMenu = true;
+
+  isTopNavOverflowOpen = false;
+
+  topNavOverflowStage: TopNavOverflowStage = 'none';
+
+  @ViewChild('navHeader', { static: true })
+  private navHeaderRef: ElementRef<HTMLElement>;
 
   readonly topPopupPositions: ConnectedPosition[] = [
     {
@@ -117,6 +137,8 @@ export class NavbarComponent implements OnInit {
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
+      this.isTopNavOverflowOpen = false;
+
       this.checkUrls(x.url);
     })
   );
@@ -158,11 +180,135 @@ export class NavbarComponent implements OnInit {
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
-    private cd: ChangeDetectorRef
-  ) {}
+    private cd: ChangeDetectorRef,
+    private destroyRef: DestroyRef
+  ) {
+    afterNextRender(() => {
+      let navHeader: HTMLElement = this.navHeaderRef.nativeElement;
+
+      let navContent: HTMLElement = navHeader.querySelector('.top-nav-content');
+
+      let updateOverflow = (): void => {
+        this.updateTopNavOverflow({ navHeader: navHeader });
+      };
+
+      let resizeObserver: ResizeObserver = new ResizeObserver(updateOverflow);
+
+      let contentObserver: MutationObserver = new MutationObserver(
+        updateOverflow
+      );
+
+      resizeObserver.observe(navHeader);
+
+      contentObserver.observe(navContent, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+
+      this.destroyRef.onDestroy(() => {
+        resizeObserver.disconnect();
+        contentObserver.disconnect();
+      });
+    });
+  }
 
   ngOnInit() {
     this.checkUrls(this.router.url);
+  }
+
+  closeTopNavOverflow(item: { overflowButton: HTMLButtonElement }): void {
+    let { overflowButton } = item;
+
+    if (!this.isTopNavOverflowOpen) {
+      return;
+    }
+
+    this.isTopNavOverflowOpen = false;
+
+    overflowButton.focus();
+  }
+
+  private updateTopNavOverflow(item: { navHeader: HTMLElement }): void {
+    let { navHeader } = item;
+
+    if (this.isSideMenu) {
+      return;
+    }
+
+    let pinnedControls: NodeListOf<HTMLElement> = navHeader.querySelectorAll(
+      '.top-nav-logo, .top-nav-account'
+    );
+
+    let selectors: HTMLElement = navHeader.querySelector('.top-nav-selectors');
+
+    let branch: HTMLElement = navHeader.querySelector('.rail-branch-slot');
+
+    let pages: HTMLElement = navHeader.querySelector('.top-nav-pages');
+
+    // Read the uncollapsed widths even when some controls are in the menu.
+    navHeader.classList.add('top-nav-measuring');
+
+    let stage: TopNavOverflowStage;
+
+    try {
+      let style: CSSStyleDeclaration = getComputedStyle(navHeader);
+
+      let gap: number = parseFloat(style.columnGap);
+
+      let availableWidth: number =
+        navHeader.getBoundingClientRect().width -
+        parseFloat(style.paddingInlineStart) -
+        parseFloat(style.paddingInlineEnd);
+
+      let pinnedWidth: number =
+        Array.from(pinnedControls).reduce(
+          (width, control) => width + control.getBoundingClientRect().width,
+          0
+        ) +
+        pinnedControls.length * gap;
+
+      let mainWidth: number =
+        pinnedWidth +
+        (isDefined(branch)
+          ? branch.getBoundingClientRect().width +
+            parseFloat(getComputedStyle(branch).marginInlineEnd) +
+            gap
+          : 0) +
+        (isDefined(pages) ? pages.getBoundingClientRect().width + gap : 0);
+
+      let selectorsWidth: number = selectors.getBoundingClientRect().width;
+
+      let hamburgerWidth: number = parseFloat(
+        style.getPropertyValue('--top-nav-row-height')
+      );
+
+      let minBranchWidth: number = parseFloat(
+        style.getPropertyValue('--top-nav-branch-min-width')
+      );
+
+      if (mainWidth + selectorsWidth <= availableWidth) {
+        stage = 'none';
+      } else if (mainWidth + hamburgerWidth <= availableWidth) {
+        stage = 'selectors';
+      } else if (
+        isDefined(branch) &&
+        pinnedWidth + hamburgerWidth + minBranchWidth + gap > availableWidth
+      ) {
+        stage = 'branch';
+      } else {
+        stage = 'pages';
+      }
+    } finally {
+      navHeader.classList.remove('top-nav-measuring');
+    }
+
+    if (this.topNavOverflowStage !== stage) {
+      this.topNavOverflowStage = stage;
+      this.isTopNavOverflowOpen = false;
+
+      this.cd.detectChanges();
+    }
   }
 
   checkUrls(url: string) {

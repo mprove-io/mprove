@@ -5,6 +5,8 @@
   --rail-text: #18181b;
   --rail-muted: #52525b;
   --rail-active: #0084d1; // Mprove m600.
+  --rail-item-min-height: 30px;
+  --rail-item-padding-inline: 8px;
 }
 
 .mprove-shell {
@@ -12,32 +14,51 @@
   --rail-value: #71717a;
   --rail-context-padding-top: 3px;
   --top-nav-selector-width: 7rem;
-  --top-nav-selector-padding-block: 6px;
-  --top-nav-selector-padding-end: 14px;
+  --top-nav-selector-padding-block: 3px;
+  --nav-padding-block-start: 4px;
+  --nav-logo-inset: 8px;
+  --top-nav-row-height: 40px;
+  --top-nav-branch-min-width: 96px;
+  --top-nav-height: calc(
+    var(--top-nav-row-height) + 2 * var(--nav-padding-block-start)
+  );
 
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
 
   .top-nav {
     display: flex;
-    align-items: start;
+    align-items: center;
     gap: 12px;
-    padding: 8px 16px;
+    padding-block: var(--nav-padding-block-start);
+    padding-inline: var(--nav-logo-inset) 16px;
     @apply bg-m0 select-none rounded shadow;
     position: relative;
     z-index: 1;
   }
 
-  .top-nav > button {
-    margin-block-start: 8px;
+  .top-nav-logo {
+    padding-inline: var(--rail-item-padding-inline);
+    transition: background-color 120ms ease;
+
+    &:is(:hover, :focus-visible) {
+      background: var(--rail-hover);
+    }
+
+    > img {
+      block-size: var(--top-nav-row-height);
+    }
+  }
+
+  .top-nav > .top-nav-overflow-button {
+    display: none;
   }
 
   .top-nav-content,
-  .top-nav-main,
   .top-nav-pages,
-  .top-nav-context {
+  .top-nav-selectors {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 4px 8px;
   }
@@ -49,9 +70,9 @@
     gap: 4px 12px;
   }
 
-  .top-nav-main {
-    flex: 1;
-    justify-content: center;
+  .top-nav-overflow,
+  .top-nav-branch-overflow {
+    display: contents;
   }
 
   .top-nav-pages > .rail-item {
@@ -61,15 +82,12 @@
   .rail-branch-slot {
     flex-shrink: 0;
     width: 9rem;
+    max-width: 100%;
   }
 
-  .top-nav-context > :is(m-org-menu, .rail-picker) {
-    width: var(--top-nav-selector-width);
-  }
-
-  .top-nav-context > m-project-menu {
+  .top-nav-selectors > :is(m-org-menu, m-project-menu, .rail-picker) {
     width: max-content;
-    max-width: var(--top-nav-selector-width);
+    max-width: min(var(--top-nav-selector-width), 100%);
   }
 
   &.side-menu {
@@ -80,14 +98,16 @@
       flex-direction: column;
       align-items: stretch;
       min-height: 0;
-      padding: 12px 8px;
+      // Center the logo on the workspace's mt-6 / h-11 title row.
+      padding: calc(
+          (1.5rem + 2.75rem / 2) * 2 / 3 - var(--top-nav-row-height) / 2
+        )
+        var(--nav-logo-inset) 12px;
       border-inline-end: 1px solid var(--rail-line);
     }
 
-    .top-nav > button {
+    .top-nav-logo {
       align-self: flex-start;
-      margin-block-start: 4px;
-      margin-inline-start: 8px;
     }
 
     .side-menu-no-divider {
@@ -95,8 +115,7 @@
     }
 
     .top-nav-content,
-    .top-nav-main,
-    .top-nav-context {
+    .top-nav-selectors {
       flex-direction: column;
       flex-wrap: nowrap;
       align-items: stretch;
@@ -114,14 +133,9 @@
       flex: none;
     }
 
-    .top-nav-context {
+    .top-nav-selectors {
       @apply gap-3;
       margin-block-start: auto;
-    }
-
-    .top-nav-main {
-      flex: none;
-      gap: 12px;
     }
 
     .rail-branch-slot {
@@ -130,57 +144,107 @@
 
     .top-nav-pages {
       display: block;
+      flex: none;
     }
 
     .rail-branch-slot,
-    .top-nav-context > :not(m-user-menu),
+    .top-nav-selectors > *,
     .top-nav-pages > .rail-item {
       width: 100%;
       max-width: none;
     }
   }
 
-  @media (min-width: 82rem) {
-    &:not(.side-menu) {
-      .top-nav {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-      }
-
-      .top-nav > button {
-        align-self: start;
-        justify-self: start;
-      }
-
-      .top-nav-content {
-        display: contents;
-      }
-
-      .top-nav-main {
-        grid-column: 2;
-      }
-
-      .top-nav-context {
-        grid-column: 3;
-        justify-self: end;
+  &:not(.side-menu) {
+    .top-nav:not(.top-nav-measuring):is(
+        .top-nav-selectors-collapsed,
+        .top-nav-pages-collapsed,
+        .top-nav-branch-collapsed
+      ) {
+      > .top-nav-overflow-button {
+        display: inline-flex;
+        flex: none;
+        justify-content: center;
+        order: 1;
+        width: var(--top-nav-row-height);
+        margin-bottom: 0;
       }
     }
-  }
 
-  @media (max-width: 40rem) {
-    &:not(.side-menu) {
-      .top-nav {
-        flex-wrap: wrap;
+    .top-nav:not(.top-nav-measuring) {
+      &.top-nav-selectors-collapsed .top-nav-selectors,
+      &.top-nav-pages-collapsed .top-nav-overflow,
+      &.top-nav-branch-collapsed .top-nav-branch-overflow {
+        display: none;
+        position: absolute;
+        inset-block-start: 100%;
+        inset-inline-end: 8px;
+        width: min(18rem, calc(100% - 16px));
+        max-height: calc(100dvh - var(--top-nav-height) - 8px);
+        overflow-y: auto;
+        gap: 8px;
+        padding: 8px;
+        border: 1px solid var(--rail-line);
+        border-radius: 8px;
+        @apply bg-m0 shadow;
+
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      .top-nav-content {
-        flex-basis: 100%;
-        justify-content: center;
+      &.top-nav-overflow-open {
+        &.top-nav-selectors-collapsed .top-nav-selectors,
+        &.top-nav-pages-collapsed .top-nav-overflow,
+        &.top-nav-branch-collapsed .top-nav-branch-overflow {
+          display: flex;
+        }
       }
 
-      .top-nav-main {
-        flex-basis: 100%;
+      &.top-nav-selectors-collapsed .top-nav-selectors > *,
+      &.top-nav-pages-collapsed .top-nav-selectors > *,
+      &.top-nav-branch-collapsed .top-nav-selectors > *,
+      &.top-nav-branch-collapsed .rail-branch-slot {
+        width: 100%;
+        max-width: none;
+        margin-block: 0;
+      }
+
+      &.top-nav-pages-collapsed {
+        .rail-branch-slot {
+          flex-shrink: 1;
+          min-width: var(--top-nav-branch-min-width);
+          margin-inline: 0 auto;
+        }
+      }
+
+      &.top-nav-branch-collapsed {
+        .top-nav-logo {
+          margin-inline-end: auto;
+        }
+
+        .rail-branch-slot {
+          margin-inline: 0;
+        }
+
+        .rail-branch-slot > .rail-picker {
+          width: 100%;
+        }
+      }
+
+      &:is(.top-nav-pages-collapsed, .top-nav-branch-collapsed) {
+        .top-nav-pages,
+        .top-nav-selectors {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .top-nav-pages {
+          margin-inline-end: 0;
+        }
+
+        .top-nav-pages > .rail-item {
+          width: 100%;
+        }
       }
     }
   }
@@ -192,9 +256,13 @@
 
   .rail-label {
     padding-inline: 8px;
-    color: var(--rail-muted);
+    color: var(--rail-value);
     font-size: 0.75rem;
     font-weight: 600;
+  }
+
+  .rail-label-short {
+    display: none;
   }
 
   .rail-picker {
@@ -290,17 +358,58 @@
   }
 
   &:not(.side-menu) {
+    .top-nav {
+      block-size: var(--top-nav-height);
+      column-gap: 8px;
+    }
+
+    .top-nav-content {
+      display: contents;
+    }
+
+    .top-nav-pages,
+    .top-nav-selectors,
+    .top-nav-account {
+      flex: none;
+    }
+
+    .top-nav-account {
+      order: 2;
+    }
+
+    .top-nav-pages {
+      margin-inline-end: auto;
+    }
+
+    .rail-branch-slot {
+      margin-inline: auto 8px;
+    }
+
+    .top-nav:not(:has(.top-nav-pages)) .top-nav-logo {
+      margin-inline-end: auto;
+    }
+
     .rail-branch-slot > .rail-picker {
       width: max-content;
       max-width: 100%;
     }
 
+    .rail-branch-slot,
+    .top-nav-selectors > :is(m-org-menu, m-project-menu, .rail-picker) {
+      // Keep the existing navbar row height around a smaller hover area.
+      margin-block: calc(
+        (var(--top-nav-row-height) - var(--rail-item-min-height)) / 2
+      );
+    }
+
     .top-nav-pages .rail-item {
       margin-bottom: 0;
+      line-height: 18px;
     }
 
     .top-nav-pages .rail-status {
       font-weight: 400;
+      line-height: 14px;
     }
 
     // Reserve the active label's width even when the page is inactive.
@@ -313,25 +422,48 @@
     }
 
     .rail-label {
+      flex: none;
       line-height: 16px;
+      white-space: nowrap;
     }
 
-    .rail-picker .ng-select.rail-labeled-select .ng-select-container {
-      height: 46px;
+    .rail-label-long {
+      display: none;
+    }
+
+    .rail-label-short {
+      display: inline;
+    }
+
+    .rail-picker .ng-select.rail-labeled-select .ng-select-container,
+    .rail-context-trigger {
+      height: var(--rail-item-min-height);
       padding-block: var(--top-nav-selector-padding-block);
+    }
+
+    .rail-context-trigger,
+    .rail-picker-selection {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .rail-context-trigger {
-      padding-block: var(--top-nav-selector-padding-block);
+      flex-direction: row;
+    }
+
+    .rail-context-trigger > :is(.rail-label, .rail-context-value) {
+      padding-inline: 0;
     }
 
     .rail-picker .ng-select .ng-value-container,
-    .rail-context-trigger > :is(.rail-label, .rail-context-value) {
-      padding-inline-end: var(--top-nav-selector-padding-end);
+    .rail-context-trigger {
+      padding-inline: var(--rail-item-padding-inline);
     }
 
     .rail-context-value,
     .rail-picker-value {
+      min-width: 0;
       line-height: 18px;
     }
   }
@@ -339,6 +471,10 @@
   .rail-status {
     color: var(--rail-muted);
     font-size: 0.6875rem;
+  }
+
+  .rail-branch-select .rail-label {
+    color: var(--rail-muted);
   }
 }
 
@@ -348,9 +484,9 @@
     align-items: center;
     gap: 6px;
     width: 100%;
-    min-height: 30px;
+    min-height: var(--rail-item-min-height);
     margin-bottom: 2px;
-    padding: 2px 8px;
+    padding: 2px var(--rail-item-padding-inline);
     border-radius: 6px;
     color: var(--rail-muted);
     font-weight: 400;
@@ -419,7 +555,7 @@
 }
 
 body:has(.mprove-shell:not(.side-menu)) .rail-submenu--projects {
-  max-width: 10.5rem;
+  max-width: 9rem;
 }
 
 // Catch outside clicks without letting the page underneath react to the pointer.

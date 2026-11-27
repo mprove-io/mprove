@@ -6,7 +6,10 @@
   [cdkMenuTriggerFor]="orgMenu"
   [cdkMenuPosition]="popupPositions"
 >
-  <span class="rail-label">Organization</span>
+  <span class="rail-label">
+    <span class="rail-label-long">Organization</span>
+    <span class="rail-label-short" title="Organization">Org</span>
+  </span>
   <span
     class="rail-context-value truncate capitalize"
     [attr.title]="nav?.orgName"

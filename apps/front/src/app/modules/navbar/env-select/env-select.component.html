@@ -39,8 +39,11 @@
 </ng-select>
 
 <ng-template #envLabel let-name="name">
-  <div>
-    <div class="rail-label">Environment</div>
+  <div class="rail-picker-selection">
+    <div class="rail-label">
+      <span class="rail-label-long">Environment</span>
+      <span class="rail-label-short" title="Environment">Env</span>
+    </div>
     <div class="rail-picker-value truncate capitalize">{{ name }}</div>
   </div>
 </ng-template>
