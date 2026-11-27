@@ -57,6 +57,15 @@ export class ProjectMenuComponent implements OnInit {
 
   readonly submenuPositions = railSubmenuPositions;
 
+  readonly appendNewProjectTooltipTo = (reference: Element): Element => {
+    // CDK's popover is above document.body and outside the submenu's clip.
+    let popover: Element = reference.closest('.cdk-overlay-popover');
+
+    let container: Element = popover ?? reference.ownerDocument.body;
+
+    return container;
+  };
+
   demoOrgName = DEMO_ORG_NAME;
 
   projectsList: ProjectsItem[] = [];

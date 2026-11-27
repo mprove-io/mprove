@@ -60,6 +60,16 @@ export class NavbarComponent implements OnInit {
     }
   ];
 
+  readonly topSelectorPopupPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'bottom',
+      overlayX: 'end',
+      overlayY: 'top',
+      offsetY: 8
+    }
+  ];
+
   readonly sidePopupPositions: ConnectedPosition[] = [
     {
       originX: 'end',

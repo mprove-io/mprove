@@ -71,7 +71,7 @@
 
                 <ng-template #templateNewDashboard>
                   <div *ngIf="alias === restrictedUserAlias"
-                    >Demo user is restricted</div
+                    >Sign in with your own account to create a dashboard</div
                   >
 
                   <div
@@ -115,8 +115,8 @@
 
                 <div
                   *ngIf="isExplorer === true && alias === restrictedUserAlias"
-                  >Demo user is restricted. Sign Up at https://mprove.io to get full
-                  access.</div
+                  >Sign in with your own account to save a copy of this
+                  dashboard</div
                 >
               </ng-template> -->
 
@@ -171,7 +171,8 @@
 
                 <ng-template #templateAutoRunSelector>
                   <div *ngIf="alias === restrictedUserAlias"
-                    >Demo user is restricted</div
+                    >Sign in with your own account to change the Auto Run
+                    interval</div
                   >
 
                   <div
@@ -288,7 +289,7 @@
       <ng-template #dashboardParameterActions>
         <ng-template #templateAddTile>
           <div *ngIf="alias === restrictedUserAlias"
-            >Demo user is restricted</div
+            >Sign in with your own account to add tiles</div
           >
 
           <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"

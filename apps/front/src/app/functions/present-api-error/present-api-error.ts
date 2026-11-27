@@ -231,10 +231,10 @@ export function presentApiError<TResponse extends ToBackendResponse>(item: {
       'Sign in to ChatGPT on user profile page to refresh auth';
   } else if (error.code === 'BACKEND_RESTRICTED_USER') {
     errorData.description =
-      'Demo user is restricted. Sign Up at https://mprove.io to create your own project.';
+      'Sign in with your own account to continue, or sign up at mprove.io.';
   } else if (error.code === 'BACKEND_RESTRICTED_PROJECT') {
     errorData.description =
-      'Some actions of Demo project are restricted. Switch organization project to remove restrictions.';
+      'Switch to a different project to complete this action.';
   } else if (error.code === 'BACKEND_ROLES_DO_NOT_EXIST') {
     let missingRoles: string[] = error.displayData?.roles;
 

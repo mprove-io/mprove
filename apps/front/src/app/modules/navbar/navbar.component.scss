@@ -413,6 +413,15 @@
   box-shadow: 0 4px 16px rgb(24 24 27 / 15%);
 }
 
+// Keep the submenu's shadow from spilling sideways onto its parent.
+.rail-submenu {
+  clip-path: inset(-16px 0 -24px);
+}
+
+body:has(.mprove-shell:not(.side-menu)) .rail-submenu--projects {
+  max-width: 10.5rem;
+}
+
 // Catch outside clicks without letting the page underneath react to the pointer.
 body:has(.rail-popup, > .ng-dropdown-panel.rail-picker-select)
   .mprove-shell::after {

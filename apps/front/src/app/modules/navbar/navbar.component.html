@@ -1,4 +1,6 @@
 @let popupPositions = isSideMenu ? sidePopupPositions : topPopupPositions;
+@let selectorPopupPositions =
+  isSideMenu ? sidePopupPositions : topSelectorPopupPositions;
 @let isWorkspacePage =
   isBuilderRouteActive ||
   isExplorerRouteActive ||
@@ -109,8 +111,10 @@
       </div>
 
       <div class="top-nav-context">
-        <m-org-menu [popupPositions]="popupPositions"></m-org-menu>
-        <m-project-menu [popupPositions]="popupPositions"></m-project-menu>
+        <m-org-menu [popupPositions]="selectorPopupPositions"></m-org-menu>
+        <m-project-menu
+          [popupPositions]="selectorPopupPositions"
+        ></m-project-menu>
 
         <section
           *ngIf="!!nav?.projectId"

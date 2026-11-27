@@ -15,7 +15,7 @@
 </button>
 
 <ng-template #orgPicker>
-  <div class="rail-popup" cdkMenu aria-label="Switch organization">
+  <div class="rail-popup rail-submenu" cdkMenu aria-label="Switch organization">
     <div
       class="max-h-40 overflow-y-auto"
       role="group"
@@ -41,7 +41,7 @@
     </div>
 
     <div
-      tp="Demo user is restricted"
+      tp="Sign in with your own account to create an organization"
       placement="left"
       [tpIsEnabled]="user?.alias === restrictedUserAlias"
     >
@@ -70,7 +70,7 @@
     >
       Organizations
       <m-chevron-right-icon
-        class="text-s500 ms-auto"
+        class="text-s500 shrink-0 [&>svg]:size-4"
         aria-hidden="true"
       ></m-chevron-right-icon>
     </button>

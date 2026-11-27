@@ -15,7 +15,11 @@
 </button>
 
 <ng-template #projectPicker>
-  <div class="rail-popup" cdkMenu aria-label="Switch project">
+  <div
+    class="rail-popup rail-submenu rail-submenu--projects"
+    cdkMenu
+    aria-label="Switch project"
+  >
     <div class="max-h-40 overflow-y-auto" role="group" aria-label="Projects">
       <div *ngIf="isProjectsListLoading" class="px-2 py-1 text-xs" role="status"
         >Loading projects…</div
@@ -42,7 +46,7 @@
 
     <ng-template #templateNewProject>
       <div *ngIf="nav.orgName === demoOrgName"
-        >Organization "Demo" is restricted</div
+        >Switch from the Demo organization to create a project</div
       >
 
       <div *ngIf="nav.orgName !== demoOrgName && user.userId !== nav.orgOwnerId"
@@ -52,7 +56,8 @@
 
     <div
       [tp]="templateNewProject"
-      placement="left"
+      tpPlacement="left"
+      [tpAppendTo]="appendNewProjectTooltipTo"
       [tpIsEnabled]="
         user.userId !== nav.orgOwnerId || nav.orgName === demoOrgName
       "
@@ -86,7 +91,7 @@
     >
       Projects
       <m-chevron-right-icon
-        class="text-s500 ms-auto"
+        class="text-s500 shrink-0 [&>svg]:size-4"
         aria-hidden="true"
       ></m-chevron-right-icon>
     </button>
@@ -174,7 +179,7 @@
       </div>
 
       <div
-        tp="Project is restricted for demo purposes. Only admin can access."
+        tp="Switch from the Demo organization to view a project’s team"
         placement="right"
         [tpIsEnabled]="nav?.orgName === demoOrgName && isAdmin === false"
       >
