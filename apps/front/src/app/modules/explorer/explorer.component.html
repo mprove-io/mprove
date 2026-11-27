@@ -43,26 +43,19 @@
       </div>
     </div>
 
-    <div
-      class="bg-m0 mt-6 flex h-2 min-h-0 flex-1 flex-row gap-3 rounded shadow"
-    >
-      <ng-container *ngIf="!isSessionRoute">
-        <div class="flex h-full w-full flex-grow overflow-hidden">
+    <div class="mt-6 flex h-2 min-h-0 flex-1 flex-row gap-6">
+      <div
+        class="bg-m0 flex h-full w-1/4 flex-shrink-0 flex-col rounded shadow"
+      >
+        <div *ngIf="showContent" class="flex flex-1 overflow-hidden">
           <router-outlet></router-outlet>
         </div>
-      </ng-container>
+      </div>
 
-      <ng-container *ngIf="isSessionRoute && showContent">
-        <div class="flex h-full w-1/4 flex-shrink-0 flex-col">
-          <div class="flex flex-1 overflow-hidden">
-            <router-outlet></router-outlet>
-          </div>
-        </div>
-
-        <div
-          class="border-s200 flex min-h-0 min-w-0 flex-1 flex-col border-l pl-3"
-        >
+      <div class="bg-m0 flex min-h-0 min-w-0 flex-1 flex-col rounded shadow">
+        <ng-container *ngIf="showContent">
           <m-explorer-tabs
+            *ngIf="isSessionRoute"
             class="flex-shrink-0"
             [tabs]="tabs"
             [activeTabId]="activeTabId"
@@ -70,7 +63,12 @@
             (tabClose)="onTabClose($event)"
           ></m-explorer-tabs>
 
-          <ng-container *ngIf="activeTabContent as content; else noTab">
+          <ng-container
+            *ngIf="
+              isSessionRoute ? activeTabContent : null as content;
+              else noTab
+            "
+          >
             @switch (content.status) {
               @case ('idle') {
                 <div
@@ -131,14 +129,8 @@
               No tab selected
             </div>
           </ng-template>
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="isSessionRoute && !showContent">
-        <div class="h-full w-1/4 flex-shrink-0"></div>
-
-        <div class="border-s200 min-h-0 min-w-0 flex-1 border-l pl-3"></div>
-      </ng-container>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

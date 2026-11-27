@@ -509,8 +509,8 @@
         </div>
       </div>
 
-      <div class="bg-m0 mt-6 flex h-2 flex-1 flex-row gap-3 rounded shadow">
-        <div class="flex w-1/4 flex-shrink-0">
+      <div class="mt-6 flex h-2 flex-1 flex-row gap-6">
+        <div class="bg-m0 flex w-1/4 flex-shrink-0 rounded shadow">
           <m-builder-left
             [builderLeft]="builderLeft"
             [isEditor]="isEditor"
@@ -520,29 +520,31 @@
           ></m-builder-left>
         </div>
 
-        <div class="border-s200 flex flex-1 flex-col border-l pl-3">
-          <div class="flex h-full flex-grow">
-            <div class="h-full w-full">
-              <router-outlet></router-outlet>
+        <div class="bg-m0 flex min-w-0 flex-1 flex-row gap-3 rounded shadow">
+          <div class="flex flex-1 flex-col">
+            <div class="flex h-full flex-grow">
+              <div class="h-full w-full">
+                <router-outlet></router-outlet>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div
-          class="border-s200 flex border-l pl-3"
-          [ngClass]="{
-            'w-1/4 flex-shrink-0': !secondFileNodeId,
-            'flex-1': !!secondFileNodeId
-          }"
-          *ngIf="
-            builderLeft === 'Tree' ||
-            builderLeft === 'Info' ||
-            lastUrl === pathNewSession ||
-            lastUrl === pathSelectFile ||
-            !file?.fileId
-          "
-        >
-          <m-builder-right class="flex w-full"></m-builder-right>
+          <div
+            class="border-s200 flex border-l pl-3"
+            [ngClass]="{
+              'w-1/3 flex-shrink-0': !secondFileNodeId,
+              'flex-1': !!secondFileNodeId
+            }"
+            *ngIf="
+              builderLeft === 'Tree' ||
+              builderLeft === 'Info' ||
+              lastUrl === pathNewSession ||
+              lastUrl === pathSelectFile ||
+              !file?.fileId
+            "
+          >
+            <m-builder-right class="flex w-full"></m-builder-right>
+          </div>
         </div>
       </div>
     </div>
