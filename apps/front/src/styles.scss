@@ -239,23 +239,39 @@ ui-switch .switch:where(:not(.rail *, .rail-popup *)) {
   transition: 0.3s ease-out all !important;
 }
 
+// Keep fixed-size SVG icons in step with the surrounding controls at 150%.
 :is(
     m-chart-line-icon,
     m-chart-pie-icon,
     m-chart-pivot-table-icon,
     m-chart-scatter-icon,
     m-chart-single-icon,
+    m-editor-icon,
+    m-explorer-icon,
     m-folder-minus-icon,
     m-folder-tree-icon,
-    m-link-icon
+    m-link-icon,
+    m-link-off-icon,
+    m-network-icon,
+    m-question-mark-circle-icon,
+    m-resize-icon,
+    m-save-icon,
+    m-table-icon,
+    m-tree-icon,
+    m-unfold-less-icon,
+    m-unfold-more-icon
   )
   > svg:where(:not(.rail *, .rail-popup *)) {
   @apply size-6;
 }
 
-:is(m-left-panel-icon, m-bottom-panel-icon)
+:is(m-left-panel-icon, m-bottom-panel-icon, m-right-panel-icon)
   > svg:where(:not(.rail *, .rail-popup *)) {
   @apply h-5 w-6;
+}
+
+m-mini-charts-icon > svg:where(:not(.rail *, .rail-popup *)) {
+  @apply size-7;
 }
 
 @import '@ng-select/ng-select/themes/default.theme.css';

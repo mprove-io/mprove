@@ -93,11 +93,9 @@
                 session.status !== 'Archived'
             }"
           >
-            <span
+            <m-explorer-icon
               *ngIf="session.type === 'Explorer'"
-              class="flex [&_svg]:h-[22px] [&_svg]:w-[22px]"
-              ><m-explorer-icon></m-explorer-icon
-            ></span>
+            ></m-explorer-icon>
             <m-editor-icon *ngIf="session.type === 'Editor'"></m-editor-icon>
           </div>
           <span
@@ -139,7 +137,7 @@
               [disabled]="session.status === 'New'"
               (click)="archiveSession($event, session)"
             >
-              <span class="flex [&_svg]:h-[20px] [&_svg]:w-[20px]"
+              <span class="flex [&_svg]:size-5"
                 ><m-archive-icon></m-archive-icon
               ></span>
             </button>
