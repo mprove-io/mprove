@@ -38,7 +38,7 @@
     gap: 12px;
     padding-block: var(--nav-padding-block-start);
     padding-inline: var(--nav-logo-inset) 16px;
-    @apply bg-m0 select-none rounded shadow;
+    @apply bg-m0 select-none shadow;
     position: relative;
     z-index: 1;
   }

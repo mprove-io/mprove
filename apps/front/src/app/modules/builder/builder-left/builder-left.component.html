@@ -254,23 +254,26 @@
                       ></m-files-right-panel-toggle>
 
                       <div
-                        class="ml-3 h-9 w-9 flex-shrink-0"
-                        *ngIf="nav.repoType === 'production'"
-                      ></div>
-
-                      <div
-                        *ngIf="nav.repoType !== 'production'"
-                        class="text-s1 invisible ml-3 flex flex-shrink-0 group-hover:visible"
+                        class="text-s1 ml-3 flex flex-shrink-0 opacity-0 focus-within:opacity-100 group-hover:opacity-100"
                       >
-                        <m-folder-options
-                          *ngIf="node.data.isFolder"
-                          [node]="node"
-                        ></m-folder-options>
-
-                        <m-file-options
-                          *ngIf="!node.data.isFolder"
-                          [node]="node"
-                        ></m-file-options>
+                        @if (nav?.repoType === 'production') {
+                          <button
+                            type="button"
+                            class="hover:bg-m200 flex h-8 w-8 items-center justify-center rounded"
+                            aria-label="Repository item options"
+                            [tp]="productionTreeOptions"
+                            [tpHideOnEscape]="true"
+                            tpVariation="menu"
+                            className="my-menu"
+                            (click)="$event.stopPropagation()"
+                          >
+                            <m-dots-vertical-icon></m-dots-vertical-icon>
+                          </button>
+                        } @else if (node.data.isFolder) {
+                          <m-folder-options [node]="node"></m-folder-options>
+                        } @else {
+                          <m-file-options [node]="node"></m-file-options>
+                        }
                       </div>
                     </div>
                   </div>
@@ -522,5 +525,13 @@
     "
   >
     Push branch to Remote
+  </div>
+</ng-template>
+
+<ng-template #productionTreeOptions>
+  <div
+    class="border-s4 bg-m0 text-s500 w-56 cursor-default rounded-md border px-3 py-2 text-sm shadow-xl"
+  >
+    Switch to dev repo branch to edit files
   </div>
 </ng-template>
