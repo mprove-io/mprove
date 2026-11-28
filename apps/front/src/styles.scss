@@ -20,8 +20,13 @@ body {
   }
 }
 
-// Keep the navigation rail and its portaled menus at their existing density.
-:where(.rail, .rail-popup, .ng-dropdown-panel.rail-picker-select) {
+// Keep the rail menus and search popups at a shared density.
+:where(
+    .rail,
+    .rail-popup,
+    .ng-dropdown-panel.rail-picker-select,
+    .catalog-search-dialog
+  ) {
   --mprove-spacing-scale: 0.8125;
   --mprove-line-height-scale: 1;
   --mprove-font-xs: 0.6875rem;
@@ -40,6 +45,14 @@ body {
   --mprove-leading-3xl: 2rem;
 
   @apply text-base;
+}
+
+:where(.timezone-popup) {
+  --search-popup-padding: 10px;
+}
+
+:where(.catalog-search-dialog) {
+  --search-popup-padding: 16px;
 }
 
 :where(
@@ -97,6 +110,73 @@ body {
 
   .form-select {
     @apply pr-9;
+  }
+
+  .search-popup-input {
+    @apply border-s3 focus:border-m600 h-11 w-full rounded-md border-[1.5px] px-[var(--rail-item-padding-inline)] text-sm;
+  }
+
+  .list-toolbar-action {
+    @apply h-10 rounded-md px-2.5;
+
+    &:hover:not(:disabled, [aria-current='page'], [aria-expanded='true']) {
+      @apply bg-s200;
+    }
+  }
+}
+
+@media (forced-colors: none) {
+  :is(.form-input, .form-textarea):focus {
+    border-width: 1.5px;
+    --tw-ring-offset-shadow: 0 0 transparent;
+    --tw-ring-shadow: 0 0 transparent;
+  }
+
+  // Mark keyboard focus without a border on controls that don't edit text.
+  :where(
+      button,
+      select,
+      summary,
+      input:is(
+          [type='button'],
+          [type='submit'],
+          [type='reset'],
+          [type='checkbox'],
+          [type='radio'],
+          [type='range'],
+          [type='color'],
+          [type='file']
+        ),
+      [role='button'],
+      [role='tab'],
+      [role='switch']
+    ) {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      box-shadow: inset 0 0 0 100vmax rgb(0 0 0 / 12%);
+    }
+  }
+
+  :where(a[href]) {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  :is(.form-select, .form-multiselect):focus {
+    @apply border-s300;
+    box-shadow: none;
+  }
+
+  :is(.form-select, .form-multiselect):focus-visible {
+    box-shadow: inset 0 0 0 100vmax rgb(0 0 0 / 12%);
   }
 }
 
@@ -542,27 +622,6 @@ ngneat-dialog {
 .ng-select.ng-select-single:where(:not(.rail-picker-select))
   .ng-select-container {
   height: 24px;
-}
-
-.ng-select.report-timezone-select .ng-select-container {
-  .ng-value-container {
-    min-width: 0;
-    padding-left: calc(10px * 2 / 3);
-  }
-
-  .ng-arrow-wrapper {
-    width: calc(25px * 2 / 3);
-    padding-right: calc(5px * 2 / 3);
-  }
-
-  .ng-value-container .ng-input {
-    padding-left: calc(10px * 2 / 3);
-    padding-right: calc(25px * 2 / 3);
-  }
-}
-
-.ng-dropdown-panel.report-timezone-select {
-  min-width: min(calc(260px * 2 / 3), 85vw);
 }
 
 .ng-dropdown-panel:where(:not(.rail-picker-select)) {

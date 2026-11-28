@@ -1,18 +1,21 @@
 <div
-  class="text-s1 flex min-w-0 items-center gap-2 px-2 text-sm"
-  [ngClass]="{ 'bg-p200 rounded-full py-1': !!word }"
+  class="text-s1 flex min-w-0 items-center gap-2 text-sm"
+  [ngClass]="{ 'bg-p200 rounded-full py-1 pl-1 pr-2': !!word }"
 >
   <button
     #searchButton
     type="button"
-    class="text-s500 flex size-9 flex-shrink-0 items-center justify-center rounded-full focus:outline-none"
+    class="text-s500 aria-expanded:text-m600 flex size-10 flex-shrink-0 items-center justify-center rounded-md focus:outline-none aria-expanded:shadow-none"
     [ngClass]="
-      word
-        ? 'hover:bg-p300 focus-visible:bg-p300'
-        : 'hover:bg-m200 focus-visible:bg-m200'
+      isOpen
+        ? ''
+        : word
+          ? 'hover:bg-p300 hover:text-s1 focus-visible:bg-p300 focus-visible:text-s1'
+          : 'hover:bg-s200 hover:text-s1 focus-visible:bg-s200 focus-visible:text-s1'
     "
     [attr.aria-label]="'Search ' + label"
     aria-haspopup="dialog"
+    [attr.aria-expanded]="isOpen"
     (click)="open({ trigger: searchButton })"
   >
     <m-search-icon></m-search-icon>

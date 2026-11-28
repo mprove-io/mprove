@@ -21,7 +21,6 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { IRowNode } from 'ag-grid-community';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
@@ -48,7 +47,6 @@ import {
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 
-import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -325,8 +323,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }> = this.fb.group({
     timezone: this.fb.control<string>(undefined)
   });
-
-  timezones = getTimezones();
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -713,6 +709,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   lastUrl: string;
 
+  get toolbarListPath(): string {
+    let path: string = this.navigateService.getOptimisticLastPath({
+      lastPath: this.lastUrl
+    });
+
+    return path;
+  }
+
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
@@ -918,10 +922,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  timezoneChange() {
-    (document.activeElement as HTMLElement).blur();
+  timezoneChange(item: { timezone: string }): void {
+    let { timezone } = item;
 
-    let timezone = this.timezoneForm.controls['timezone'].value;
+    this.timezoneForm.controls['timezone'].setValue(timezone);
 
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
@@ -1419,7 +1423,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   refreshShow() {}
 
   navToReportsList() {
-    if (this.lastUrl !== this.pathReportsList) {
+    if (this.toolbarListPath !== this.pathReportsList) {
       this.title.setTitle(this.pageTitle);
 
       this.reportQuery.reset();
@@ -1446,16 +1450,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToReport({
       reportId: EMPTY_REPORT_ID
     });
-  }
-
-  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
-    let haystack = [`${timezone.label}`];
-
-    let opts = {};
-    let uf = new uFuzzy(opts);
-    let idxs = uf.filter(haystack, term);
-
-    return idxs != null && idxs.length > 0;
   }
 
   scrollToSelectedReport(item: { isSmooth: boolean }) {

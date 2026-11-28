@@ -11,7 +11,6 @@ import {
 import { FormBuilder, type FormControl, type FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import uFuzzy from '@leeoniya/ufuzzy';
 import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
 import { DASHBOARDS_PAGE_TITLE } from '#common/constants/page-titles';
@@ -24,7 +23,6 @@ import {
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 
-import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -108,8 +106,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }> = this.fb.group({
     timezone: this.fb.control<string>(undefined)
   });
-
-  timezones = getTimezones();
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -317,6 +313,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
 
   lastUrl: string;
+
+  get toolbarListPath(): string {
+    let path: string = this.navigateService.getOptimisticLastPath({
+      lastPath: this.lastUrl
+    });
+
+    return path;
+  }
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -546,7 +550,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   navToDashboardsList() {
-    if (this.lastUrl !== this.pathDashboardsList) {
+    if (this.toolbarListPath !== this.pathDashboardsList) {
       this.title.setTitle(this.pageTitle);
 
       this.navigateService.navigateToDashboardsList();
@@ -669,10 +673,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  timezoneChange() {
-    (document.activeElement as HTMLElement).blur();
+  timezoneChange(item: { timezone: string }): void {
+    let { timezone } = item;
 
-    let timezone = this.timezoneForm.controls['timezone'].value;
+    this.timezoneForm.controls['timezone'].setValue(timezone);
 
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
@@ -707,16 +711,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     }
-  }
-
-  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
-    let haystack = [`${timezone.label}`];
-
-    let opts = {};
-    let uf = new uFuzzy(opts);
-    let idxs = uf.filter(haystack, term);
-
-    return idxs != null && idxs.length > 0;
   }
 
   scrollToSelectedDashboard(item: { isSmooth: boolean }) {

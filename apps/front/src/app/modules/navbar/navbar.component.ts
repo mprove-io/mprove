@@ -6,11 +6,12 @@ import {
   DestroyRef,
   type ElementRef,
   type OnInit,
+  signal,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, take, tap } from 'rxjs/operators';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { filter, finalize, take, tap } from 'rxjs/operators';
 import {
   EMPTY_REPORT_ID,
   PATH_BUILDER,
@@ -45,6 +46,8 @@ const topNavOverflowStageValues = [
 ] as const;
 
 type TopNavOverflowStage = (typeof topNavOverflowStageValues)[number];
+
+type PageLookup = { path: string };
 
 @Component({
   standalone: false,
@@ -128,18 +131,35 @@ export class NavbarComponent implements OnInit {
 
   explorerEnabled = environment.explorerEnabled;
 
-  isBuilderRouteActive: boolean;
-  isExplorerRouteActive: boolean;
-  isModelsRouteActive: boolean;
-  isDashboardsRouteActive: boolean;
-  isReportsRouteActive: boolean;
+  readonly pathBuilder = PATH_BUILDER;
+  readonly pathExplorer = PATH_EXPLORER;
+  readonly pathModels = PATH_MODELS;
+  readonly pathDashboards = PATH_DASHBOARDS;
+  readonly pathReports = PATH_REPORTS;
+
+  activePage: string;
+  private readonly pendingLookup = signal<PageLookup>(undefined);
+
+  get selectedPage(): string {
+    let path: string =
+      this.pendingLookup()?.path ??
+      this.navigateService.pendingRouteSegments()[10] ??
+      this.activePage;
+
+    return path;
+  }
 
   routerEvents$ = this.router.events.pipe(
+    tap(event => {
+      if (event instanceof NavigationStart) {
+        this.pendingLookup.set(undefined);
+      }
+    }),
     filter(ev => ev instanceof NavigationEnd),
-    tap((x: any) => {
+    tap(event => {
       this.isTopNavOverflowOpen = false;
 
-      this.checkUrls(x.url);
+      this.updateActivePage({ url: event.urlAfterRedirects });
     })
   );
 
@@ -214,7 +234,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.checkUrls(this.router.url);
+    this.updateActivePage({ url: this.router.url });
   }
 
   closeTopNavOverflow(item: { overflowButton: HTMLButtonElement }): void {
@@ -311,27 +331,46 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  checkUrls(url: string) {
-    this.isBuilderRouteActive =
-      url.split('?')[0]?.split('/')[11] === PATH_BUILDER;
+  private updateActivePage(item: { url: string }): void {
+    let { url } = item;
 
-    this.isExplorerRouteActive =
-      url.split('?')[0]?.split('/')[11] === PATH_EXPLORER;
-
-    this.isModelsRouteActive =
-      url.split('?')[0]?.split('/')[11] === PATH_MODELS;
-
-    this.isDashboardsRouteActive =
-      url.split('?')[0]?.split('/')[11] === PATH_DASHBOARDS;
-
-    this.isReportsRouteActive =
-      url.split('?')[0]?.split('/')[11] === PATH_REPORTS;
+    this.activePage = url.split(/[?#]/)[0].split('/')[11];
 
     this.cd.detectChanges();
   }
 
+  private beginPageNavigation(item: { path: string }): boolean {
+    let { path } = item;
+
+    if (this.selectedPage === path) {
+      return false;
+    }
+
+    this.pendingLookup.set(undefined);
+
+    return true;
+  }
+
+  private startPageLookup(item: { path: string }): PageLookup {
+    let { path } = item;
+
+    let lookup: PageLookup = { path: path };
+
+    this.pendingLookup.set(lookup);
+
+    return lookup;
+  }
+
+  private finishPageLookup(item: { lookup: PageLookup }): void {
+    let { lookup } = item;
+
+    if (this.pendingLookup() === lookup) {
+      this.pendingLookup.set(undefined);
+    }
+  }
+
   navigateBuilder() {
-    if (this.isBuilderRouteActive === true) {
+    if (!this.beginPageNavigation({ path: PATH_BUILDER })) {
       return;
     }
 
@@ -354,7 +393,7 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    if (this.isExplorerRouteActive === true) {
+    if (!this.beginPageNavigation({ path: PATH_EXPLORER })) {
       return;
     }
 
@@ -367,7 +406,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateCharts() {
-    if (this.isModelsRouteActive === true) {
+    if (!this.beginPageNavigation({ path: PATH_MODELS })) {
       return;
     }
 
@@ -388,6 +427,8 @@ export class NavbarComponent implements OnInit {
     );
 
     if (isDefined(pModelLink) && isDefined(pChartLink)) {
+      let lookup: PageLookup = this.startPageLookup({ path: PATH_MODELS });
+
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -404,6 +445,10 @@ export class NavbarComponent implements OnInit {
         })
         .pipe(
           tap(resp => {
+            if (this.pendingLookup() !== lookup) {
+              return;
+            }
+
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
@@ -423,7 +468,8 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToModels();
           }),
           take(1),
-          this.spinnerService.appTrack()
+          this.spinnerService.appTrack(),
+          finalize(() => this.finishPageLookup({ lookup: lookup }))
         )
         .subscribe();
     } else {
@@ -432,7 +478,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateDashboards() {
-    if (this.isDashboardsRouteActive === true) {
+    if (!this.beginPageNavigation({ path: PATH_DASHBOARDS })) {
       return;
     }
 
@@ -447,6 +493,8 @@ export class NavbarComponent implements OnInit {
     );
 
     if (isDefined(pLink?.dashboardId)) {
+      let lookup: PageLookup = this.startPageLookup({ path: PATH_DASHBOARDS });
+
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -462,6 +510,10 @@ export class NavbarComponent implements OnInit {
         })
         .pipe(
           tap(resp => {
+            if (this.pendingLookup() !== lookup) {
+              return;
+            }
+
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
@@ -477,7 +529,8 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToDashboardsList();
           }),
           take(1),
-          this.spinnerService.appTrack()
+          this.spinnerService.appTrack(),
+          finalize(() => this.finishPageLookup({ lookup: lookup }))
         )
         .subscribe();
     } else {
@@ -486,7 +539,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateReports() {
-    if (this.isReportsRouteActive === true) {
+    if (!this.beginPageNavigation({ path: PATH_REPORTS })) {
       return;
     }
 
@@ -507,6 +560,8 @@ export class NavbarComponent implements OnInit {
     }
 
     if (isDefined(pLink?.reportId)) {
+      let lookup: PageLookup = this.startPageLookup({ path: PATH_REPORTS });
+
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -522,6 +577,10 @@ export class NavbarComponent implements OnInit {
         })
         .pipe(
           tap(resp => {
+            if (this.pendingLookup() !== lookup) {
+              return;
+            }
+
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
@@ -537,7 +596,8 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToReportsList();
           }),
           take(1),
-          this.spinnerService.appTrack()
+          this.spinnerService.appTrack(),
+          finalize(() => this.finishPageLookup({ lookup: lookup }))
         )
         .subscribe();
     } else {

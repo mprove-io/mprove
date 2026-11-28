@@ -30,8 +30,12 @@
           </div>
 
           <div class="ml-12 flex flex-shrink-0 flex-row items-center">
-            <div
-              class="flex flex-shrink-0 cursor-pointer flex-row items-center"
+            <button
+              type="button"
+              class="list-toolbar-action flex flex-shrink-0 cursor-pointer flex-row items-center"
+              [attr.aria-current]="
+                toolbarListPath === pathModelsList ? 'page' : null
+              "
               (click)="navToModelsList()"
             >
               <!-- <m-view-list-icon
@@ -41,17 +45,17 @@
                 }"
               ></m-view-list-icon> -->
 
-              <div
+              <span
                 class="select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
                 data-label="Models List"
                 [ngClass]="{
-                  'text-m500 font-semibold': lastUrl === pathModelsList,
-                  'text-s500': lastUrl !== pathModelsList
+                  'text-m500 font-semibold': toolbarListPath === pathModelsList,
+                  'text-s500': toolbarListPath !== pathModelsList
                 }"
               >
                 Models List
-              </div>
-            </div>
+              </span>
+            </button>
 
             <m-catalog-search
               class="ml-1 min-w-0 max-w-40 flex-shrink-0"
@@ -63,8 +67,12 @@
               (resultOpen)="navigateToSearchModel({ id: $event })"
             ></m-catalog-search>
 
-            <div
-              class="ml-6 flex flex-shrink-0 cursor-pointer flex-row items-center"
+            <button
+              type="button"
+              class="list-toolbar-action ml-6 flex flex-shrink-0 cursor-pointer flex-row items-center"
+              [attr.aria-current]="
+                toolbarListPath === pathChartsList ? 'page' : null
+              "
               (click)="navToChartsList()"
             >
               <!-- <m-view-list-icon
@@ -74,17 +82,17 @@
                 }"
               ></m-view-list-icon> -->
 
-              <div
+              <span
                 class="select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
                 data-label="Charts List"
                 [ngClass]="{
-                  'text-m500 font-semibold': lastUrl === pathChartsList,
-                  'text-s500': lastUrl !== pathChartsList
+                  'text-m500 font-semibold': toolbarListPath === pathChartsList,
+                  'text-s500': toolbarListPath !== pathChartsList
                 }"
               >
                 Charts List
-              </div>
-            </div>
+              </span>
+            </button>
 
             <m-catalog-search
               class="ml-1 min-w-0 max-w-40 flex-shrink-0"
@@ -138,6 +146,14 @@
                 [showLastCompleteDuration]="true"
                 [completedWord]="'Completed'"
               ></m-query-status>
+
+              <m-timezone-picker
+                class="ml-5"
+                testId="modelTimezoneSelect"
+                [value]="timezoneForm.controls.timezone.value"
+                [isDisabled]="timezoneForm.controls.timezone.disabled"
+                (timezoneChange)="timezoneChange({ timezone: $event })"
+              ></m-timezone-picker>
 
               <div
                 class="ml-7 flex cursor-pointer flex-row items-center"
@@ -1491,58 +1507,6 @@
                     <m-validation
                       [control]="limitForm.controls['limit']"
                     ></m-validation>
-                  </div>
-
-                  <div
-                    class="text-s1 ml-5 select-none text-base"
-                    *ngIf="mconfig?.select.length > 0"
-                    >Timezone</div
-                  >
-
-                  <div
-                    class="ml-5 mr-9 flex w-2 flex-1"
-                    *ngIf="mconfig?.select.length > 0"
-                  >
-                    <form
-                      class="w-full"
-                      [formGroup]="timezoneForm"
-                      tp="Timezone change is not allowed"
-                      [tpIsEnabled]="
-                        timezoneForm.controls['timezone'].disabled === true
-                      "
-                    >
-                      <ng-select
-                        #modelTimezoneSelect
-                        [fixNgSelectBottom]="modelTimezoneSelect"
-                        data-cy="modelTimezoneSelect"
-                        class="w-full select-none text-base"
-                        [items]="timezones"
-                        [clearable]="false"
-                        [searchable]="true"
-                        [searchFn]="timezoneSearchFn"
-                        (change)="timezoneChange()"
-                        (keyup.esc)="
-                          $event.stopImmediatePropagation();
-                          modelTimezoneSelect.blur()
-                        "
-                        (keyup.enter)="
-                          $event.stopImmediatePropagation();
-                          modelTimezoneSelect.blur()
-                        "
-                        appendTo="body"
-                        bindLabel="label"
-                        bindValue="value"
-                        formControlName="timezone"
-                      >
-                        <ng-template ng-label-tmp let-item="item">
-                          <div class="truncate">{{ item.label }}</div>
-                        </ng-template>
-
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="truncate">{{ item.label }}</div>
-                        </ng-template>
-                      </ng-select>
-                    </form>
                   </div>
                 </div>
 

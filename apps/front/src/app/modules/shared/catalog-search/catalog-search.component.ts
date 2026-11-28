@@ -37,6 +37,12 @@ export class CatalogSearchComponent implements OnDestroy {
     CatalogSearchDialogResult
   >;
 
+  get isOpen(): boolean {
+    let isOpen: boolean = isDefined(this.dialog);
+
+    return isOpen;
+  }
+
   constructor(private dialogService: DialogService) {}
 
   open(item: { trigger: HTMLButtonElement }): void {

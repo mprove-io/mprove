@@ -2,11 +2,11 @@
 @let selectorPopupPositions =
   isSideMenu ? sidePopupPositions : topSelectorPopupPositions;
 @let isWorkspacePage =
-  isBuilderRouteActive ||
-  isExplorerRouteActive ||
-  isReportsRouteActive ||
-  isModelsRouteActive ||
-  isDashboardsRouteActive;
+  activePage === pathBuilder ||
+  activePage === pathExplorer ||
+  activePage === pathReports ||
+  activePage === pathModels ||
+  activePage === pathDashboards;
 
 <div class="mprove-shell grid h-full w-full" [class.side-menu]="isSideMenu">
   <header
@@ -89,7 +89,7 @@
             <button
               type="button"
               class="rail-item"
-              [attr.aria-current]="isBuilderRouteActive ? 'page' : null"
+              [attr.aria-current]="selectedPage === pathBuilder ? 'page' : null"
               (click)="navigateBuilder()"
               [disabled]="needSave"
             >
@@ -116,7 +116,9 @@
               <button
                 type="button"
                 class="rail-item"
-                [attr.aria-current]="isExplorerRouteActive ? 'page' : null"
+                [attr.aria-current]="
+                  selectedPage === pathExplorer ? 'page' : null
+                "
                 (click)="navigateExplorer()"
                 [disabled]="needSave || member?.isExplorer !== true"
               >
@@ -132,7 +134,9 @@
               <button
                 type="button"
                 class="rail-item"
-                [attr.aria-current]="isModelsRouteActive ? 'page' : null"
+                [attr.aria-current]="
+                  selectedPage === pathModels ? 'page' : null
+                "
                 (click)="navigateCharts()"
                 [disabled]="needSave || member?.isExplorer !== true"
               >
@@ -143,7 +147,7 @@
             <button
               type="button"
               class="rail-item"
-              [attr.aria-current]="isReportsRouteActive ? 'page' : null"
+              [attr.aria-current]="selectedPage === pathReports ? 'page' : null"
               (click)="navigateReports()"
               [disabled]="needSave"
             >
@@ -153,7 +157,9 @@
             <button
               type="button"
               class="rail-item"
-              [attr.aria-current]="isDashboardsRouteActive ? 'page' : null"
+              [attr.aria-current]="
+                selectedPage === pathDashboards ? 'page' : null
+              "
               (click)="navigateDashboards()"
               [disabled]="needSave"
             >

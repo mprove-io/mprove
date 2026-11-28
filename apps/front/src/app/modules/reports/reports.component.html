@@ -46,17 +46,21 @@
           </div>
 
           <div class="ml-12 flex flex-shrink-0 items-center">
-            <div
-              class="cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
+            <button
+              type="button"
+              class="list-toolbar-action cursor-pointer select-none content-center whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
               data-label="Reports List"
+              [attr.aria-current]="
+                toolbarListPath === pathReportsList ? 'page' : null
+              "
               [ngClass]="{
-                'text-m500 font-semibold': lastUrl === pathReportsList,
-                'text-s500': lastUrl !== pathReportsList
+                'text-m500 font-semibold': toolbarListPath === pathReportsList,
+                'text-s500': toolbarListPath !== pathReportsList
               }"
               (click)="navToReportsList()"
             >
               Reports List
-            </div>
+            </button>
 
             <m-catalog-search
               class="ml-1 min-w-0 max-w-40 flex-shrink-0"
@@ -196,6 +200,14 @@
             ></m-query-status>
 
             <div class="flex flex-shrink-0 flex-row items-center">
+              <m-timezone-picker
+                class="ml-5"
+                testId="metricsTimezoneSelect"
+                [value]="timezoneForm.controls.timezone.value"
+                [isDisabled]="timezoneForm.controls.timezone.disabled"
+                (timezoneChange)="timezoneChange({ timezone: $event })"
+              ></m-timezone-picker>
+
               <div
                 class="ml-7 flex cursor-pointer flex-row items-center"
                 (click)="toggleAutoRun()"
@@ -765,60 +777,6 @@
 
                 <div class="flex h-2 flex-1 flex-col">
                   <m-metrics-tree class="flex flex-1"></m-metrics-tree>
-                </div>
-              </div>
-
-              <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
-                <div class="flex flex-row"></div>
-                <div class="flex flex-row"></div>
-              </div>
-
-              <div
-                class="mb-5 ml-6 mr-5 mt-5 flex min-h-11 flex-wrap items-center gap-x-5 gap-y-2"
-              >
-                <div class="text-s1 select-none text-base">Timezone</div>
-
-                <div class="flex w-[calc(70px*2/3)] max-w-full">
-                  <form
-                    class="w-full"
-                    [formGroup]="timezoneForm"
-                    tp="Timezone change is not allowed"
-                    [tpIsEnabled]="
-                      timezoneForm.controls['timezone'].disabled === true
-                    "
-                  >
-                    <ng-select
-                      #metricsTimezoneSelect
-                      [fixNgSelectBottom]="metricsTimezoneSelect"
-                      data-cy="metricsTimezoneSelect"
-                      class="report-timezone-select w-full select-none text-base"
-                      [items]="timezones"
-                      [clearable]="false"
-                      [searchable]="true"
-                      [searchFn]="timezoneSearchFn"
-                      (change)="timezoneChange()"
-                      (keyup.esc)="
-                        $event.stopImmediatePropagation();
-                        metricsTimezoneSelect.blur()
-                      "
-                      (keyup.enter)="
-                        $event.stopImmediatePropagation();
-                        metricsTimezoneSelect.blur()
-                      "
-                      appendTo="body"
-                      bindLabel="label"
-                      bindValue="value"
-                      formControlName="timezone"
-                    >
-                      <ng-template ng-label-tmp let-item="item">
-                        <div class="truncate">{{ item.label }}</div>
-                      </ng-template>
-
-                      <ng-template ng-option-tmp let-item="item">
-                        <div class="truncate">{{ item.label }}</div>
-                      </ng-template>
-                    </ng-select>
-                  </form>
                 </div>
               </div>
             </div>

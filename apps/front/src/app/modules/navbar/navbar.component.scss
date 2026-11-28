@@ -1,5 +1,6 @@
 .mprove-shell,
 .rail-popup,
+.catalog-search-dialog,
 .ng-dropdown-panel.rail-picker-select {
   --rail-line: rgba(24, 24, 27, 0.09);
   --rail-hover: rgba(24, 24, 27, 0.04);
@@ -333,9 +334,8 @@
     border-radius: 6px;
     transition: background-color 120ms ease;
 
-    &:not(.ng-select-disabled):is(
+    &:not(.ng-select-disabled, .ng-select-opened):is(
         :hover,
-        .ng-select-opened,
         :has(.ng-input > input:focus-visible)
       ) {
       background: var(--rail-hover);
@@ -544,7 +544,12 @@
   }
 }
 
-:is(.mprove-shell, .rail-popup, :where(.ng-dropdown-panel.rail-picker-select))
+:is(
+    .mprove-shell,
+    .rail-popup,
+    .catalog-search-dialog,
+    :where(.ng-dropdown-panel.rail-picker-select)
+  )
   .rail-item,
 .ng-dropdown-panel.rail-picker-select .ng-dropdown-panel-items .ng-option {
   display: flex;
@@ -560,7 +565,12 @@
   text-align: start;
 }
 
-:is(.mprove-shell, .rail-popup, :where(.ng-dropdown-panel.rail-picker-select)) {
+:is(
+    .mprove-shell,
+    .rail-popup,
+    .catalog-search-dialog,
+    :where(.ng-dropdown-panel.rail-picker-select)
+  ) {
   .rail-item:has(.rail-status) {
     flex-direction: column;
     align-items: flex-start;
@@ -575,18 +585,29 @@
       color 120ms ease;
   }
 
-  .rail-popup-trigger:hover:not(:disabled),
-  .rail-popup-trigger[aria-expanded='true'],
-  .rail-item[aria-expanded='true'],
-  .rail-item:hover:not(:disabled, [aria-disabled='true'], [aria-current]) {
+  .rail-popup-trigger:hover:not(:disabled, [aria-expanded='true']),
+  .rail-item:hover:not(
+      :disabled,
+      [aria-disabled='true'],
+      [aria-current],
+      [aria-expanded='true']
+    ) {
     background: var(--rail-hover);
     color: var(--rail-text);
   }
 
-  .rail-item:focus-visible,
-  .rail-popup-trigger:focus-visible {
+  .rail-item:focus-visible:not([aria-expanded='true']),
+  .rail-popup-trigger:focus-visible:not([aria-expanded='true']) {
     outline: none;
     background: var(--rail-hover);
+  }
+
+  :is(.rail-popup-trigger, .rail-item)[aria-expanded='true'] {
+    box-shadow: none;
+  }
+
+  .rail-item[aria-expanded='true'] {
+    color: var(--rail-active);
   }
 
   .rail-item:is([aria-current='page'], [aria-current='true']) {
@@ -616,6 +637,16 @@
   border-radius: 8px;
   background: #fff;
   box-shadow: var(--rail-popup-shadow);
+}
+
+.rail-popup.timezone-popup,
+.catalog-search-dialog {
+  --rail-item-min-height: 32px;
+}
+
+.rail-popup.timezone-popup {
+  width: min(18rem, calc(100vw - 1rem));
+  padding: var(--search-popup-padding);
 }
 
 .ng-dropdown-panel.rail-picker-select {
@@ -684,7 +715,7 @@ body:has(.mprove-shell:not(.side-menu)) .rail-submenu--projects {
 }
 
 // Catch outside clicks without letting the page underneath react to the pointer.
-body:has(.rail-popup) .mprove-shell::after,
+body:has(.rail-popup:not(.timezone-popup)) .mprove-shell::after,
 .mprove-shell:has(> .ng-dropdown-panel.rail-picker-select)::after {
   content: '';
   position: fixed;

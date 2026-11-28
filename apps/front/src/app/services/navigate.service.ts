@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { computed, Injectable, type Signal } from '@angular/core';
+import { type Navigation, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
@@ -36,6 +36,18 @@ import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
 export class NavigateService {
+  readonly pendingRouteSegments: Signal<string[]> = computed(() => {
+    let navigation: Navigation = this.router.currentNavigation();
+
+    let url: string = (
+      navigation?.finalUrl ?? navigation?.extractedUrl
+    )?.toString();
+
+    let segments: string[] = url?.split(/[?#]/)[0].split('/').slice(1) ?? [];
+
+    return segments;
+  });
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -73,6 +85,14 @@ export class NavigateService {
     let { navParts } = item;
 
     return this.router.navigate(navParts);
+  }
+
+  getOptimisticLastPath(item: { lastPath: string }): string {
+    let { lastPath } = item;
+
+    let path: string = this.pendingRouteSegments().at(-1) ?? lastPath;
+
+    return path;
   }
 
   async navigateToProfile() {

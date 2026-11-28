@@ -162,6 +162,7 @@ import { DocumentRingComponent } from './rings/document-ring/document-ring.compo
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { RowMetricLabelComponent } from './row-metric-label/row-metric-label.component';
 import { SuggestFieldLabelComponent } from './suggest-field-label/suggest-field-label.component';
+import { TimezonePickerComponent } from './timezone-picker/timezone-picker.component';
 import { ValidationComponent } from './validation/validation.component';
 
 let pipesArray = [
@@ -341,6 +342,7 @@ let sharedComponents = [
     Grid,
     UiSwitchModule,
     NgScrollbarModule,
+    TimezonePickerComponent,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })
@@ -349,7 +351,8 @@ let sharedComponents = [
     ...sharedComponents,
     ...pipesArray,
     ...directivesArray,
-    CatalogSearchComponent
+    CatalogSearchComponent,
+    TimezonePickerComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
