@@ -5,16 +5,16 @@
 
   <div class="flex h-2 flex-1 flex-row">
     <div
-      class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col [--left-panel-width:max(20%,12rem)]"
+      class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col [--left-panel-width:max(20%,15.5rem)]"
     >
       <div class="flex h-11 flex-row justify-between">
         <div class="flex w-full flex-row items-center">
           <div
-            class="flex h-11 w-[var(--left-panel-width)] flex-shrink-0 items-center gap-3 pl-6"
+            class="flex h-11 min-w-[var(--left-panel-width)] flex-shrink-0 items-center gap-3 pl-6"
           >
             <div
               data-cy="metricsTitle"
-              class="text-s1 min-w-0 select-none truncate text-2xl font-semibold"
+              class="text-s1 flex-shrink-0 select-none whitespace-nowrap text-2xl font-semibold"
             >
               {{ pageTitle }}
             </div>
@@ -24,6 +24,7 @@
               (click)="toggleShowLeft()"
               [isFilled]="isShowLeft === true"
             ></m-left-panel-icon>
+
             <div
               class="ml-auto flex-shrink-0"
               [tp]="templateExplorer"
@@ -44,7 +45,7 @@
             </div>
           </div>
 
-          <div class="ml-6 flex flex-shrink-0 items-center">
+          <div class="ml-12 flex flex-shrink-0 items-center">
             <div
               class="cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
               data-label="Reports List"
@@ -56,6 +57,16 @@
             >
               Reports List
             </div>
+
+            <m-catalog-search
+              class="ml-1 min-w-0 max-w-40 flex-shrink-0"
+              label="Reports"
+              inputTestId="reportsSearchReportsInput"
+              [word]="searchReportsWord"
+              [preview]="previewReportsSearch"
+              (wordChange)="applyReportsSearch({ word: $event })"
+              (resultOpen)="navigateToSearchReport({ id: $event })"
+            ></m-catalog-search>
 
             <!-- <button
             class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
@@ -388,60 +399,6 @@
                 *ngIf="showMetrics === false"
                 class="flex h-2 flex-1 flex-col"
               >
-                <div class="mb-5 mt-5 flex h-11 flex-row items-center">
-                  <m-search-icon class="text-s1 ml-6"></m-search-icon>
-
-                  <input
-                    spellcheck="false"
-                    autocomplete="off"
-                    data-cy="reportsSearchReportsInput"
-                    class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
-                    placeholder="Search Reports"
-                    [ngClass]="{
-                      'bg-p200': !!searchReportsWord
-                    }"
-                    [(ngModel)]="searchReportsWord"
-                    (ngModelChange)="searchReportsWordChange()"
-                  />
-
-                  <div class="h-9 w-9">
-                    <m-delete-icon
-                      *ngIf="!!searchReportsWord"
-                      class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                      [ngClass]="{
-                        'bg-p200 hover:bg-p300 cursor-pointer':
-                          !!searchReportsWord
-                      }"
-                      (click)="resetReportsSearch()"
-                    ></m-delete-icon>
-                  </div>
-
-                  <div class="flex flex-grow"></div>
-
-                  <button
-                    *ngIf="
-                      filteredDraftsLength > 0 && alias !== restrictedUserAlias
-                    "
-                    class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
-                    [ngClass]="{
-                      'border-s400 text-s500 hover:bg-s100':
-                        filteredDraftsLength > 0,
-                      'border-s300 text-s400 cursor-default':
-                        filteredDraftsLength === 0
-                    }"
-                    [disabled]="filteredDraftsLength === 0"
-                    (click)="deleteDrafts()"
-                  >
-                    <m-trash-icon></m-trash-icon>
-                    <div class="ml-3">Drafts</div>
-                  </button>
-                </div>
-
-                <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
-                  <div class="flex flex-row"></div>
-                  <div class="flex flex-row"></div>
-                </div>
-
                 <div class="flex h-2 flex-1 flex-col">
                   <div
                     #leftReportsContainer
@@ -464,17 +421,28 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          class="mb-2 ml-6 mr-5 flex select-none items-center pl-3 pr-2 font-semibold"
                           [ngClass]="{
                             'text-s400': alias === restrictedUserAlias,
                             'text-s500': alias !== restrictedUserAlias
                           }"
                         >
-                          {{
+                          <span>{{
                             alias === restrictedUserAlias
                               ? 'Drafts are hidden for Demo User'
                               : 'Drafts'
-                          }}
+                          }}</span>
+
+                          <button
+                            *ngIf="alias !== restrictedUserAlias"
+                            type="button"
+                            class="hover:bg-m200 text-s500 ml-auto flex h-9 flex-shrink-0 items-center justify-center rounded px-2"
+                            aria-label="Delete drafts"
+                            tp="Delete drafts"
+                            (click)="deleteDrafts()"
+                          >
+                            <m-trash-icon></m-trash-icon>
+                          </button>
                         </div>
 
                         <div
@@ -484,8 +452,7 @@
                           class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                           (click)="navToReport(r)"
                           [ngClass]="{
-                            'bg-m50': r.reportId === report.reportId,
-                            'mt-4': i === 0
+                            'bg-m50': r.reportId === report.reportId
                           }"
                         >
                           <div class="ml-4 mr-3 flex h-2 items-center">

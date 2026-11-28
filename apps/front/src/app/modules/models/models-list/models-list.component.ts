@@ -1,8 +1,7 @@
-import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import uFuzzy from '@leeoniya/ufuzzy';
+import { ActivatedRoute } from '@angular/router';
+import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MODELS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
 
@@ -14,17 +13,16 @@ import { ModelQuery } from '#front/app/queries/model.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { matchModels } from '../../shared/catalog-search/match-models';
 
 @Component({
   standalone: false,
   selector: 'm-models-list',
   templateUrl: './models-list.component.html'
 })
-export class ModelsListComponent implements OnInit, OnDestroy {
+export class ModelsListComponent implements OnInit {
   pageTitle = MODELS_LIST_PAGE_TITLE;
 
-  models: ModelX[];
-  modelsFilteredByWord: ModelX[];
   filteredModels: ModelX[];
 
   isExplorer = false;
@@ -35,11 +33,27 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     })
   );
 
-  models$ = this.modelsQuery.select().pipe(
-    tap(ml => {
-      this.models = ml.models.filter(x => x.hasAccess === true);
+  models$ = combineLatest([
+    this.modelsQuery.select(),
+    this.route.queryParamMap
+  ]).pipe(
+    tap(([state, params]) => {
+      this.word = params.get('search') ?? '';
 
-      this.makeFilteredModels();
+      let models: ModelX[] = state.models.filter(
+        model => model.hasAccess === true
+      );
+
+      let matches: ModelX[] = isDefinedAndNotEmpty(this.word)
+        ? matchModels({ models: models, word: this.word })
+        : models;
+
+      this.filteredModels = matches.sort((a, b) => {
+        let aLabel = a.label || a.modelId;
+        let bLabel = b.label || b.modelId;
+
+        return aLabel > bLabel ? 1 : bLabel > aLabel ? -1 : 0;
+      });
 
       this.cd.detectChanges();
     })
@@ -55,10 +69,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
   word: string;
 
-  private timer: any;
-
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
@@ -66,92 +77,15 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     private memberQuery: MemberQuery,
     private modelQuery: ModelQuery,
     private navigateService: NavigateService,
-    private location: Location,
     private title: Title
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.title.setTitle(this.pageTitle);
-
-    this.word = this.route.snapshot.queryParamMap.get('search');
-    this.searchWordChange();
-  }
-
-  makeFilteredModels() {
-    let idxs;
-
-    let modelsA = this.models;
-
-    if (isDefinedAndNotEmpty(this.word)) {
-      let haystack = modelsA.map(x => {
-        let accessRolesCombined = x.accessRolesCombined
-          .map(role => role.role)
-          .join(' ');
-
-        return `${x.label} ${x.modelId} ${x.connectionId} ${x.spaceFullTitle} ${accessRolesCombined}`;
-      });
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.word);
-    }
-
-    this.modelsFilteredByWord = isDefinedAndNotEmpty(this.word)
-      ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): ModelX => modelsA[idx])
-        : []
-      : modelsA;
-
-    this.filteredModels = this.modelsFilteredByWord;
-
-    this.filteredModels = this.filteredModels.sort((a, b) => {
-      let aLabel = a.label || a.modelId;
-      let bLabel = b.label || b.modelId;
-
-      return aLabel > bLabel ? 1 : bLabel > aLabel ? -1 : 0;
-    });
   }
 
   trackByFn(index: number, item: ModelX) {
     return item.modelId;
-  }
-
-  searchWordChange() {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
-    this.timer = setTimeout(() => {
-      this.makeFilteredModels();
-      this.cd.detectChanges();
-
-      let url = this.router
-        .createUrlTree([], {
-          relativeTo: this.route,
-          queryParams: {
-            search: isDefinedAndNotEmpty(this.word) ? this.word : undefined
-          }
-        })
-        .toString();
-
-      this.location.replaceState(url);
-    }, 600);
-  }
-
-  resetSearch() {
-    this.word = undefined;
-    this.makeFilteredModels();
-    this.cd.detectChanges();
-
-    let url = this.router
-      .createUrlTree([], {
-        relativeTo: this.route,
-        queryParams: {
-          search: isDefinedAndNotEmpty(this.word) ? this.word : undefined
-        }
-      })
-      .toString();
-
-    this.location.replaceState(url);
   }
 
   rowMenuOnClick(event: any) {
@@ -179,18 +113,13 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.navigateService.navigateToModelsList({
-      modelId: item.modelId
+    void this.navigateService.navigateToModelsList({
+      modelId: item.modelId,
+      search: this.word
     });
 
     if (this.uiQuery.getValue().showSchema === false) {
       this.uiQuery.updatePart({ showSchema: true });
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.timer) {
-      clearTimeout(this.timer);
     }
   }
 }

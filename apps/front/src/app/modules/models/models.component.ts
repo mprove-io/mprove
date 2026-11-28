@@ -65,6 +65,7 @@ import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
@@ -83,6 +84,11 @@ import type { Query } from '#common/types/blockml/parts/query/query';
 import type { QueryPart } from '#common/types/front/query-info/query-part';
 import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
+import { matchModels } from '#front/app/modules/shared/catalog-search/match-models';
+import {
+  CATALOG_SEARCH_PREVIEW_LIMIT,
+  type SearchNode
+} from '#front/app/modules/shared/catalog-search/search-node';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { FilteredChartsQuery } from '#front/app/queries/filtered-charts.query';
@@ -196,6 +202,34 @@ export class ModelsComponent implements OnInit, OnDestroy {
   );
 
   searchChartsWord: string;
+
+  readonly searchModelsWord$ = this.route.queryParamMap.pipe(
+    map(params => params.get('search') ?? '')
+  );
+
+  readonly previewChartsSearch = (word: string): SearchNode[] =>
+    this.spaceUiService.makeSearchPreview({
+      nodes: this.chartsQuery.getValue().chartSpaceNodes,
+      word: word
+    });
+
+  readonly previewModelsSearch = (word: string): SearchNode[] => {
+    let matches: ModelX[] = matchModels({
+      models: this.filteredModels ?? [],
+      word: word
+    });
+
+    let preview: SearchNode[] = matches
+      .slice(0, CATALOG_SEARCH_PREVIEW_LIMIT)
+      .map(model => ({
+        kind: 'result',
+        id: model.modelId,
+        label: model.label || model.modelId
+      }));
+
+    return preview;
+  };
+
   searchSchemaWord: string;
 
   filteredDraftsLength = 0;
@@ -695,8 +729,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   ];
 
   private searchSchemaTimer: any;
-  private searchChartsTimer: any;
-
   updateChartAccessControls() {
     let chartTypeControl = this.chartTypeForm.controls['chartType'];
     let chartTitleControl = this.chartTitleForm.controls['chartTitle'];
@@ -773,7 +805,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
       .pipe(
         tap(ml => {
           this.models = ml.models;
-          this.filteredModels = this.models.filter(model => model.hasAccess);
+          this.filteredModels = this.models.filter(
+            model => model.hasAccess === true
+          );
           this.updateModelSelectItems();
 
           let selectedModel = this.modelQuery.getValue();
@@ -1659,20 +1693,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }, 600);
   }
 
-  searchChartsWordChange() {
-    if (this.searchChartsTimer) {
-      clearTimeout(this.searchChartsTimer);
-    }
-
-    this.searchChartsTimer = setTimeout(() => {
-      this.updateFiltered({
-        chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
-      });
-
-      this.cd.detectChanges();
-    }, 600);
-  }
-
   resetSchemaSearch() {
     this.searchSchemaWord = undefined;
     this.uiQuery.updatePart({
@@ -1680,14 +1700,78 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetChartsSearch() {
-    this.searchChartsWord = undefined;
+  applyChartsSearch(item: { word: string }): void {
+    let { word } = item;
+
+    this.searchChartsWord = word;
+
+    if (isDefinedAndNotEmpty(word)) {
+      this.setShowCharts();
+
+      return;
+    }
 
     this.updateFiltered({
       chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
     });
 
     this.cd.detectChanges();
+  }
+
+  async navigateToSearchChart(item: { id: string }): Promise<void> {
+    let { id } = item;
+
+    let unit: ChartUnit = this.charts?.find(
+      chart => chart.chartId === id && chart.draft === false
+    );
+
+    if (isUndefined(unit)) {
+      return;
+    }
+
+    this.setShowCharts();
+
+    await this.navToChart({ chartId: id, modelId: unit.modelId });
+
+    if (this.chart?.chartId === id) {
+      this.scrollToSelectedChart({ isSmooth: true });
+    }
+  }
+
+  async applyModelsSearch(item: { word: string }): Promise<void> {
+    let { word } = item;
+
+    if (this.lastUrl !== this.pathModelsList) {
+      this.chartQuery.reset();
+    }
+
+    await this.navigateService.navigateToModelsList({
+      modelId: this.model?.modelId,
+      search: word
+    });
+  }
+
+  async navigateToSearchModel(item: { id: string }): Promise<void> {
+    let { id } = item;
+
+    if (
+      (this.filteredModels ?? []).findIndex(model => model.modelId === id) < 0
+    ) {
+      return;
+    }
+
+    if (this.lastUrl !== this.pathModelsList) {
+      this.chartQuery.reset();
+    }
+
+    await this.navigateService.navigateToModelsList({
+      modelId: id,
+      search: this.route.snapshot.queryParamMap.get('search') ?? ''
+    });
+
+    if (this.showSchema === false) {
+      this.uiQuery.updatePart({ showSchema: true });
+    }
   }
 
   updateModelSelectItems() {
@@ -1705,13 +1789,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
         : [...(this.filteredModels ?? [])];
   }
 
-  navToChart(chart: { chartId: string; modelId: string }) {
-    if (this.chart.chartId !== chart.chartId) {
+  async navToChart(item: { chartId: string; modelId: string }): Promise<void> {
+    let { chartId, modelId } = item;
+
+    if (this.chart?.chartId !== chartId) {
       this.manualNavToChart = true;
 
-      this.navigateService.navigateToChart({
-        modelId: chart.modelId,
-        chartId: chart.chartId
+      await this.navigateService.navigateToChart({
+        modelId: modelId,
+        chartId: chartId
       });
     }
   }
@@ -1755,46 +1841,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
       nodes: nodes
     });
 
-    let isSearchDefined = isDefinedAndNotEmpty(this.searchChartsWord);
     let chartMatchedIds: Set<string> | undefined;
 
-    if (isSearchDefined === true) {
-      chartMatchedIds = new Set<string>();
-
-      let searchEntries = makeSpaceUnits({
-        spaceNodes: searchNodes
-      }).map(chart => {
-        let title = isDefined(chart.title) ? chart.title : chart.unitId;
-        let accessRolesCombined = chart.accessRolesCombined
-          .map(x => x.role)
-          .join(' ');
-
-        return {
-          chart: chart,
-          searchText: `${title} ${chart.unitId} ${chart.author ?? ''} ${chart.spaceFullTitle} ${chart.modelLabel ?? ''} ${accessRolesCombined}`
-        };
+    if (isDefinedAndNotEmpty(this.searchChartsWord)) {
+      let matches: SpaceUnit[] = this.spaceUiService.matchUnits({
+        nodes: searchNodes,
+        word: this.searchChartsWord
       });
 
-      let haystack = searchEntries.map(entry => entry.searchText);
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      let idxs = uf.filter(haystack, this.searchChartsWord);
-      let searchWord = this.searchChartsWord.toLowerCase();
-      let matchedIndexes = new Set<number>(idxs ?? []);
-
-      searchEntries.forEach((entry, index) => {
-        let searchText = entry.searchText.toLowerCase();
-        let isSubstringMatched = searchText.includes(searchWord);
-
-        if (isSubstringMatched === true) {
-          matchedIndexes.add(index);
-        }
-      });
-
-      matchedIndexes.forEach(index => {
-        let entry = searchEntries[index];
-        chartMatchedIds.add(entry.chart.unitId);
-      });
+      chartMatchedIds = new Set(matches.map(unit => unit.unitId));
     }
 
     let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
@@ -2018,13 +2073,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
       );
 
       if (isDefined(chartUnit)) {
-        this.navToChart(chartUnit);
+        void this.navToChart({
+          chartId: chartUnit.chartId,
+          modelId: chartUnit.modelId
+        });
       }
     }
   }
 
-  clearQuery() {
-    if (isDefined(this.model.modelId)) {
+  newChart(): void {
+    if (isDefined(this.model?.modelId)) {
       if (this.showSchema === false) {
         this.showSchema = true;
         this.isInitialScrollCompleted = false;
@@ -2032,10 +2090,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
-      this.navigateService.navigateToChart({
+      void this.navigateService.navigateToChart({
         modelId: this.model.modelId,
         chartId: EMPTY_CHART_ID
       });
+    } else {
+      void this.navigateService.navigateToModels();
     }
   }
 

@@ -1,37 +1,7 @@
 <div class="flex h-full flex-col">
   <div class="bg-m0 flex flex-grow overflow-y-auto rounded shadow">
     <div class="ml-5 mr-5 mt-6 flex w-full flex-col">
-      <div class="flex h-11 flex-row items-center">
-        <m-search-icon class="text-s1 ml-8"></m-search-icon>
-
-        <input
-          autocomplete="off"
-          spellcheck="false"
-          data-cy="modelsSearchInput"
-          class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[400px] rounded"
-          placeholder="Search Models by Label or FileName"
-          [ngClass]="{
-            'bg-p200': !!word
-          }"
-          [(ngModel)]="word"
-          (ngModelChange)="searchWordChange()"
-        />
-
-        <div class="h-9 w-9">
-          <m-delete-icon
-            *ngIf="!!word"
-            class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-            [ngClass]="{
-              'bg-p200 hover:bg-p300 cursor-pointer': !!word
-            }"
-            (click)="resetSearch()"
-          ></m-delete-icon>
-        </div>
-
-        <div class="flex-grow"></div>
-      </div>
-
-      <div class="divide-s500 mt-10 flex flex-col divide-y">
+      <div class="divide-s500 flex flex-col divide-y">
         <div
           class="text-s1 mb-3 mr-5 flex flex-row space-x-5 text-base font-semibold"
         >
@@ -169,7 +139,7 @@
         *ngIf="filteredModels?.length === 0"
         ><div
           class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
-          >No models</div
+          >{{ word ? 'Search results are empty' : 'No models' }}</div
         >
       </div>
     </div>

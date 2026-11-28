@@ -1,0 +1,97 @@
+<div
+  class="flex max-h-[var(--catalog-search-max-height)] flex-col p-6"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+  (keydown)="
+    moveFocus({ event: $event, input: searchInput, resultTree: searchResults })
+  "
+>
+  <form
+    class="flex flex-shrink-0 items-center gap-3"
+    role="search"
+    (ngSubmit)="apply()"
+  >
+    <div class="relative flex min-w-0 flex-1 items-center">
+      <m-search-icon
+        aria-hidden="true"
+        class="text-s500 pointer-events-none absolute left-3"
+      ></m-search-icon>
+
+      <input
+        #searchInput
+        cdkFocusInitial
+        [attr.data-cy]="ref.data.inputTestId"
+        type="search"
+        class="form-input border-s400 focus:border-m600 h-11 w-full rounded pl-10 text-base"
+        spellcheck="false"
+        autocomplete="off"
+        [placeholder]="'Search ' + ref.data.label"
+        [attr.aria-label]="'Search ' + ref.data.label"
+        [value]="word"
+        (input)="updatePreview({ word: searchInput.value })"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="bg-m600 text-m0 hover:bg-m500 disabled:bg-s400 h-11 flex-shrink-0 rounded px-5 text-base font-medium disabled:cursor-default"
+      [disabled]="!canSearch"
+      >Apply</button
+    >
+  </form>
+
+  <div
+    #searchResults
+    class="mt-3 min-h-0 overflow-y-auto"
+    [class.hidden]="rows.length === 0"
+    role="tree"
+    [attr.aria-label]="'Matching ' + ref.data.label"
+  >
+    @for (
+      row of rows;
+      track row.node.kind + ':' + row.node.id;
+      let i = $index
+    ) {
+      <button
+        type="button"
+        role="treeitem"
+        class="text-s1 hover:bg-m50 focus-visible:bg-m50 flex h-10 w-full min-w-0 items-center gap-2 rounded pr-3 text-left text-lg"
+        [attr.tabindex]="i === activeIndex ? 0 : -1"
+        [attr.aria-level]="row.level"
+        [attr.aria-expanded]="
+          row.node.kind === 'folder'
+            ? !collapsedFolderIdSet.has(row.node.id)
+            : null
+        "
+        [style.padding-left.rem]="0.5 + (row.level - 1) * 0.75"
+        (focus)="activeIndex = i"
+        (click)="activeIndex = i; activateRow({ row: row })"
+      >
+        @if (row.node.kind === 'folder' || row.level > 1) {
+          <span
+            class="text-s500 flex w-14 flex-shrink-0 items-center gap-1"
+            aria-hidden="true"
+          >
+            @if (row.node.kind === 'folder') {
+              @if (collapsedFolderIdSet.has(row.node.id)) {
+                <m-chevron-right-icon></m-chevron-right-icon>
+                <m-folder-closed-icon class="text-m500"></m-folder-closed-icon>
+              } @else {
+                <m-chevron-down-icon></m-chevron-down-icon>
+                <m-folder-open-icon class="text-m600"></m-folder-open-icon>
+              }
+            }
+          </span>
+        }
+
+        <span class="min-w-0 truncate">{{ row.node.label }}</span>
+      </button>
+    }
+  </div>
+
+  @if (canSearch && rows.length === 0) {
+    <div class="text-s500 mt-3 px-3 py-2 text-base" role="status"
+      >No matching {{ ref.data.label.toLowerCase() }}</div
+    >
+  }
+</div>

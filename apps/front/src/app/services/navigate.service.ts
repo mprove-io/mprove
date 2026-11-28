@@ -252,8 +252,11 @@ export class NavigateService {
     return this.router.navigate(navTo);
   }
 
-  async navigateToModelsList(item: { modelId: string }) {
-    let { modelId } = item;
+  async navigateToModelsList(item: {
+    modelId: string;
+    search?: string;
+  }): Promise<boolean> {
+    let { modelId, search } = item;
 
     let navTo = isDefined(modelId)
       ? [
@@ -287,7 +290,9 @@ export class NavigateService {
           PATH_MODELS_LIST
         ];
 
-    return this.router.navigate(navTo);
+    return this.router.navigate(navTo, {
+      queryParams: { search: search || undefined }
+    });
   }
 
   async navigateToChart(item: { modelId: string; chartId: string }) {

@@ -1,0 +1,28 @@
+<div
+  class="text-s1 flex min-w-0 items-center gap-2 px-2 text-sm"
+  [ngClass]="{ 'bg-p200 rounded-full py-1': !!word }"
+>
+  <button
+    #searchButton
+    type="button"
+    class="text-s500 hover:bg-p300 flex size-9 flex-shrink-0 items-center justify-center rounded-full"
+    [attr.aria-label]="'Search ' + label"
+    aria-haspopup="dialog"
+    (click)="open({ trigger: searchButton })"
+  >
+    <m-search-icon></m-search-icon>
+  </button>
+
+  @if (word) {
+    <span class="min-w-0 truncate" [title]="word">{{ word }}</span>
+
+    <button
+      type="button"
+      class="hover:bg-p300 flex size-7 flex-shrink-0 items-center justify-center rounded-full"
+      [attr.aria-label]="'Clear search for ' + label"
+      (click)="clear({ trigger: searchButton })"
+    >
+      <m-delete-icon></m-delete-icon>
+    </button>
+  }
+</div>

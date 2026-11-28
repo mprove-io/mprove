@@ -421,6 +421,17 @@ cdk-virtual-scroll-viewport {
 }
 
 ngneat-dialog {
+  &.catalog-search-dialog .ngneat-dialog-backdrop {
+    --catalog-search-top: max(30px, 10dvh);
+    --catalog-search-bottom: clamp(8px, 2vw, 16px);
+    --catalog-search-max-height: calc(
+      100dvh - var(--catalog-search-top) - var(--catalog-search-bottom)
+    );
+
+    align-items: flex-start;
+    padding-block: var(--catalog-search-top) var(--catalog-search-bottom);
+  }
+
   .ngneat-dialog-backdrop {
     overflow: hidden !important;
     padding: clamp(8px, 2vw, 16px);

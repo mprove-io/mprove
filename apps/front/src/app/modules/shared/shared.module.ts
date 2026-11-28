@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
@@ -19,6 +20,8 @@ import { ReportAddRowDialogComponent } from '../reports/report-add-row-dialog/re
 import { SpaceOptionsComponent } from '../reports/space-options/space-options.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
+import { CatalogSearchComponent } from './catalog-search/catalog-search.component';
+import { CatalogSearchDialogComponent } from './catalog-search/catalog-search-dialog.component';
 import { ChartBoxComponent } from './chart-box/chart-box.component';
 import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartEditorSeriesElementComponent } from './chart-editor-series-element/chart-editor-series-element.component';
@@ -318,8 +321,15 @@ let sharedComponents = [
 ];
 
 @NgModule({
-  declarations: [...sharedComponents, ...pipesArray, ...directivesArray],
+  declarations: [
+    ...sharedComponents,
+    ...pipesArray,
+    ...directivesArray,
+    CatalogSearchComponent,
+    CatalogSearchDialogComponent
+  ],
   imports: [
+    A11yModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -335,7 +345,12 @@ let sharedComponents = [
       echarts: () => import('echarts')
     })
   ],
-  exports: [...sharedComponents, ...pipesArray, ...directivesArray],
+  exports: [
+    ...sharedComponents,
+    ...pipesArray,
+    ...directivesArray,
+    CatalogSearchComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

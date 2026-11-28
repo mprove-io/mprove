@@ -1,13 +1,77 @@
 import { Injectable } from '@angular/core';
+import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
 import type { SpaceFolderX } from '#common/types/backend/parts/space-folder-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
+import { matchSearchItems } from '#front/app/modules/shared/catalog-search/match-search-items';
+import {
+  CATALOG_SEARCH_PREVIEW_LIMIT,
+  type SearchNode
+} from '#front/app/modules/shared/catalog-search/search-node';
 import { UnitsUiService } from './units-ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class SpaceUiService {
   constructor(private unitsUiService: UnitsUiService) {}
+
+  matchUnits(item: { nodes: SpaceNode[]; word: string }): SpaceUnit[] {
+    let { nodes, word } = item;
+
+    let units: SpaceUnit[] = makeSpaceUnits({ spaceNodes: nodes ?? [] });
+
+    let matches: SpaceUnit[] = matchSearchItems({
+      items: units,
+      getSearchText: unit => {
+        let title = unit.title ?? unit.unitId;
+        let modelLabel = unit.modelLabel ?? '';
+
+        let roles: string = unit.accessRolesCombined.map(x => x.role).join(' ');
+
+        return `${title} ${unit.unitId} ${unit.author ?? ''} ${unit.spaceFullTitle}${modelLabel ? ` ${modelLabel}` : ''} ${roles}`;
+      },
+      word: word
+    });
+
+    return matches;
+  }
+
+  makeSearchPreview(item: { nodes: SpaceNode[]; word: string }): SearchNode[] {
+    let { nodes, word } = item;
+
+    let matches: SpaceUnit[] = this.matchUnits({ nodes: nodes, word: word });
+
+    let visibleNodes: SpaceNodeX[] = this.makeVisibleSpaceNodes({
+      nodes: nodes,
+      unitMatchedIds: new Set(
+        matches.slice(0, CATALOG_SEARCH_PREVIEW_LIMIT).map(unit => unit.unitId)
+      )
+    });
+
+    let preview: SearchNode[] = this.toSearchNodesRecursive({
+      nodes: visibleNodes
+    });
+
+    return preview;
+  }
+
+  private toSearchNodesRecursive(item: { nodes: SpaceNodeX[] }): SearchNode[] {
+    let { nodes } = item;
+
+    let searchNodes: SearchNode[] = nodes.map(node =>
+      node.type === 'spaceFolder'
+        ? {
+            kind: 'folder',
+            id: node.id,
+            label: node.title,
+            children: this.toSearchNodesRecursive({ nodes: node.children })
+          }
+        : { kind: 'result', id: node.unitId, label: node.title || node.unitId }
+    );
+
+    return searchNodes;
+  }
 
   private spaceFolderToSpaceFolderX(item: {
     spaceFolder: SpaceFolder;

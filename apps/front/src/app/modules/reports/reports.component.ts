@@ -58,6 +58,7 @@ import type { ReportUnit } from '#common/types/backend/parts/report/report-unit'
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
@@ -77,6 +78,7 @@ import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { spaceUnitToReportUnit } from '#front/app/functions/space/space-unit-to-report-unit';
+import type { SearchNode } from '#front/app/modules/shared/catalog-search/search-node';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -215,6 +217,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   searchMetricsWord: string;
   searchReportsWord: string;
+
+  readonly previewReportsSearch = (word: string): SearchNode[] =>
+    this.spaceUiService.makeSearchPreview({
+      nodes: this.reportsQuery.getValue().reportSpaceNodes,
+      word: word
+    });
   favoritesOnly = false;
 
   filteredDraftsLength: number;
@@ -1069,14 +1077,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  navToReport(report: { reportId: string }) {
+  async navToReport(item: { reportId: string }): Promise<void> {
+    let { reportId } = item;
+
     if (this.reportSelectedNodes.length > 0) {
       this.isShow = false;
       this.uiQuery.getValue().gridApi.deselectAll();
     }
 
-    this.navigateService.navigateToReport({
-      reportId: report.reportId
+    await this.navigateService.navigateToReport({
+      reportId: reportId
     });
   }
 
@@ -1117,20 +1127,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }, 600);
   }
 
-  searchReportsWordChange() {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
-    this.timer = setTimeout(() => {
-      this.updateFiltered({
-        reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
-      });
-
-      this.cd.detectChanges();
-    }, 600);
-  }
-
   resetMetricsSearch() {
     this.searchMetricsWord = undefined;
 
@@ -1139,14 +1135,50 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetReportsSearch() {
-    this.searchReportsWord = undefined;
+  applyReportsSearch(item: { word: string }): void {
+    let { word } = item;
+
+    this.searchReportsWord = word;
 
     this.updateFiltered({
       reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
     });
 
+    if (isDefinedAndNotEmpty(word)) {
+      this.showReportSearchPanel();
+    }
+
     this.cd.detectChanges();
+  }
+
+  async navigateToSearchReport(item: { id: string }): Promise<void> {
+    let { id } = item;
+
+    let unit: ReportUnit = this.reports?.find(
+      report => report.reportId === id && report.draft === false
+    );
+
+    if (isUndefined(unit)) {
+      return;
+    }
+
+    this.showReportSearchPanel();
+
+    await this.navToReport({ reportId: id });
+
+    if (this.report?.reportId === id && isDefinedAndNotEmpty(unit.space)) {
+      this.expandSpacePath({ space: unit.space });
+    }
+  }
+
+  private showReportSearchPanel(): void {
+    if (this.isShowLeft === false) {
+      this.toggleShowLeft();
+    }
+
+    if (this.showMetrics === true) {
+      this.setShowReports();
+    }
   }
 
   reportTreeNodeOnClick(item: { node: TreeNode }) {
@@ -1162,7 +1194,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       let report = this.reports.find(x => x.reportId === node.data.unitId);
 
       if (isDefined(report)) {
-        this.navToReport(report);
+        void this.navToReport({ reportId: report.reportId });
       }
     }
   }
@@ -1469,47 +1501,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
       nodes: nodes
     });
 
-    let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
-
     let reportMatchedIds: Set<string> | undefined;
 
-    if (isSearchDefined === true) {
-      reportMatchedIds = new Set<string>();
-
-      let searchEntries = makeSpaceUnits({
-        spaceNodes: searchNodes
-      }).map(report => {
-        let title = isDefined(report.title) ? report.title : report.unitId;
-        let accessRolesCombined = report.accessRolesCombined
-          .map(x => x.role)
-          .join(' ');
-
-        return {
-          report: report,
-          searchText: `${title} ${report.unitId} ${report.author ?? ''} ${report.spaceFullTitle} ${accessRolesCombined}`
-        };
+    if (isDefinedAndNotEmpty(this.searchReportsWord)) {
+      let matches: SpaceUnit[] = this.spaceUiService.matchUnits({
+        nodes: searchNodes,
+        word: this.searchReportsWord
       });
 
-      let haystack = searchEntries.map(entry => entry.searchText);
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      let idxs = uf.filter(haystack, this.searchReportsWord);
-      let searchWord = this.searchReportsWord.toLowerCase();
-      let matchedIndexes = new Set<number>(idxs ?? []);
-
-      searchEntries.forEach((entry, index) => {
-        let searchText = entry.searchText.toLowerCase();
-        let isSubstringMatched = searchText.includes(searchWord);
-
-        if (isSubstringMatched === true) {
-          matchedIndexes.add(index);
-        }
-      });
-
-      matchedIndexes.forEach(index => {
-        let entry = searchEntries[index];
-        reportMatchedIds.add(entry.report.unitId);
-      });
+      reportMatchedIds = new Set(matches.map(unit => unit.unitId));
     }
 
     let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({

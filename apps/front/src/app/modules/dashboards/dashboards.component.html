@@ -1,16 +1,16 @@
 <div class="flex h-full cursor-default flex-col bg-[var(--rail-background)]">
   <div class="flex h-2 flex-1 flex-row">
     <div
-      class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col [--left-panel-width:max(20%,14.5rem)]"
+      class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col [--left-panel-width:max(20%,15.5rem)]"
     >
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
           <div
-            class="flex w-[var(--left-panel-width)] flex-shrink-0 items-center gap-3 pl-6"
+            class="flex min-w-[var(--left-panel-width)] flex-shrink-0 items-center gap-3 pl-6"
           >
             <div
               data-cy="dashboardsTitle"
-              class="text-s1 min-w-0 select-none truncate text-2xl font-semibold"
+              class="text-s1 flex-shrink-0 select-none whitespace-nowrap text-2xl font-semibold"
               >{{ pageTitle }}
             </div>
 
@@ -58,7 +58,7 @@
           </div>
 
           <div
-            class="ml-6 flex-shrink-0 cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
+            class="ml-12 flex-shrink-0 cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)]"
             data-label="Dashboards List"
             [ngClass]="{
               'text-m500 font-semibold': lastUrl === pathDashboardsList,
@@ -68,6 +68,16 @@
           >
             Dashboards List
           </div>
+
+          <m-catalog-search
+            class="ml-1 min-w-0 max-w-40 flex-shrink-0"
+            label="Dashboards"
+            inputTestId="dashboardsSearchInput"
+            [word]="word"
+            [preview]="previewSearch"
+            (wordChange)="applySearch({ word: $event })"
+            (resultOpen)="navigateToSearchDashboard({ id: $event })"
+          ></m-catalog-search>
 
           <div
             *ngIf="!!dashboard?.dashboardId"
@@ -400,62 +410,8 @@
         >
           <div class="flex w-full flex-col">
             <div class="bg-m0 flex w-full flex-grow rounded shadow">
-              <div class="text-s1 mt-6 flex w-full flex-col text-base">
+              <div class="text-s1 mt-3 flex w-full flex-col text-base">
                 <div class="flex flex-1 flex-col">
-                  <div class="mb-6 flex h-11 flex-row items-center">
-                    <m-search-icon class="text-s1 ml-6"></m-search-icon>
-
-                    <input
-                      spellcheck="false"
-                      autocomplete="off"
-                      data-cy="dashboardsSearchInput"
-                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
-                      placeholder="Search Dashboards"
-                      [ngClass]="{
-                        'bg-p200': !!word
-                      }"
-                      [(ngModel)]="word"
-                      (ngModelChange)="searchWordChange()"
-                    />
-
-                    <div class="h-9 w-9">
-                      <m-delete-icon
-                        *ngIf="!!word"
-                        class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                        [ngClass]="{
-                          'bg-p200 hover:bg-p300 cursor-pointer': !!word
-                        }"
-                        (click)="resetSearch()"
-                      ></m-delete-icon>
-                    </div>
-
-                    <div class="flex flex-grow"></div>
-
-                    <button
-                      *ngIf="
-                        filteredDraftsLength > 0 &&
-                        alias !== restrictedUserAlias
-                      "
-                      class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
-                      [ngClass]="{
-                        'border-s400 text-s500 hover:bg-s100':
-                          filteredDraftsLength > 0,
-                        'border-s300 text-s400 cursor-default':
-                          filteredDraftsLength === 0
-                      }"
-                      [disabled]="filteredDraftsLength === 0"
-                      (click)="deleteDrafts()"
-                    >
-                      <m-trash-icon></m-trash-icon>
-                      <div class="ml-3">Drafts</div>
-                    </button>
-                  </div>
-
-                  <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
-                    <div class="flex flex-row"></div>
-                    <div class="flex flex-row"></div>
-                  </div>
-
                   <div
                     #leftDashboardsContainer
                     class="flex h-2 flex-grow flex-col overflow-y-auto"
@@ -469,8 +425,6 @@
                       [visibility]="'hover'"
                       [appearance]="'compact'"
                     >
-                      <div class="h-[12px]"></div>
-
                       <div
                         *ngFor="
                           let dPart of dashboardUnitsFiltered;
@@ -480,17 +434,28 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          class="mb-2 ml-6 mr-5 flex select-none items-center pl-3 pr-2 font-semibold"
                           [ngClass]="{
                             'text-s400': alias === restrictedUserAlias,
                             'text-s500': alias !== restrictedUserAlias
                           }"
                         >
-                          {{
+                          <span>{{
                             alias === restrictedUserAlias
                               ? 'Drafts are hidden for Demo User'
                               : 'Drafts'
-                          }}
+                          }}</span>
+
+                          <button
+                            *ngIf="alias !== restrictedUserAlias"
+                            type="button"
+                            class="hover:bg-m200 text-s500 ml-auto flex h-9 flex-shrink-0 items-center justify-center rounded px-2"
+                            aria-label="Delete drafts"
+                            tp="Delete drafts"
+                            (click)="deleteDrafts()"
+                          >
+                            <m-trash-icon></m-trash-icon>
+                          </button>
                         </div>
 
                         <div
@@ -503,7 +468,6 @@
                           [ngClass]="{
                             'bg-m50':
                               dPart.dashboardId === dashboard?.dashboardId,
-                            'mt-4': i === 0,
                             'mb-5': i === filteredDraftsLength - 1
                           }"
                         >

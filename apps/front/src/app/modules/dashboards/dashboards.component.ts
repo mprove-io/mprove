@@ -35,6 +35,7 @@ import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard
 import type { Member } from '#common/types/backend/parts/member';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';
 import type { ToBackendGetQueriesRequest } from '#common/types/backend/routes/queries/get-queries/get-queries-request';
@@ -44,6 +45,7 @@ import type { Query } from '#common/types/blockml/parts/query/query';
 import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
+import type { SearchNode } from '#front/app/modules/shared/catalog-search/search-node';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-units-filtered.query';
@@ -308,6 +310,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   word: string;
 
+  readonly previewSearch = (word: string): SearchNode[] =>
+    this.spaceUiService.makeSearchPreview({
+      nodes: this.dashboardUnitsQuery.getValue().dashboardSpaceNodes,
+      word: word
+    });
+
   lastUrl: string;
 
   routerEvents$ = this.router.events.pipe(
@@ -328,8 +336,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   refreshList: RefreshItem[] = REFRESH_LIST;
 
   runButtonTimerSubscription: Subscription;
-
-  private timer: any;
 
   constructor(
     private spinnerService: SpinnerService,
@@ -412,27 +418,49 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  searchWordChange() {
-    if (this.timer) {
-      clearTimeout(this.timer);
+  async navigateToSearchDashboard(item: { id: string }): Promise<void> {
+    let { id } = item;
+
+    let unit: DashboardUnit = this.dashboardUnits?.find(
+      dashboard => dashboard.dashboardId === id && dashboard.draft === false
+    );
+
+    if (isUndefined(unit)) {
+      return;
     }
 
-    this.timer = setTimeout(() => {
-      this.updateFiltered({
-        dashboardSpaceNodes:
-          this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
-      });
+    if (this.showDashboardsLeftPanel === false) {
+      this.toggleShowLeft();
+    }
 
-      this.cd.detectChanges();
-    }, 600);
+    await this.navigateService.navigateToDashboard({
+      dashboardId: id
+    });
+
+    if (
+      this.dashboard?.dashboardId === id &&
+      isDefinedAndNotEmpty(unit.space)
+    ) {
+      this.expandSpacePath({ space: unit.space });
+    }
   }
 
-  resetSearch() {
-    this.word = undefined;
+  applySearch(item: { word: string }): void {
+    let { word } = item;
+
+    this.word = word;
+
     this.updateFiltered({
       dashboardSpaceNodes:
         this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
     });
+
+    if (
+      isDefinedAndNotEmpty(this.word) &&
+      this.showDashboardsLeftPanel === false
+    ) {
+      this.toggleShowLeft();
+    }
 
     this.cd.detectChanges();
   }
@@ -446,48 +474,15 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       nodes: nodes
     });
 
-    let isSearchDefined = isDefinedAndNotEmpty(this.word);
     let dashboardMatchedIds: Set<string> | undefined;
 
-    if (isSearchDefined === true) {
-      dashboardMatchedIds = new Set<string>();
-
-      let searchEntries = makeSpaceUnits({
-        spaceNodes: searchNodes
-      }).map(dashboard => {
-        let title = isDefined(dashboard.title)
-          ? dashboard.title
-          : dashboard.unitId;
-        let accessRolesCombined = dashboard.accessRolesCombined
-          .map(x => x.role)
-          .join(' ');
-
-        return {
-          dashboard: dashboard,
-          searchText: `${title} ${dashboard.unitId} ${dashboard.author ?? ''} ${dashboard.spaceFullTitle} ${accessRolesCombined}`
-        };
+    if (isDefinedAndNotEmpty(this.word)) {
+      let matchedUnits: SpaceUnit[] = this.spaceUiService.matchUnits({
+        nodes: searchNodes,
+        word: this.word
       });
 
-      let haystack = searchEntries.map(entry => entry.searchText);
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      let idxs = uf.filter(haystack, this.word);
-      let searchWord = this.word.toLowerCase();
-      let matchedIndexes = new Set<number>(idxs ?? []);
-
-      searchEntries.forEach((entry, index) => {
-        let searchText = entry.searchText.toLowerCase();
-        let isSubstringMatched = searchText.includes(searchWord);
-
-        if (isSubstringMatched === true) {
-          matchedIndexes.add(index);
-        }
-      });
-
-      matchedIndexes.forEach(index => {
-        let entry = searchEntries[index];
-        dashboardMatchedIds.add(entry.dashboard.unitId);
-      });
+      dashboardMatchedIds = new Set(matchedUnits.map(unit => unit.unitId));
     }
 
     let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
@@ -1084,10 +1079,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
     this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();
 
