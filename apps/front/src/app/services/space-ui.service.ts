@@ -5,7 +5,10 @@ import type { SpaceFolderX } from '#common/types/backend/parts/space-folder-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
-import { matchSearchItems } from '#front/app/modules/shared/catalog-search/match-search-items';
+import {
+  type CatalogItemMatch,
+  matchCatalogItems
+} from '#front/app/modules/shared/catalog-search/match-catalog-items';
 import {
   CATALOG_SEARCH_PREVIEW_LIMIT,
   type SearchNode
@@ -19,9 +22,23 @@ export class SpaceUiService {
   matchUnits(item: { nodes: SpaceNode[]; word: string }): SpaceUnit[] {
     let { nodes, word } = item;
 
+    let units: SpaceUnit[] = this.matchUnitResults({
+      nodes: nodes,
+      word: word
+    }).map(match => match.item);
+
+    return units;
+  }
+
+  private matchUnitResults(item: {
+    nodes: SpaceNode[];
+    word: string;
+  }): CatalogItemMatch<SpaceUnit>[] {
+    let { nodes, word } = item;
+
     let units: SpaceUnit[] = makeSpaceUnits({ spaceNodes: nodes ?? [] });
 
-    let matches: SpaceUnit[] = matchSearchItems({
+    let matches: CatalogItemMatch<SpaceUnit>[] = matchCatalogItems({
       items: units,
       getSearchText: unit => {
         let title = unit.title ?? unit.unitId;
@@ -31,6 +48,7 @@ export class SpaceUiService {
 
         return `${title} ${unit.unitId} ${unit.author ?? ''} ${unit.spaceFullTitle}${modelLabel ? ` ${modelLabel}` : ''} ${roles}`;
       },
+      getFields: unit => unit.selectedFields,
       word: word
     });
 
@@ -40,24 +58,31 @@ export class SpaceUiService {
   makeSearchPreview(item: { nodes: SpaceNode[]; word: string }): SearchNode[] {
     let { nodes, word } = item;
 
-    let matches: SpaceUnit[] = this.matchUnits({ nodes: nodes, word: word });
+    let matches: CatalogItemMatch<SpaceUnit>[] = this.matchUnitResults({
+      nodes: nodes,
+      word: word
+    }).slice(0, CATALOG_SEARCH_PREVIEW_LIMIT);
+
+    let matchById = new Map(matches.map(match => [match.item.unitId, match]));
 
     let visibleNodes: SpaceNodeX[] = this.makeVisibleSpaceNodes({
       nodes: nodes,
-      unitMatchedIds: new Set(
-        matches.slice(0, CATALOG_SEARCH_PREVIEW_LIMIT).map(unit => unit.unitId)
-      )
+      unitMatchedIds: new Set(matchById.keys())
     });
 
     let preview: SearchNode[] = this.toSearchNodesRecursive({
-      nodes: visibleNodes
+      nodes: visibleNodes,
+      matchById: matchById
     });
 
     return preview;
   }
 
-  private toSearchNodesRecursive(item: { nodes: SpaceNodeX[] }): SearchNode[] {
-    let { nodes } = item;
+  private toSearchNodesRecursive(item: {
+    nodes: SpaceNodeX[];
+    matchById: Map<string, CatalogItemMatch<SpaceUnit>>;
+  }): SearchNode[] {
+    let { nodes, matchById } = item;
 
     let searchNodes: SearchNode[] = nodes.map(node =>
       node.type === 'spaceFolder'
@@ -65,9 +90,17 @@ export class SpaceUiService {
             kind: 'folder',
             id: node.id,
             label: node.title,
-            children: this.toSearchNodesRecursive({ nodes: node.children })
+            children: this.toSearchNodesRecursive({
+              nodes: node.children,
+              matchById: matchById
+            })
           }
-        : { kind: 'result', id: node.unitId, label: node.title || node.unitId }
+        : {
+            kind: 'result',
+            id: node.unitId,
+            label: node.title || node.unitId,
+            matchedFieldLabels: matchById.get(node.unitId)?.matchedFieldLabels
+          }
     );
 
     return searchNodes;

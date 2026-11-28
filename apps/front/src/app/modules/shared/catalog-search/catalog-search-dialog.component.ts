@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import {
+  getSearchHighlightParts,
+  type SearchHighlightPart
+} from './get-search-highlight-parts';
 import type { SearchNode } from './search-node';
 
 export type CatalogSearchDialogData = {
@@ -18,6 +22,8 @@ type SearchRow = {
   node: SearchNode;
   level: number;
   parentId?: string;
+  labelParts: SearchHighlightPart[];
+  fieldLabelParts: SearchHighlightPart[][];
 };
 
 @Component({
@@ -165,7 +171,25 @@ export class CatalogSearchDialogComponent {
     let rows: SearchRow[] = [];
 
     nodes.forEach(node => {
-      rows.push({ node: node, level: level, parentId: parentId });
+      let matchedFieldLabels: string[] =
+        node.kind === 'result' ? node.matchedFieldLabels : undefined;
+
+      rows.push({
+        node: node,
+        level: level,
+        parentId: parentId,
+        labelParts: getSearchHighlightParts({
+          text: node.label,
+          word: isDefined(matchedFieldLabels) ? this.word.trim() : ''
+        }),
+        fieldLabelParts: (matchedFieldLabels ?? []).map(label =>
+          getSearchHighlightParts({
+            text: label,
+            word: this.word.trim(),
+            isFieldMatch: true
+          })
+        )
+      });
 
       if (
         node.kind === 'folder' &&

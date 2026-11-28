@@ -1,6 +1,7 @@
 import { Result } from '@praha/byethrow';
-import { and, eq, isNull, or } from 'drizzle-orm';
+import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { chartsTable } from '#backend/drizzle/postgres/tables/charts';
+import { mconfigsTable } from '#backend/drizzle/postgres/tables/mconfigs';
 import type { ModelTab } from '#backend/drizzle/postgres/tables/models';
 import type { UserTab } from '#backend/drizzle/postgres/tables/users';
 import { addModelLevelToChartSpaceNodesRecursive } from '#backend/functions/db/charts/get-charts-catalog/add-model-level-to-chart-space-nodes-recursive/add-model-level-to-chart-space-nodes-recursive';
@@ -121,12 +122,42 @@ export async function getChartsCatalog(item: {
         })
       )
     ),
+    Result.bind('savedChartMconfigIds', v =>
+      Result.succeed([
+        ...new Set(
+          v.sortedSavedCharts.flatMap(chart =>
+            chart.tiles.map(tile => tile.mconfigId)
+          )
+        )
+      ])
+    ),
+    Result.bind('savedChartMconfigs', async v =>
+      v.savedChartMconfigIds.length === 0
+        ? Result.succeed([])
+        : v.db.mconfigs.findMany({
+            where: and(
+              eq(mconfigsTable.structId, v.structId),
+              inArray(mconfigsTable.mconfigId, [...v.savedChartMconfigIds])
+            )
+          })
+    ),
+    Result.bind('mconfigById', v =>
+      Result.succeed(
+        new Map(
+          v.savedChartMconfigs.map(mconfig => [mconfig.mconfigId, mconfig])
+        )
+      )
+    ),
+    Result.bind('modelById', v =>
+      Result.succeed(new Map(v.models.map(model => [model.modelId, model])))
+    ),
     Result.bind('chartSpaceUnits', v =>
       Result.succeed(
         v.sortedSavedCharts.map(chart =>
           makeChartSpaceUnit({
             chart: chart,
-            model: v.models.find(model => model.modelId === chart.modelId),
+            modelById: v.modelById,
+            mconfigById: v.mconfigById,
             member: v.apiUserMember,
             favoriteChartIds: v.favoriteChartIds
           })

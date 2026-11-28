@@ -45,7 +45,9 @@ export class ModelsListComponent implements OnInit {
       );
 
       let matches: ModelX[] = isDefinedAndNotEmpty(this.word)
-        ? matchModels({ models: models, word: this.word })
+        ? matchModels({ models: models, word: this.word }).map(
+            match => match.item
+          )
         : models;
 
       this.filteredModels = matches.sort((a, b) => {

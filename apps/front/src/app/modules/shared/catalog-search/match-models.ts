@@ -1,13 +1,16 @@
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
-import { matchSearchItems } from './match-search-items';
+import {
+  type CatalogItemMatch,
+  matchCatalogItems
+} from './match-catalog-items';
 
 export function matchModels(item: {
   models: ModelX[];
   word: string;
-}): ModelX[] {
+}): CatalogItemMatch<ModelX>[] {
   let { models, word } = item;
 
-  let matches: ModelX[] = matchSearchItems({
+  let matches: CatalogItemMatch<ModelX>[] = matchCatalogItems({
     items: models,
     getSearchText: model => {
       let roles: string = model.accessRolesCombined
@@ -16,6 +19,7 @@ export function matchModels(item: {
 
       return `${model.label} ${model.modelId} ${model.connectionId} ${model.spaceFullTitle} ${roles}`;
     },
+    getFields: model => (model.fields ?? []).filter(field => !field.hidden),
     word: word
   });
 

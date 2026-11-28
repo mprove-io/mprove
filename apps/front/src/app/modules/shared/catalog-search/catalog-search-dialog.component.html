@@ -55,7 +55,8 @@
       <button
         type="button"
         role="treeitem"
-        class="text-s1 hover:bg-m50 focus-visible:bg-m50 flex h-10 w-full min-w-0 items-center gap-2 rounded pr-3 text-left text-lg"
+        class="text-s1 hover:bg-m50 focus-visible:bg-m50 flex min-h-10 w-full min-w-0 items-center gap-2 rounded pr-3 text-left text-lg"
+        [class.py-1]="row.fieldLabelParts.length > 0"
         [attr.tabindex]="i === activeIndex ? 0 : -1"
         [attr.aria-level]="row.level"
         [attr.aria-expanded]="
@@ -84,7 +85,21 @@
           </span>
         }
 
-        <span class="min-w-0 truncate">{{ row.node.label }}</span>
+        <span class="min-w-0">
+          <span class="block truncate">
+            @for (part of row.labelParts; track $index) {
+              <span [class.font-bold]="part.isMatch">{{ part.text }}</span>
+            }
+          </span>
+          @for (parts of row.fieldLabelParts; track $index) {
+            <span class="block truncate pl-4 text-base">
+              <span class="text-s500 mr-2" aria-hidden="true">›</span>
+              @for (part of parts; track $index) {
+                <span [class.font-bold]="part.isMatch">{{ part.text }}</span>
+              }
+            </span>
+          }
+        </span>
       </button>
     }
   </div>

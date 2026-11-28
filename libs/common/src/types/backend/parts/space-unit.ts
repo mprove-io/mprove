@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type CatalogSearchField,
+  zCatalogSearchField
+} from '#common/types/backend/parts/catalog-search-field';
+import {
   type ChartType,
   zChartType
 } from '#common/types/blockml/parts/chart/chart-type';
@@ -27,6 +31,7 @@ export type SpaceUnit = {
   modelLabel?: string;
   chartType?: ChartType;
   iconPath?: string;
+  selectedFields?: CatalogSearchField[];
 };
 
 export let zSpaceUnit = z
@@ -46,7 +51,8 @@ export let zSpaceUnit = z
     modelId: z.string().nullish(),
     modelLabel: z.string().nullish(),
     chartType: zChartType.nullish(),
-    iconPath: z.string().nullish()
+    iconPath: z.string().nullish(),
+    selectedFields: z.array(zCatalogSearchField).nullish()
   })
   .meta({ id: 'SpaceUnit' });
 

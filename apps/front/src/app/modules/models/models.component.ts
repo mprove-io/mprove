@@ -84,6 +84,7 @@ import type { Query } from '#common/types/blockml/parts/query/query';
 import type { QueryPart } from '#common/types/front/query-info/query-part';
 import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
+import type { CatalogItemMatch } from '#front/app/modules/shared/catalog-search/match-catalog-items';
 import { matchModels } from '#front/app/modules/shared/catalog-search/match-models';
 import {
   CATALOG_SEARCH_PREVIEW_LIMIT,
@@ -214,17 +215,18 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
 
   readonly previewModelsSearch = (word: string): SearchNode[] => {
-    let matches: ModelX[] = matchModels({
+    let matches: CatalogItemMatch<ModelX>[] = matchModels({
       models: this.filteredModels ?? [],
       word: word
     });
 
     let preview: SearchNode[] = matches
       .slice(0, CATALOG_SEARCH_PREVIEW_LIMIT)
-      .map(model => ({
+      .map(({ item: model, matchedFieldLabels }) => ({
         kind: 'result',
         id: model.modelId,
-        label: model.label || model.modelId
+        label: model.label || model.modelId,
+        matchedFieldLabels: matchedFieldLabels
       }));
 
     return preview;
@@ -1760,13 +1762,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.lastUrl !== this.pathModelsList) {
-      this.chartQuery.reset();
-    }
-
-    await this.navigateService.navigateToModelsList({
+    await this.navigateService.navigateToChart({
       modelId: id,
-      search: this.route.snapshot.queryParamMap.get('search') ?? ''
+      chartId: EMPTY_CHART_ID
     });
 
     if (this.showSchema === false) {
