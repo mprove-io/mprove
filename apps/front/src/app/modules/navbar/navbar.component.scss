@@ -639,12 +639,12 @@
   box-shadow: var(--rail-popup-shadow);
 }
 
-.rail-popup.timezone-popup,
+.rail-popup.searchable-picker-popup,
 .catalog-search-dialog {
   --rail-item-min-height: 32px;
 }
 
-.rail-popup.timezone-popup {
+.rail-popup.searchable-picker-popup {
   width: min(18rem, calc(100vw - 1rem));
   padding: var(--search-popup-padding);
 }
@@ -715,7 +715,7 @@ body:has(.mprove-shell:not(.side-menu)) .rail-submenu--projects {
 }
 
 // Catch outside clicks without letting the page underneath react to the pointer.
-body:has(.rail-popup:not(.timezone-popup)) .mprove-shell::after,
+body:has(.rail-popup:not(.searchable-picker-popup)) .mprove-shell::after,
 .mprove-shell:has(> .ng-dropdown-panel.rail-picker-select)::after {
   content: '';
   position: fixed;

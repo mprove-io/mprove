@@ -1,81 +1,10 @@
-<span
-  cdkOverlayOrigin
-  #origin="cdkOverlayOrigin"
-  class="inline-flex"
-  tp="Timezone change is not allowed"
-  [tpIsEnabled]="isDisabled()"
->
-  <button
-    type="button"
-    class="list-toolbar-action text-s1 aria-expanded:text-m600 flex items-center text-base disabled:cursor-default disabled:opacity-50 aria-expanded:shadow-none"
-    [attr.data-cy]="testId()"
-    [attr.aria-label]="'Timezone: ' + selectedTimezone().label"
-    aria-haspopup="dialog"
-    [attr.aria-expanded]="isOpen && !isDisabled()"
-    [disabled]="isDisabled()"
-    (click)="open()"
-    (keydown.arrowdown)="$event.preventDefault(); open()"
-    >{{ selectedTimezone().name }}</button
-  >
-</span>
-
-<ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="origin"
-  [cdkConnectedOverlayOpen]="isOpen && !isDisabled()"
-  [cdkConnectedOverlayPositions]="positions"
-  [cdkConnectedOverlayViewportMargin]="8"
-  [cdkConnectedOverlayPush]="true"
-  [cdkConnectedOverlayHasBackdrop]="true"
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  (backdropClick)="isOpen = false"
-  (detach)="isOpen = false"
->
-  <div
-    class="rail-popup timezone-popup"
-    role="dialog"
-    aria-label="Timezone"
-    aria-modal="true"
-    cdkTrapFocus
-    (keydown)="
-      moveFocus({
-        event: $event,
-        input: searchInput,
-        resultList: searchResults
-      })
-    "
-  >
-    <input
-      #searchInput
-      type="search"
-      aria-label="Search Timezone"
-      placeholder="Search Timezone"
-      autocomplete="off"
-      class="search-popup-input form-input mb-2"
-      (input)="search({ term: searchInput.value })"
-    />
-
-    <div
-      class="flex min-h-[var(--rail-item-min-height)] items-center px-[var(--rail-item-padding-inline)] text-sm text-[var(--rail-muted)]"
-      aria-current="true"
-      >{{ selectedTimezone().label }}</div
-    >
-
-    <hr class="my-2 border-[var(--rail-line)]" />
-
-    <div #searchResults class="max-h-72 overflow-y-auto text-sm">
-      @for (zone of visibleTimezones(); track zone.value; let i = $index) {
-        <button
-          type="button"
-          class="rail-item"
-          [attr.tabindex]="i === activeIndex ? 0 : -1"
-          (focus)="activeIndex = i"
-          (click)="select({ timezone: zone.value })"
-          >{{ zone.label }}</button
-        >
-      } @empty {
-        <div class="px-2 py-1 text-sm">No other timezones found</div>
-      }
-    </div>
-  </div>
-</ng-template>
+<m-searchable-picker
+  label="Timezone"
+  disabledTooltip="Timezone change is not allowed"
+  emptyMessage="No other timezones found"
+  [options]="timezones"
+  [value]="value()"
+  [isDisabled]="isDisabled()"
+  [testId]="testId()"
+  (valueChange)="timezoneChange.emit($event)"
+></m-searchable-picker>

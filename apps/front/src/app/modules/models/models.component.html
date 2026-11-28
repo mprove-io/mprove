@@ -1,22 +1,54 @@
 <div class="flex h-full cursor-default flex-col bg-[var(--rail-background)]">
   <div class="flex h-2 flex-1 flex-row overflow-y-hidden">
-    <div class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col">
+    <div
+      class="mb-6 mr-6 mt-6 flex min-w-[2px] flex-grow flex-col [--charts-sidebar-width:max(25%,23rem)]"
+    >
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
           <div
-            class="flex w-1/4 flex-shrink-0 items-center justify-between gap-3 pl-6"
+            class="flex w-[var(--charts-sidebar-width)] shrink-0 items-center gap-2 pl-6"
           >
             <div
-              data-cy="modelTitle"
-              class="text-s1 min-w-0 select-none truncate text-2xl font-semibold"
+              class="flex shrink-0 items-center gap-1"
+              role="group"
+              aria-label="Sidebar view"
             >
-              {{ pageTitle }}
+              <button
+                type="button"
+                data-cy="modelTitle"
+                class="list-toolbar-action text-s500 aria-pressed:text-m500 cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)] aria-pressed:cursor-default aria-pressed:font-semibold"
+                [attr.data-label]="pageTitle"
+                [attr.aria-pressed]="showSchema === false"
+                (click)="setShowCharts()"
+                >{{ pageTitle }}</button
+              >
+
+              <button
+                type="button"
+                class="list-toolbar-action text-s500 aria-pressed:text-m500 cursor-pointer select-none whitespace-nowrap text-lg after:invisible after:block after:h-0 after:font-semibold after:content-[attr(data-label)] aria-pressed:cursor-default aria-pressed:font-semibold"
+                data-label="Model"
+                [attr.aria-pressed]="showSchema"
+                (click)="setShowSchema()"
+                >Model</button
+              >
             </div>
+
+            <m-searchable-picker
+              class="flex min-w-0 flex-1"
+              label="Model"
+              placeholder="Select a model"
+              emptyMessage="No other models found"
+              testId="modelsModelSelect"
+              align="start"
+              [options]="modelSelectItems"
+              [value]="model?.modelId"
+              (valueChange)="modelChange({ modelId: $event })"
+            ></m-searchable-picker>
 
             <div
               [tp]="templateNewChart"
               [tpIsEnabled]="isExplorer === false || !model?.modelId"
-              class="h-11 flex-shrink-0"
+              class="ml-auto h-11 flex-shrink-0"
             >
               <button
                 type="button"
@@ -29,7 +61,7 @@
             </div>
           </div>
 
-          <div class="ml-12 flex flex-shrink-0 flex-row items-center">
+          <div class="ml-6 flex flex-shrink-0 flex-row items-center">
             <button
               type="button"
               class="list-toolbar-action flex flex-shrink-0 cursor-pointer flex-row items-center"
@@ -335,97 +367,8 @@
 
       <div class="mt-6 flex h-2 w-full flex-1 flex-row">
         <div
-          class="bg-m0 flex h-full w-1/4 flex-shrink-0 flex-col rounded shadow"
+          class="bg-m0 flex h-full w-[var(--charts-sidebar-width)] flex-shrink-0 flex-col rounded shadow"
         >
-          <div
-            class="text-s1 flex h-[92px] w-full flex-shrink-0 flex-row items-center pb-6 pt-6"
-          >
-            <!-- <div
-              class="flex h-11 select-none flex-row items-center pl-6 text-lg font-semibold"
-            >
-              <div class="flex flex-row items-center">
-                <div> MODEL </div>
-              </div>
-            </div> -->
-
-            <div class="ml-6 flex w-2 flex-1 items-center">
-              <div class="flex flex-col">
-                <div
-                  class="text-s500 flex h-9 select-none items-center text-lg font-semibold"
-                  >Model</div
-                >
-              </div>
-
-              <form class="ml-5 w-full flex-1" [formGroup]="modelForm">
-                <ng-select
-                  #modelsModelSelect
-                  [fixNgSelectBottom]="modelsModelSelect"
-                  data-cy="modelsModelSelect"
-                  class="model-select w-full select-none text-base"
-                  [items]="modelSelectItems"
-                  [clearable]="false"
-                  [searchable]="true"
-                  (change)="modelChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation(); modelsModelSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation(); modelsModelSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="modelId"
-                  formControlName="model"
-                  placeholder="Model"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="ml-1 truncate">
-                      <span>{{ item.label }}</span>
-                    </div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="ml-1 truncate">
-                      <span>{{ item.label }}</span>
-                    </div>
-                  </ng-template>
-                </ng-select>
-              </form>
-            </div>
-
-            <div
-              (click)="setShowCharts()"
-              class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
-            >
-              <div class="flex w-[90px] flex-row items-center justify-center">
-                <div
-                  [ngClass]="{
-                    'text-s400': showSchema === true,
-                    'font-semibold': showSchema === false
-                  }"
-                >
-                  CHARTS
-                </div>
-              </div>
-            </div>
-
-            <div
-              (click)="setShowSchema()"
-              class="ml-2 mr-9 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
-            >
-              <div class="flex w-[90px] flex-row items-center justify-center">
-                <div
-                  [ngClass]="{
-                    'text-s400': showSchema === false,
-                    'font-semibold': showSchema === true
-                  }"
-                >
-                  SCHEMA
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
             <div
               *ngIf="model?.hasAccess === false"
@@ -435,23 +378,15 @@
 
             <div
               *ngIf="!!model?.modelId && model?.hasAccess !== false"
-              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+              class="mb-5 mt-5 flex h-11 flex-row items-center pl-8 pr-6"
             >
-              <div class="flex flex-row"></div>
-              <div class="flex flex-row"></div>
-            </div>
-
-            <div
-              *ngIf="!!model?.modelId && model?.hasAccess !== false"
-              class="mb-5 mt-5 flex h-11 flex-row items-center"
-            >
-              <m-search-icon class="text-s1 ml-8"></m-search-icon>
+              <m-search-icon class="text-s1 shrink-0"></m-search-icon>
 
               <input
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchFieldsInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 select-none rounded"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-56 min-w-0 select-none rounded"
                 placeholder="Search Fields"
                 [ngClass]="{
                   'bg-p200': !!searchSchemaWord
@@ -473,24 +408,23 @@
                 ></m-delete-icon>
               </div>
 
-              <div class="flex flex-grow"></div>
-
-              <div class="ml-4 mr-11 flex h-9 w-9 flex-shrink-0">
-                <button
-                  class="text-s1 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
-                  (click)="toggleModelTreeLevels()"
-                >
-                  <div class="flex h-6 w-6">
-                    <m-tree-icon
-                      [isFlat]="modelTreeLevels === 'FlatTime'"
-                    ></m-tree-icon>
-                  </div>
-                </button>
-              </div>
+              <button
+                type="button"
+                class="text-s1 hover:bg-m200 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
+                aria-label="Flatten time fields"
+                [attr.aria-pressed]="modelTreeLevels === 'FlatTime'"
+                (click)="toggleModelTreeLevels()"
+              >
+                <div class="flex h-6 w-6" aria-hidden="true">
+                  <m-tree-icon
+                    [isFlat]="modelTreeLevels === 'FlatTime'"
+                  ></m-tree-icon>
+                </div>
+              </button>
             </div>
 
             <div
-              *ngIf="model?.hasAccess !== false"
+              *ngIf="!!model?.modelId && model?.hasAccess !== false"
               class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
             >
               <div class="flex flex-row"></div>
@@ -502,14 +436,6 @@
               class="flex flex-1"
               (expandFilters)="expandFiltersPanel()"
             ></m-model-tree>
-          </div>
-
-          <div
-            *ngIf="showSchema === false"
-            class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
-          >
-            <div class="flex flex-row"></div>
-            <div class="flex flex-row"></div>
           </div>
 
           <div *ngIf="showSchema === false" class="flex h-2 flex-1 flex-col">

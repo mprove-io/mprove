@@ -10,6 +10,7 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { SearchablePickerComponent } from '../shared/searchable-picker/searchable-picker.component';
 import { SharedModule } from '../shared/shared.module';
 import { ChartComponent } from './chart/chart.component';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
@@ -44,6 +45,7 @@ import { QueryOptionsComponent } from './query-options/query-options.component';
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    SearchablePickerComponent,
     RouterModule,
     TreeModule,
     NgSelectModule,

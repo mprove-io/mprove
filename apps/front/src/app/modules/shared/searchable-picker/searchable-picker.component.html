@@ -1,0 +1,93 @@
+<span
+  cdkOverlayOrigin
+  #origin="cdkOverlayOrigin"
+  class="inline-flex min-w-0 max-w-full flex-auto"
+  [tp]="disabledTooltip()"
+  [tpIsEnabled]="isDisabled() && !!disabledTooltip()"
+>
+  <button
+    type="button"
+    #trigger
+    class="list-toolbar-action text-s1 aria-expanded:text-m600 flex min-w-0 flex-auto items-center text-base disabled:cursor-default disabled:opacity-50 aria-expanded:shadow-none"
+    [style.box-shadow]="isTriggerFocusRestored() ? 'none' : null"
+    [style.background-color]="isTriggerFocusRestored() ? 'transparent' : null"
+    [attr.data-cy]="testId()"
+    [attr.aria-label]="
+      label() + ': ' + (selectedOption()?.label ?? placeholder())
+    "
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="isOpen && !isDisabled()"
+    [disabled]="isDisabled()"
+    (blur)="isTriggerFocusRestored.set(false)"
+    (click)="open()"
+    (keydown.arrowdown)="$event.preventDefault(); open()"
+  >
+    <span class="truncate">{{
+      selectedOption()?.name ?? selectedOption()?.label ?? placeholder()
+    }}</span>
+  </button>
+</span>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="isOpen && !isDisabled()"
+  [cdkConnectedOverlayPositions]="positions()"
+  [cdkConnectedOverlayViewportMargin]="8"
+  [cdkConnectedOverlayPush]="true"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="close()"
+  (detach)="isOpen = false"
+  (overlayKeydown)="$event.key === 'Escape' && close()"
+>
+  <div
+    class="rail-popup searchable-picker-popup"
+    role="dialog"
+    [attr.aria-label]="label()"
+    aria-modal="true"
+    cdkTrapFocus
+    (keydown)="
+      moveFocus({
+        event: $event,
+        input: searchInput,
+        resultList: searchResults
+      })
+    "
+  >
+    <input
+      #searchInput
+      type="search"
+      [attr.aria-label]="'Search ' + label()"
+      [placeholder]="'Search ' + label()"
+      autocomplete="off"
+      class="search-popup-input form-input mb-2"
+      (input)="search({ term: searchInput.value })"
+    />
+
+    @if (selectedOption(); as selected) {
+      <div
+        class="flex min-h-[var(--rail-item-min-height)] items-center px-[var(--rail-item-padding-inline)] text-sm text-[var(--rail-muted)]"
+        aria-current="true"
+        >{{ selected.label }}</div
+      >
+
+      <hr class="my-2 border-[var(--rail-line)]" />
+    }
+
+    <div #searchResults class="max-h-72 overflow-y-auto text-sm">
+      @for (option of visibleOptions(); track option.value; let i = $index) {
+        <button
+          type="button"
+          class="rail-item"
+          [attr.tabindex]="i === activeIndex ? 0 : -1"
+          (focus)="activeIndex = i"
+          (click)="select({ value: option.value })"
+          >{{ option.label }}</button
+        >
+      } @empty {
+        <div class="px-2 py-1 text-sm">{{ emptyMessage() }}</div>
+      }
+    </div>
+  </div>
+</ng-template>

@@ -7,15 +7,17 @@
     type="button"
     class="text-s500 aria-expanded:text-m600 flex size-10 flex-shrink-0 items-center justify-center rounded-md focus:outline-none aria-expanded:shadow-none"
     [ngClass]="
-      isOpen
+      isOpen || isTriggerFocusRestored()
         ? ''
         : word
           ? 'hover:bg-p300 hover:text-s1 focus-visible:bg-p300 focus-visible:text-s1'
           : 'hover:bg-s200 hover:text-s1 focus-visible:bg-s200 focus-visible:text-s1'
     "
+    [style.box-shadow]="isTriggerFocusRestored() ? 'none' : null"
     [attr.aria-label]="'Search ' + label"
     aria-haspopup="dialog"
     [attr.aria-expanded]="isOpen"
+    (blur)="isTriggerFocusRestored.set(false)"
     (click)="open({ trigger: searchButton })"
   >
     <m-search-icon></m-search-icon>

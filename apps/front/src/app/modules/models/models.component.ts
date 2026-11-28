@@ -88,6 +88,7 @@ import {
   CATALOG_SEARCH_PREVIEW_LIMIT,
   type SearchNode
 } from '#front/app/modules/shared/catalog-search/search-node';
+import type { SearchablePickerOption } from '#front/app/modules/shared/searchable-picker/searchable-picker.component';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { FilteredChartsQuery } from '#front/app/queries/filtered-charts.query';
@@ -148,9 +149,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   @ViewChild('queryPartSelect', { static: false })
   queryPartSelectElement: NgSelectComponent;
-
-  @ViewChild('modelsModelSelect', { static: false })
-  modelsModelSelectElement: NgSelectComponent;
 
   @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
 
@@ -348,7 +346,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   );
 
   filteredModels: ModelX[];
-  modelSelectItems: ModelX[] = [];
+  modelSelectItems: SearchablePickerOption[] = [];
 
   models: ModelX[];
   modelsSubscription: Subscription;
@@ -439,8 +437,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.sortedNotHiddenFieldsList = this.sortedFieldsList.filter(
         y => y.hidden === false
       );
-
-      this.modelForm.controls['model'].setValue(this.model.modelId);
 
       this.updateModelSelectItems();
 
@@ -649,12 +645,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       }
     })
   );
-
-  modelForm: FormGroup<{
-    model: FormControl<string>;
-  }> = this.fb.group({
-    model: this.fb.control<string>(undefined)
-  });
 
   timeDiff: number;
 
@@ -889,7 +879,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   treeOnUpdateData() {}
 
-  setShowSchema() {
+  setShowSchema(): void {
     if (this.showSchema === true) {
       return;
     }
@@ -1204,10 +1194,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async modelChange() {
-    (document.activeElement as HTMLElement).blur();
-
-    let modelId = this.modelForm.controls['model'].value;
+  async modelChange(item: { modelId: string }): Promise<void> {
+    let { modelId } = item;
 
     // chart (empty model not available for selection)
     this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
@@ -1766,19 +1754,29 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateModelSelectItems() {
-    let model = this.modelQuery.getValue();
+  updateModelSelectItems(): void {
+    let model: ModelState = this.modelQuery.getValue();
 
-    let currentModelIsInOptions = this.filteredModels?.some(
-      x => x.modelId === model.modelId
+    let models: ModelX[] = this.filteredModels ?? [];
+    let isCurrentModelInOptions: boolean = models.some(
+      option => option.modelId === model.modelId
     );
 
-    this.modelSelectItems =
+    this.modelSelectItems = models.map(option => ({
+      value: option.modelId,
+      label: option.label
+    }));
+
+    if (
       isDefined(model.modelId) &&
       model.hasAccess === false &&
-      currentModelIsInOptions !== true
-        ? [...(this.filteredModels ?? []), model as ModelX]
-        : [...(this.filteredModels ?? [])];
+      !isCurrentModelInOptions
+    ) {
+      this.modelSelectItems.push({
+        value: model.modelId,
+        label: model.label
+      });
+    }
   }
 
   async navToChart(item: { chartId: string; modelId: string }): Promise<void> {

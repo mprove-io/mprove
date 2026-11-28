@@ -47,7 +47,7 @@ body {
   @apply text-base;
 }
 
-:where(.timezone-popup) {
+:where(.searchable-picker-popup) {
   --search-popup-padding: 10px;
 }
 
@@ -119,7 +119,12 @@ body {
   .list-toolbar-action {
     @apply h-10 rounded-md px-2.5;
 
-    &:hover:not(:disabled, [aria-current='page'], [aria-expanded='true']) {
+    &:hover:not(
+        :disabled,
+        [aria-current='page'],
+        [aria-expanded='true'],
+        [aria-pressed='true']
+      ) {
       @apply bg-s200;
     }
   }
@@ -637,7 +642,6 @@ ngneat-dialog {
 
 .ng-select.ng-select-single:is(
     .group-metric-by-select,
-    .model-select,
     .new-metric-select,
     .filter-metric-by-select,
     .charts-add-parameter-select,
@@ -692,10 +696,6 @@ ngneat-dialog {
 
 .ng-dropdown-panel.chart-type-select .scroll-host {
   max-height: 45vh;
-}
-
-.ng-dropdown-panel.model-select .scroll-host {
-  max-height: 35vh;
 }
 
 .ng-dropdown-panel.llm-model-select .scroll-host {
